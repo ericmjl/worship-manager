@@ -7,16 +7,19 @@
             <button class='btn btn-success btn-lg' type="submit" formaction="/songs/add">增添</button>
         </div>
     </div>
+    <!-- Table Section -->
     <div class="row">
         <table class="table table-hover">
             <tr>
                 <th>歌名</th>
                 <th>來源</th>
+                <th></th>
             </tr>
             {% for song in all_songs %}
                 <tr>
                     <td><a href="/songs/{{ song.eid }}/edit/">{{ song['name'] }}</a></td>
                     <td>{{ song['source'] }}</td>
+                    <td><a href="/songs/{{ song.eid }}/edit/">剪輯</a></td>
                 </tr>
             {% endfor %}
         </table>
