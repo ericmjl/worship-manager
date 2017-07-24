@@ -1,5 +1,5 @@
 # Custom
-*_db.yaml
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

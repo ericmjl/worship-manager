@@ -1,0 +1,25 @@
+{% extends "master.html" %}
+
+{% block content %}
+<form method="post">
+    <div class="row">
+        <div id="actions" class="form-group">
+            <button class='btn btn-success btn-lg' type="submit" formaction="/songs/add">增添</button>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-hover">
+            <tr>
+                <th>歌名</th>
+                <th>來源</th>
+            </tr>
+            {% for song in all_songs %}
+                <tr>
+                    <td><a href="/songs/{{ song.eid }}/edit/">{{ song['name'] }}</a></td>
+                    <td>{{ song['source'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</form>
+{% endblock %}
