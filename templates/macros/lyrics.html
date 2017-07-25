@@ -1,7 +1,7 @@
 {% macro render_lyrics(section=None, lyrics=None, song_eid=None, loop_index=1) %}
 <div class="col-3">
     <!-- Section Name -->
-    <label for="section-{{ loop_index }}">Section Name</label>
+    <label for="section-{{ loop_index }}">曲段</label>
     {% if not section %}
         <input class="form-control" type="text" name="section-{{ loop_index }}" value="section-{{ loop_index }}"></input>
     {% else %}
@@ -9,7 +9,7 @@
     {% endif %}
 
     <!-- Lyrics Text Box -->
-    <label for="lyrics-{{ loop_index }}">Lyrics</label>
+    <label for="lyrics-{{ loop_index }}">歌詞</label>
     {% if lyrics %}
         <textarea class="form-control" type="textarea" name="lyrics-{{ loop_index }}" rows=6>{{ lyrics }}</textarea>
     {% else %}
