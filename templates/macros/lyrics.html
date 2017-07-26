@@ -1,22 +1,36 @@
 {% macro render_lyrics(section=None, lyrics=None, song_eid=None, loop_index=1) %}
 <div class="col-3">
-    <!-- Section Name -->
-    <label for="section-{{ loop_index }}">曲段</label>
-    {% if not section %}
-        <input class="form-control" type="text" name="section-{{ loop_index }}" value="section-{{ loop_index }}"></input>
-    {% else %}
-        <input class="form-control" type="text" name="section-{{ loop_index }}" value="{{ section }}"></input>
-    {% endif %}
+    <div class="row">
+        <div class="col-12">
+            <!-- Section Name -->
+            <label for="section-{{ loop_index }}">曲段</label>
+            {% if not section %}
+                <input class="form-control" type="text" name="section-{{ loop_index }}" value="section-{{ loop_index }}"></input>
+            {% else %}
+                <input class="form-control" type="text" name="section-{{ loop_index }}" value="{{ section }}"></input>
+            {% endif %}
+        </div>
+    </div>
+    <p>
+    <div class="row">
+        <div class="col-12">
+            <!-- Lyrics Text Box -->
+            <label for="lyrics-{{ loop_index }}">歌詞</label>
+            {% if lyrics %}
+                <textarea class="form-control" type="textarea" name="lyrics-{{ loop_index }}" rows=6>{{ lyrics }}</textarea>
+            {% else %}
+                <textarea class="form-control" type="textarea" name="lyrics-{{ loop_index }}" rows=6>Lyrics</textarea>
+            {% endif %}
+        </div>
+    </div>
+    <p>
+    <div class="row">
+        <div class="col-12">
+                    <button class="btn btn-danger btn-sm" type="submit" name="button" formaction="/songs/{{ song_eid }}/remove_lyrics_section/{{ loop_index }}">刪除曲段</button>
+        </div>
 
-    <!-- Lyrics Text Box -->
-    <label for="lyrics-{{ loop_index }}">歌詞</label>
-    {% if lyrics %}
-        <textarea class="form-control" type="textarea" name="lyrics-{{ loop_index }}" rows=6>{{ lyrics }}</textarea>
-    {% else %}
-        <textarea class="form-control" type="textarea" name="lyrics-{{ loop_index }}" rows=6>Lyrics</textarea>
-    {% endif %}
+    </div>
 
-    <button class="btn btn-danger btn-sm" type="submit" name="button" formaction="/songs/{{ song_eid }}/remove_lyrics_section/{{ loop_index }}">Remove Section</button>
 
 </div>
 {% endmacro %}

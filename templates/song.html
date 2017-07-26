@@ -15,30 +15,36 @@
         <div class="col-3" id="div-name">
             <div name="name" class="form-group">
                 <label for="name">詩歌歌名</label>
-                    <input class="form-control" name="name" value="{{ song['name'] }}"></input>
+                <input class="form-control" name="name" value="{{ song['name'] }}"></input>
             </div>
         </div>
         <div class="col-3" id="div-composer">
             <div name="composer" class="form-group">
                 <label for="composer">詞曲</label>
-                    <input class="form-control" name="composer" value="{{ song['composer'] }}"></input>
+                <input class="form-control" name="composer" value="{{ song['composer'] }}"></input>
             </div>
         </div>
         <div class="col-3" id="div-copyright">
             <div name="copyright" class="form-group">
                 <label for="copyright">版權</label>
-                    <input class="form-control" name="copyright" value="{{ song['copyright'] }}"></input>
+                <input class="form-control" name="copyright" value="{{ song['copyright'] }}"></input>
             </div>
         </div>
         <div class="col-3" id="div-ccli">
             <div name="ccli" class="form-group">
-                <label for="ccli">CCLI</label>
-                    <input class="form-control" name="ccli" value="{{ song['ccli'] }}"></input>
+                <label for="ccli">CCLI號碼</label>
+                <input class="form-control" name="ccli" value="{{ song['ccli'] }}"></input>
             </div>
         </div>
 
     </div>
-    <hr>
+    <div class="row" id="div-default_arrangement">
+        <div class="col-12" name="default_arrangement">
+            <label for="default_arrangement">默認排版</label>
+            <input class="form-control" type="text" name="default_arrangement" value="{{ song['default_arrangement'] }}">
+        </div>
+    </div>
+    <p>
     <div class="row" id="row-lyrics">
         {% if song and song['lyrics'] %}
             {% set counter = ['1'] %}
@@ -56,12 +62,16 @@
     <hr>
     <div class="row" id="row-add-section-button">
         <div class="col-12">
-            <button class="btn btn-success btn-sm" type="submit" name="button" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">Add Section</button>
+            <button class="btn btn-success btn-sm" type="submit" name="button" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">增添曲段</button>
         </div>
     <hr>
     </div>
-        <button class="btn btn-primary btn-lg" type="submit" formaction="/songs/{{ song.eid }}/save">儲存</button>
-        <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/{{ song.eid }}/remove">刪除</button>
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-primary btn-lg" type="submit" formaction="/songs/{{ song.eid }}/save">儲存</button>
+            <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/{{ song.eid }}/remove">刪除</button>
+        </div>
+    </div>
 </form>
 
 {% endblock %}
