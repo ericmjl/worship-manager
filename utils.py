@@ -1,18 +1,24 @@
+import os
+
 from datamodels import Lyrics, Song
+
 from hanziconv import HanziConv
+
+from pptx import Presentation
 
 hzc = HanziConv()
 # Keep a list of song keys
 song_datamodel = list(Song().to_dict().keys())
 
 
-def get_lyrics(data, request, exclude_id=None):
+def get_lyrics(request, exclude_id=None):
     """
     Utility function that returns a Lyrics object containing the song lyrics.
 
     Parameters:
     ===========
     - data: (dict-like) pass in `request.form` from Flask app.
+    - request: pass in `request` from Flask app.
     - exclude_id: (int) used in excluding a particular lyrics section.
     """
     # Defensive programming checks
@@ -21,7 +27,7 @@ def get_lyrics(data, request, exclude_id=None):
 
     # Get lyrics
     l = Lyrics()
-    for k, v in data.items():
+    for k, v in request.form.items():
         if 'section' in k:
             idx = int(k.split('-')[-1])
             if idx is not exclude_id:
@@ -45,8 +51,7 @@ def update_song_info(request, eid, song_db, exclude_id=None):
             for k, v in request.form.items()
             if k in song_datamodel}
 
-    lyrics = get_lyrics(data=request.form, request=request,
-                        exclude_id=exclude_id)
+    lyrics = get_lyrics(request=request, exclude_id=exclude_id)
     data['lyrics'] = lyrics.to_dict()
     song_db.update(data, eids=[eid])
 
@@ -101,3 +106,31 @@ def arrange_lyrics(arrangement, song_data):
         arranged_lyrics += '\n\n'
     print(arranged_lyrics)
     return arranged_lyrics
+
+
+def make_lyrics_presentation(song_data):
+    """
+    Makes a set of slides from the lyrics.
+
+    Parameters:
+    ===========
+    - song_data: (dict) the song's data dictionary conforming to the
+                 specification in `datamodels.py`. One of the keys is `lyrics`.
+    """
+    prs = Presentation()
+    bullet_slide_layout = prs.slide_layouts[1]
+    for sld, lyr in song_data['lyrics'].items():
+        slide = prs.slides.add_slide(bullet_slide_layout)
+        shapes = slide.shapes
+        title_shape = shapes.title
+        body_shape = shapes.placeholders[1]
+        title_shape.text = sld
+        tf = body_shape.text_frame
+        tf.text = lyr
+    prs.save('tmp/slides.pptx')
+
+
+def ensure_dir(file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)

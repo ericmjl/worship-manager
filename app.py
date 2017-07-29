@@ -1,10 +1,21 @@
-from flask import Flask, render_template, request, redirect
+import json
+
+from datamodels import Song
+
+from flask import (Flask, make_response, redirect, render_template, request,
+                   send_file)
+
 from tinydb import TinyDB
 from tinydb.operations import delete
-from datamodels import Song
-from utils import update_song_info, clean_song_arrangement, arrange_lyrics
-import json
+
+from utils import (arrange_lyrics, clean_song_arrangement,
+                   make_lyrics_presentation, update_song_info)
+
 import yaml
+
+
+UPLOAD_FOLDER = 'files/'
+ALLOWED_EXTENSIONS = set(['pdf'])
 
 app = Flask(__name__)
 song_db = TinyDB('song.db')
@@ -113,9 +124,9 @@ def export_songs_database():
     return yaml.dump(data, default_flow_style=False)
 
 
-@app.route('/songs/<int:eid>/export', methods=['POST'])
-@app.route('/songs/<int:eid>/export')
-def export_song_lyrics(eid):
+@app.route('/songs/<int:eid>/export/<fmt>', methods=['POST'])
+@app.route('/songs/<int:eid>/export/<fmt>')
+def export_song_lyrics(eid, fmt):
     """
     Exports a song's lyrics as a string.
     """
@@ -123,7 +134,15 @@ def export_song_lyrics(eid):
     arrangement = clean_song_arrangement(
         arrangement=song['default_arrangement'], song_data=song)
     arr_lyrics = arrange_lyrics(arrangement=arrangement, song_data=song)
-    return arr_lyrics
+
+    if fmt == 'txt':
+        response = make_response(arr_lyrics)
+        response.headers["Content-Disposition"] = "attachment; filename=lyrics.txt"  # noqa
+
+        return response
+    elif fmt == 'pptx':
+        make_lyrics_presentation(song)
+        return send_file('tmp/slides.pptx')
 
 
 @app.route('/coworkers', methods=['POST'])
