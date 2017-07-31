@@ -1,5 +1,10 @@
 {% extends "master.html" %}
 
+{% block title_extension %}
+    詩歌
+{% endblock %}
+
+
 {% block content %}
 <form method="post">
     <div class="row">
@@ -19,6 +24,7 @@
                 <th>版權</th>
                 <th>詞曲</th>
                 <th>排版</th>
+                <th>歌譜</th>
                 <th></th>
             </tr>
             {% for song in all_songs %}
@@ -27,6 +33,11 @@
                     <td>{{ song['copyright'] }}</td>
                     <td>{{ song['composer']|truncate(20) }}</td>
                     <td>{{ song['default_arrangement']|truncate(20) }}</td>
+                    {% if song['sheet_music'] %}
+                        <td><a href="/songs/{{ song.eid }}/sheet_music/download">歌譜</a></td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
                     <td><a href="/songs/{{ song.eid }}/edit">剪輯</a></td>
                 </tr>
             {% endfor %}

@@ -18,6 +18,8 @@ class Song(object):
         self.default_arrangement = default_arrangement
         self._add_default_arrangement(default_arrangement)
 
+        self.sheet_music = None
+
     def _add_lyrics(self, lyrics):
         if lyrics:
             assert isinstance(lyrics, Lyrics)

@@ -2,8 +2,12 @@
 
 {% from "macros/lyrics.html" import render_lyrics %}
 
+{% block title_extension %}
+    {{ song['name'] }}
+{% endblock %}
+
 {% block content %}
-<form class="form-group" method="post">
+<form class="form-group" method="post" enctype=multipart/form-data>
     <div class="row">
         <div class="form-group">
             <div name="id" class="form-group">
@@ -52,9 +56,6 @@
                 {{ render_lyrics(section, lyrics, song.eid, loop.index) }}
                 {% set _ = counter.append('1') %}
             {% endfor %}
-            {% if add_section %}
-                {{ render_lyrics(section, lyrics, song.eid, counter|length) }}
-            {% endif %}
         {% else %}
             {{ render_lyrics(section, lyrics, song.eid) }}
         {% endif %}
@@ -64,8 +65,22 @@
         <div class="col-12">
             <button class="btn btn-success btn-sm" type="submit" name="button" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">增添曲段</button>
         </div>
-    <hr>
     </div>
+    <hr>
+    <div class="row" id="row-upload-sheet-music-button">
+        <div class="col-12">
+            <p>歌譜</p>
+            {% if song['sheet_music'] %}
+                <a href="/songs/{{ song.eid }}/sheet_music/download">下載歌譜</a>
+                <button class="btn btn-danger btn-sm" type="submit" name="delete-sheet-music" formaction="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</button>
+            {% else %}
+            <label for="file-upload" class="btn btn-default">增添歌譜</label>
+            <input type="file" name="file-upload">
+            <button class="btn btn-success btn-sm" type="submit" name="upload-button" formaction="/songs/{{ song.eid }}/sheet_music/upload">上傳</button>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
     <div class="row">
         <div class="col-12">
             <button class="btn btn-primary btn-lg" type="submit" formaction="/songs/{{ song.eid }}/save">儲存</button>

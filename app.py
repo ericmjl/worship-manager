@@ -1,23 +1,25 @@
 import json
+import os
+import os.path as osp
 
 from datamodels import Song
 
-from flask import (Flask, make_response, redirect, render_template, request,
-                   send_file)
+from flask import (Flask, flash, make_response, redirect, render_template,
+                   request, send_from_directory)
 
 from tinydb import TinyDB
 from tinydb.operations import delete
 
-from utils import (arrange_lyrics, clean_song_arrangement,
+from utils import (allowed_file, arrange_lyrics, clean_song_arrangement,
                    make_lyrics_presentation, update_song_info)
+
+from werkzeug.utils import secure_filename
 
 import yaml
 
-
-UPLOAD_FOLDER = 'files/'
-ALLOWED_EXTENSIONS = set(['pdf'])
-
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'files/'
+
 song_db = TinyDB('song.db')
 coworker_db = TinyDB('coworker.db')
 calendar_db = TinyDB('calendar.db')
@@ -40,10 +42,11 @@ def view_songs():
 
 
 @app.route('/songs/<int:eid>/view')
+@app.route('/songs/<int:eid>/edit')
 @app.route('/songs/<int:eid>')
 def view_song(eid):
     song = song_db.get(eid=eid)
-    return render_template('song.html', song=song, add_section=False)
+    return render_template('song.html', song=song)
 
 
 @app.route('/songs/add', methods=['POST'])
@@ -69,12 +72,6 @@ def delete_song(eid):
     return redirect('/songs')
 
 
-@app.route('/songs/<int:eid>/edit')
-def edit_song(eid):
-    song = song_db.get(eid=eid)
-    return render_template('song.html', song=song)
-
-
 @app.route('/songs/<int:eid>/add_lyrics_section', methods=['POST'])
 def add_lyrics_section(eid):
     """
@@ -82,7 +79,9 @@ def add_lyrics_section(eid):
     """
     update_song_info(request=request, eid=eid, song_db=song_db)
     song = song_db.get(eid=eid)
-    return render_template('song.html', song=song, add_section=True)
+    sect_ct = len(song['lyrics']) + 1
+    song['lyrics'][f'section-{sect_ct}'] = f'lyrics-{sect_ct}'
+    return render_template('song.html', song=song)
 
 
 @app.route('/songs/<int:eid>/remove_lyrics_section/<int:section_id>',
@@ -94,7 +93,52 @@ def remove_lyrics_section(eid, section_id):
     update_song_info(request=request, eid=eid, song_db=song_db,
                      exclude_id=section_id)
     song = song_db.get(eid=eid)
-    return render_template('song.html', song=song, add_section=False)
+    return render_template('song.html', song=song)
+
+
+@app.route('/songs/<int:eid>/sheet_music/upload', methods=['POST'])
+@app.route('/songs/<int:eid>/sheet_music/upload')
+def upload_sheet_music(eid):
+    """
+    Uploads a PDF for the song.
+    """
+    song = song_db.get(eid=eid)
+    if 'file-upload' not in request.files:
+        flash('No file part')
+        return render_template('song.html', song=song)
+    f = request.files['file-upload']
+
+    if f.filename == '':
+        flash('No selected file')
+        return render_template('song.html', song=song)
+
+    if f and allowed_file(f.filename):
+        fname = f'{song["name"]}-{song["copyright"]}.pdf'
+        fname = osp.join(app.config['UPLOAD_FOLDER'], fname)
+        f.save(fname)
+        song_db.update({'sheet_music': fname}, eids=[eid])
+        song = song_db.get(eid=eid)
+        return render_template('song.html', song=song)
+
+
+@app.route('/songs/<int:eid>/sheet_music/download', methods=['POST'])
+@app.route('/songs/<int:eid>/sheet_music/download')
+def download_sheet_music(eid):
+    """
+    Returns the sheet music to be downloaded.
+    """
+    song = song_db.get(eid=eid)
+    return send_from_directory(song['sheet_music'])
+
+
+@app.route('/songs/<int:eid>/sheet_music/delete', methods=['POST'])
+@app.route('/songs/<int:eid>/sheet_music/delete')
+def delete_sheet_music(eid):
+    song = song_db.get(eid=eid)
+    os.system(f'rm {song["sheet_music"]}')
+    song_db.update(delete('sheet_music'), eids=[eid])
+    song = song_db.get(eid=eid)
+    return render_template("song.html", song=song)
 
 
 @app.route('/songs/clean', methods=['POST'])
@@ -142,7 +186,7 @@ def export_song_lyrics(eid, fmt):
         return response
     elif fmt == 'pptx':
         make_lyrics_presentation(song)
-        return send_file('tmp/slides.pptx')
+        return send_from_directory('tmp/slides.pptx')
 
 
 @app.route('/coworkers', methods=['POST'])
@@ -161,4 +205,7 @@ def edit_coworker(id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
+
     app.run(debug=True, port=5678)
