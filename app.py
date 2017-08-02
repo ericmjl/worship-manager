@@ -2,18 +2,16 @@ import json
 import os
 import os.path as osp
 
-from datamodels import Song
+from app.datamodels import Song
+
+from app.utils import (allowed_file, arrange_lyrics, clean_song_arrangement,
+                       make_lyrics_presentation, update_song_info)
 
 from flask import (Flask, flash, make_response, redirect, render_template,
                    request, send_from_directory)
 
 from tinydb import TinyDB
 from tinydb.operations import delete
-
-from utils import (allowed_file, arrange_lyrics, clean_song_arrangement,
-                   make_lyrics_presentation, update_song_info)
-
-from werkzeug.utils import secure_filename
 
 import yaml
 

@@ -1,15 +1,14 @@
-import os
-
-from datamodels import Lyrics, Song
-
 from hanziconv import HanziConv
 
 from pptx import Presentation
+
+from .datamodels import Lyrics, Song
 
 hzc = HanziConv()
 # Keep a list of song keys
 song_datamodel = list(Song().to_dict().keys())
 
+# We only allow uploading of PDFs.
 ALLOWED_EXTENSIONS = set(['pdf'])
 
 
@@ -19,7 +18,6 @@ def get_lyrics(request, exclude_id=None):
 
     Parameters:
     ===========
-    - data: (dict-like) pass in `request.form` from Flask app.
     - request: pass in `request` from Flask app.
     - exclude_id: (int) used in excluding a particular lyrics section.
     """
@@ -132,12 +130,15 @@ def make_lyrics_presentation(song_data):
     prs.save('tmp/slides.pptx')
 
 
-def ensure_dir(file_path):
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+# def ensure_dir(file_path):
+#     directory = os.path.dirname(file_path)
+#     if not os.path.exists(directory):
+#         os.makedirs(directory)
 
 
 def allowed_file(filename):
+    """
+    Utility function that checks that the filename has an allowed extension.
+    """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

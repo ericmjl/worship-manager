@@ -1,0 +1,5 @@
+Flask==0.12.2
+Werkzeug==0.11.15
+hanziconv==0.3.2
+tinydb==3.3.1
+PyYAML==3.12
