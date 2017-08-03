@@ -1,0 +1,33 @@
+<!-- Renders the lyrics for each song section. -->
+{% macro render_slide_section_lyrics(section, lyrics) %}
+<section id="{{ section }}" data-transition="zoom">
+    {% set lines = lyrics.split('\n') %}
+    {% for line in lines %}
+        {{ line }} <br />
+    {% endfor %}
+</section>
+{% endmacro %}
+
+<!-- Renders the song title -->
+{% macro render_slide_song_title(song) %}
+<section id="{{ song['name'] }}-title" data-transition="zoom">
+    <h1>{{ song['name'] }}</h1>
+    {% if song['composer'] %}
+        <p>詞、曲：{{ song['composer'] }}</p>
+    {% endif %}
+    {% if song['copyright'] %}
+        <p>版權：{{ song['copyright'] }}</p>
+    {% endif %}
+</section>
+{% endmacro %}
+
+<!-- Renders the song according to the prescribed arrangement. -->
+{% macro render_slide_song(song, arrangement) %}
+<section id="{{ song['name'] }}" data-transition="zoom">
+
+    {{ render_slide_song_title(song) }}
+    {% for a in arrangement %}
+        {{ render_slide_section_lyrics(a, song['lyrics'][a]) }}
+    {% endfor %}
+</section>
+{% endmacro %}

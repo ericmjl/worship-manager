@@ -6,42 +6,57 @@
 
 
 {% block content %}
-<form method="post">
-    <div class="row">
-        <div class="col-12">
-            <div class="btn-toolbar">
-                <button class="btn btn-success btn-lg" type="submit" formaction="/songs/add">增添</button>
-                <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/clean">清理數據庫</button>
-            </div>
+<div class="row">
+    <div class="col-8">
+        <form method="post">
+            <button class="btn btn-success btn-lg" type="submit" formaction="/songs/add">增添</button>
+            <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/clean">清理數據庫</button>
+        </form>
+    </div>
+    <div class="col-3">
+        <form method="post">
+            <!-- <label for="search">搜索</label> -->
+            <input class="form-control" name="search" formaction="/songs/search"></input>
         </div>
+        <div class="col-1">
+            <button class="btn btn-danger" type="submit" formaction="/songs/search">搜索</button>
+        </form>
     </div>
-    <p>
-    <!-- Table Section -->
-    <div class="row">
-        <table class="table table-hover">
+</div>
+<p>
+<!-- Table Section -->
+<div class="row">
+    <table class="table table-hover">
+        <tr>
+            <th>歌名</th>
+            <th>版權</th>
+            <th>詞曲</th>
+            <th>排版</th>
+            <th>歌譜</th>
+            <th></th>
+        </tr>
+        {% for song in all_songs %}
             <tr>
-                <th>歌名</th>
-                <th>版權</th>
-                <th>詞曲</th>
-                <th>排版</th>
-                <th>歌譜</th>
-                <th></th>
-            </tr>
-            {% for song in all_songs %}
-                <tr>
-                    <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
-                    <td>{{ song['copyright'] }}</td>
-                    <td>{{ song['composer']|truncate(20) }}</td>
-                    <td>{{ song['default_arrangement']|truncate(20) }}</td>
-                    {% if song['sheet_music'] %}
-                        <td><a href="/songs/{{ song.eid }}/sheet_music/download">歌譜</a></td>
-                    {% else %}
-                        <td></td>
+                <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
+                <td>{{ song['copyright'] }}</td>
+                <td>
+                    {% if song['composer'] %}
+                    {{ song['composer']|truncate(20) }}
                     {% endif %}
-                    <td><a href="/songs/{{ song.eid }}/edit">剪輯</a></td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-</form>
+                </td>
+                <td>
+                    {% if song['default_arrangement'] %}
+                    {{ song['default_arrangement']|truncate(20) }}
+                    {% endif %}
+                </td>
+                {% if song['sheet_music'] %}
+                    <td><a href="/songs/{{ song.eid }}/sheet_music/download">歌譜</a></td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                <td><a href="/songs/{{ song.eid }}/edit">剪輯</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

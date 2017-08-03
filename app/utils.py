@@ -1,10 +1,9 @@
 from hanziconv import HanziConv
 
-from pptx import Presentation
-
 from .datamodels import Lyrics, Song
 
 hzc = HanziConv()
+convert = hzc.toTraditional
 # Keep a list of song keys
 song_datamodel = list(Song().to_dict().keys())
 
@@ -31,7 +30,7 @@ def get_lyrics(request, exclude_id=None):
         if 'section' in k:
             idx = int(k.split('-')[-1])
             if idx is not exclude_id:
-                lyrics = hzc.toTraditional(request.form[f'lyrics-{idx}'])
+                lyrics = convert(request.form[f'lyrics-{idx}'])
                 section = request.form[k]
                 l.add_section(section=section,
                               lyrics=lyrics)
@@ -47,7 +46,7 @@ def update_song_info(request, eid, song_db, exclude_id=None):
     - request: (dict-like) the `request` object from the Flask app.
     - eid: (int) the eid of the song to be updated in the database.
     """
-    data = {k: hzc.toTraditional(v)
+    data = {k: convert(v)
             for k, v in request.form.items()
             if k in song_datamodel}
 
@@ -108,26 +107,29 @@ def arrange_lyrics(arrangement, song_data):
     return arranged_lyrics
 
 
-def make_lyrics_presentation(song_data):
-    """
-    Makes a set of slides from the lyrics.
-
-    Parameters:
-    ===========
-    - song_data: (dict) the song's data dictionary conforming to the
-                 specification in `datamodels.py`. One of the keys is `lyrics`.
-    """
-    prs = Presentation()
-    bullet_slide_layout = prs.slide_layouts[1]
-    for sld, lyr in song_data['lyrics'].items():
-        slide = prs.slides.add_slide(bullet_slide_layout)
-        shapes = slide.shapes
-        title_shape = shapes.title
-        body_shape = shapes.placeholders[1]
-        title_shape.text = sld
-        tf = body_shape.text_frame
-        tf.text = lyr
-    prs.save('tmp/slides.pptx')
+# def make_lyrics_presentation(song_data):
+#     """
+#     DEPRECATED.
+#
+#     Makes a set of slides from the lyrics.
+#
+#     Parameters:
+#     ===========
+#     - song_data: (dict) the song's data dictionary conforming to the
+#                  specification in `datamodels.py`. One of the keys is
+#                  `lyrics`.
+#     """
+#     prs = Presentation()
+#     bullet_slide_layout = prs.slide_layouts[1]
+#     for sld, lyr in song_data['lyrics'].items():
+#         slide = prs.slides.add_slide(bullet_slide_layout)
+#         shapes = slide.shapes
+#         title_shape = shapes.title
+#         body_shape = shapes.placeholders[1]
+#         title_shape.text = sld
+#         tf = body_shape.text_frame
+#         tf.text = lyr
+#     prs.save('tmp/slides.pptx')
 
 
 # def ensure_dir(file_path):
@@ -142,3 +144,19 @@ def allowed_file(filename):
     """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def search_songs_db(term, db):
+    filtered_songs = list()
+    all_songs = db.all()
+    for song in all_songs:
+        for k, v in song.items():
+            print(k, v)
+            if k == 'lyrics':
+                for sec, txt in v.items():
+                    if term in txt and song not in filtered_songs:
+                        filtered_songs.append(song)
+            else:
+                if term in v and song not in filtered_songs:
+                    filtered_songs.append(song)
+    return filtered_songs

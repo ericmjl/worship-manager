@@ -8,6 +8,7 @@ from .utils import (allowed_file,
                     arrange_lyrics,
                     clean_song_arrangement,
                     get_lyrics,
+                    search_songs_db,
                     update_song_info)
 
 
@@ -26,6 +27,13 @@ class Database(object):
         for eid in eids:
             self.data[eid].update(data)
 
+    def all(self):
+        recs = []
+        for k, v in self.data.items():
+            recdata = v
+            recs.append(recdata)
+        return recs
+
 
 def to_request(song_data):
     r = Request()
@@ -40,19 +48,26 @@ def to_request(song_data):
 
 
 # Setup some mock data for tests below.
-song_data = {'lyrics': {'A': 'lyrics1', 'B': 'lyrics2', 'C': 'lyrics3'},
-             'name': 'test_song',
-             'composer': '',
-             'copyright': 'copyright'}
+song1_data = {'lyrics': {'A': 'lyrics1', 'B': 'lyrics2', 'C': 'lyrics3'},
+              'name': 'test_song',
+              'composer': '',
+              'copyright': 'copyright'}
+song2_data = {'lyrics': {'A': 'lyrics1', 'B': 'lyrics2', 'C': 'lyrics3'},
+              'name': 'test_song2',
+              'composer': '',
+              'copyright': 'copyright'}
+request = to_request(song1_data)
 
-request = to_request(song_data)
+song_db = Database()
+song_db.update(song1_data, [1])
+song_db.update(song2_data, [2])
 
 
 def test_clean_song_arrangement():
     # This first test is a "correctness" test - we give a valid input and
     # check to make sure that the output is valid too.
     arrangement = 'A, B, A, C'
-    new_arrangement = clean_song_arrangement(arrangement, song_data)
+    new_arrangement = clean_song_arrangement(arrangement, song1_data)
 
     assert new_arrangement == ['A', 'B', 'A', 'C']
 
@@ -61,7 +76,7 @@ def test_clean_song_arrangement():
     with pytest.raises(AssertionError):
         invalid_arrangement = 'A, B, A, D'
         new_arrangement = clean_song_arrangement(invalid_arrangement,
-                                                 song_data)
+                                                 song1_data)
 
 
 def test_arrange_lyrics():
@@ -69,7 +84,7 @@ def test_arrange_lyrics():
     # valid output.
     arrangement = ['A', 'B']
 
-    arranged_lyrics = arrange_lyrics(arrangement, song_data)
+    arranged_lyrics = arrange_lyrics(arrangement, song1_data)
 
     assert arranged_lyrics == 'lyrics1\n\nlyrics2\n\n'
 
@@ -77,7 +92,7 @@ def test_arrange_lyrics():
     # check that an error is raised.
     invalid_arrg = ['A', 'D']
     with pytest.raises(KeyError):
-        arranged_lyrics = arrange_lyrics(invalid_arrg, song_data)
+        arranged_lyrics = arrange_lyrics(invalid_arrg, song1_data)
 
 
 def test_get_lyrics():
@@ -96,11 +111,9 @@ def test_get_lyrics():
 
 def test_update_song_info():
     eid = 1
-    song_db = Database()
-
     update_song_info(request, eid, song_db)
 
-    assert song_db.data[eid] == song_data
+    assert song_db.data[eid] == song1_data
 
 
 # def test_ensure_dir():
@@ -115,3 +128,13 @@ def test_update_song_info():
 def test_allowed_file():
     assert allowed_file('myfile.pdf')
     assert not allowed_file('myfile.jpg')
+
+
+def test_search_songs_db():
+    term = 'song2'
+    filtered_songs = search_songs_db(term, song_db)
+    assert len(filtered_songs) == 1
+
+    term = 'test_song'
+    filtered_songs = search_songs_db(term, song_db)
+    assert len(filtered_songs) == 2

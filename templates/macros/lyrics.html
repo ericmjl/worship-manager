@@ -1,3 +1,4 @@
+<!-- Renders the lyrics on each song's page for editing. -->
 {% macro render_lyrics(section=None, lyrics=None, song_eid=None, loop_index=1) %}
 <div class="col-3">
     <div class="row">
@@ -26,7 +27,7 @@
     <p>
     <div class="row">
         <div class="col-12">
-                    <button class="btn btn-danger btn-sm" type="submit" name="button" formaction="/songs/{{ song_eid }}/remove_lyrics_section/{{ loop_index }}">刪除曲段</button>
+            <button class="btn btn-danger btn-sm" type="submit" name="button" formaction="/songs/{{ song_eid }}/remove_lyrics_section/{{ loop_index }}">刪除曲段</button>
         </div>
 
     </div>

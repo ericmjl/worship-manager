@@ -4,11 +4,13 @@ import os.path as osp
 
 from app.datamodels import Song
 
-from app.utils import (allowed_file, arrange_lyrics, clean_song_arrangement,
-                       make_lyrics_presentation, update_song_info)
+from app.utils import (allowed_file, clean_song_arrangement, search_songs_db,
+                       update_song_info)
 
-from flask import (Flask, flash, make_response, redirect, render_template,
+from flask import (Flask, flash, redirect, render_template,
                    request, send_from_directory)
+
+from hanziconv import HanziConv
 
 from tinydb import TinyDB
 from tinydb.operations import delete
@@ -21,6 +23,9 @@ app.config['UPLOAD_FOLDER'] = 'files/'
 song_db = TinyDB('song.db')
 coworker_db = TinyDB('coworker.db')
 calendar_db = TinyDB('calendar.db')
+
+hzc = HanziConv()
+convert = hzc.toTraditional
 
 
 # Keep a list of song keys
@@ -37,6 +42,15 @@ def home():
 def view_songs():
     all_songs = song_db.all()
     return render_template('songs.html', all_songs=all_songs)
+
+
+@app.route('/songs/search', methods=['POST'])
+@app.route('/songs/search')
+def search_songs():
+    term = convert(request.form['search'])
+    # Perform a search of all key/value pairs in the database.
+    filtered_songs = search_songs_db(term, song_db)
+    return render_template('songs.html', all_songs=filtered_songs)
 
 
 @app.route('/songs/<int:eid>/view')
@@ -166,25 +180,35 @@ def export_songs_database():
     return yaml.dump(data, default_flow_style=False)
 
 
-@app.route('/songs/<int:eid>/export/<fmt>', methods=['POST'])
-@app.route('/songs/<int:eid>/export/<fmt>')
-def export_song_lyrics(eid, fmt):
-    """
-    Exports a song's lyrics as a string.
-    """
+# @app.route('/songs/<int:eid>/export/<fmt>', methods=['POST'])
+# @app.route('/songs/<int:eid>/export/<fmt>')
+# def export_song_lyrics(eid, fmt):
+#     """
+#     Exports a song's lyrics as a string.
+#     """
+#     song = song_db.get(eid=eid)
+#     arrangement = clean_song_arrangement(
+#         arrangement=song['default_arrangement'], song_data=song)
+#     arr_lyrics = arrange_lyrics(arrangement=arrangement, song_data=song)
+#
+#     if fmt == 'txt':
+#         response = make_response(arr_lyrics)
+#         response.headers["Content-Disposition"] = "attachment; filename=lyrics.txt"  # noqa
+#
+#         return response
+#     elif fmt == 'pptx':
+#         make_lyrics_presentation(song)
+#         return send_from_directory('tmp/slides.pptx')
+
+
+@app.route('/songs/<int:eid>/slides', methods=['POST'])
+@app.route('/songs/<int:eid>/slides')
+def view_song_slides(eid):
+    update_song_info(request=request, eid=eid, song_db=song_db)
     song = song_db.get(eid=eid)
-    arrangement = clean_song_arrangement(
-        arrangement=song['default_arrangement'], song_data=song)
-    arr_lyrics = arrange_lyrics(arrangement=arrangement, song_data=song)
-
-    if fmt == 'txt':
-        response = make_response(arr_lyrics)
-        response.headers["Content-Disposition"] = "attachment; filename=lyrics.txt"  # noqa
-
-        return response
-    elif fmt == 'pptx':
-        make_lyrics_presentation(song)
-        return send_from_directory('tmp/slides.pptx')
+    arrangement = clean_song_arrangement(song['default_arrangement'], song)
+    return render_template('slides.html', song=song, arrangement=arrangement,
+                           eid=eid)
 
 
 @app.route('/coworkers', methods=['POST'])
@@ -200,6 +224,18 @@ def view_coworker(id):
 @app.route('/coworkers/<int:id>/edit', methods=['POST'])
 def edit_coworker(id):
     pass
+
+
+@app.route('/test/<int:eid>/slides')
+def testing_slides(eid):
+    """
+    Created 3 August 2017. Used to test slide generation functionality. Not
+    intended to be used for production. DO NOT MAKE UI ELEMENTS THAT RELY ON
+    THIS! Feel free to delete at later date.
+    """
+    song = song_db.get(eid=eid)
+    arrangement = clean_song_arrangement(song['default_arrangement'], song)
+    return render_template('slides.html', song=song, arrangement=arrangement)
 
 
 if __name__ == '__main__':
