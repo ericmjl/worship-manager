@@ -33,7 +33,8 @@ class Song(object):
         # a key in the lyrics' sections.
         if default_arrangement:
             for section in default_arrangement:
-                assert section in self.lyrics.keys(), f'{section} not specified'  # noqa
+                assert section in self.lyrics.sections.keys(), \
+                    f'{section} not specified'
 
             # Now, we allow the default arrangement to be set.
             self.default_arrangement = default_arrangement
