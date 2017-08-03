@@ -7,6 +7,27 @@ class Song(object):
     def __init__(self, name='name', copyright='organization',
                  composer='composer', lyrics=None, ccli=None,
                  default_arrangement=None):
+        """
+        Initialization.
+
+        :name: Name of the song.
+        :type name: str
+
+        :copyright: Organization that owns the copyright of the songs.
+        :type copyright: str
+
+        :composer: Name of the composer(s).
+        :type composer: str
+
+        :lyrics: The lyrics of the song.
+        :type lyrics: Lyrics object.
+
+        :ccli: The CCLI number.
+        :type ccli: str
+
+        :default_arrangement: How the songs are arranged.
+        :type default_arrangement: str
+        """
         self.name = name
         self.copyright = copyright
         self.composer = composer
