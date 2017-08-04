@@ -4,8 +4,8 @@ Data models used in the project.
 
 
 class Song(object):
-    def __init__(self, name='name', copyright='organization',
-                 composer='composer', lyrics=None, ccli=None,
+    def __init__(self, name='', copyright='',
+                 composer='', lyrics=None, ccli='',
                  default_arrangement=None):
         """
         Initialization.
