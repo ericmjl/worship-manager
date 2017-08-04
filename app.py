@@ -9,7 +9,7 @@ from app.utils import (allowed_file, clean_song_arrangement, search_songs_db,
 
 from flask import (Flask, flash, redirect, render_template,
                    request, send_from_directory)
-from flask_breadcrumbs import Breadcrumbs, register_breadcrumb
+from flask_breadcrumbs import Breadcrumbs
 
 from hanziconv import HanziConv
 
