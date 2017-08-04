@@ -53,7 +53,7 @@ def search_songs():
     term = convert(request.form['search'])
     # Perform a search of all key/value pairs in the database.
     filtered_songs = search_songs_db(term, song_db)
-    return render_template('songs.html', all_songs=filtered_songs)
+    return render_template('songs.html', all_songs=filtered_songs, term=term)
 
 
 @app.route('/songs/<int:eid>/view')
@@ -69,16 +69,21 @@ def view_song(eid):
 def new_song():
     data = Song().to_dict()
     eid = song_db.insert(data)
-    print(eid)
     song = song_db.get(eid=eid)
     return render_template('song.html', song=song)
 
 
 @app.route('/songs/<int:eid>/save', methods=['POST'])
-@app.route('/songs/<int:eid>/save')
 def save_song(eid):
     update_song_info(request=request, eid=eid, song_db=song_db)
     return redirect('/songs')
+
+
+@app.route('/songs/<int:eid>/update', methods=['POST'])
+def update_song(eid):
+    update_song_info(request=request, eid=eid, song_db=song_db)
+    song = song_db.get(eid=eid)
+    return render_template('song.html', song=song)
 
 
 @app.route('/songs/<int:eid>/remove', methods=['POST'])
