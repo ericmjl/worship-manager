@@ -16,7 +16,11 @@
     <div class="col-3">
         <form method="post">
             <!-- <label for="search">搜索</label> -->
-            <input class="form-control" name="search" formaction="/songs/search"></input>
+            {% if term %}
+                <input class="form-control" name="search" formaction="/songs/search" value="{{ term }}"></input>
+            {% else %}
+                <input class="form-control" name="search" formaction="/songs/search"></input>
+            {% endif %}
         </div>
         <div class="col-1">
             <button class="btn btn-danger" type="submit" formaction="/songs/search">搜索</button>
