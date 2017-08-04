@@ -154,9 +154,9 @@ def search_songs_db(term, db):
             print(k, v)
             if k == 'lyrics':
                 for sec, txt in v.items():
-                    if term in txt and song not in filtered_songs:
+                    if txt and term in txt and song not in filtered_songs:
                         filtered_songs.append(song)
             else:
-                if term in v and song not in filtered_songs:
+                if v and term in v and song not in filtered_songs:
                     filtered_songs.append(song)
     return filtered_songs
