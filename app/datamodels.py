@@ -6,7 +6,7 @@ Data models used in the project.
 class Song(object):
     def __init__(self, name='', copyright='',
                  composer='', lyrics=None, ccli='',
-                 default_arrangement=None):
+                 default_arrangement=None, youtube=''):
         """
         Initialization.
 
@@ -27,6 +27,9 @@ class Song(object):
 
         :default_arrangement: How the songs are arranged.
         :type default_arrangement: str
+
+        :youtube: URL to a YouTube video.
+        :type youtube: str
         """
         self.name = name
         self.copyright = copyright
@@ -40,6 +43,7 @@ class Song(object):
         self._add_default_arrangement(default_arrangement)
 
         self.sheet_music = None
+        self.youtube = youtube
 
     def _add_lyrics(self, lyrics):
         if lyrics:
