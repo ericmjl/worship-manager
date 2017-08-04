@@ -11,19 +11,31 @@
 
     {% block extraheader %}
     {% endblock %}
+    <style media="screen">
+        body {
+            padding-top: 70px;
+            padding-bottom: 70px;
+        }
+    </style>
+    <script src="https://use.fontawesome.com/cb9dbe8e41.js"></script>
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <nav>
+            <nav class="navbar navbar-light navbar-toggleable-md fixed-top bg-faded">
                 <ul class="nav nav-pills pull-right">
-                    <li role="presentation"><a href="/">Home</a></li>
+                    <li role="presentation">
+                        <a class="btn" href="/"><i class="fa fa-home" aria-hidden="true"></i> 主頁</a>
+                    </li>
+                    <li role="presentation">
+                        <a class="btn" href="/songs"><i class="fa fa-music" aria-hidden="true"></i> 詩歌庫</a>
+                    </li>
                 </ul>
             </nav>
             <h1 class="text-muted">{% block page_title %}{% endblock %}</h1>
         </div>
-        <div id="content">
+        <div id="content" padding-top="40px">
             {% block content %}
             {% endblock %}
         </div>
