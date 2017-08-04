@@ -9,8 +9,8 @@
 <div class="row">
     <div class="col-8">
         <form method="post">
-            <button class="btn btn-success btn-lg" type="submit" formaction="/songs/add">增添</button>
-            <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/clean">清理數據庫</button>
+            <button class="btn btn-success btn-md" type="submit" formaction="/songs/add">增添</button>
+            <button class="btn btn-danger btn-md" type="submit" formaction="/songs/clean">清理數據庫</button>
         </form>
     </div>
     <div class="col-3">
@@ -54,7 +54,7 @@
                 {% else %}
                     <td></td>
                 {% endif %}
-                <td><a href="/songs/{{ song.eid }}/edit">剪輯</a></td>
+                <td>{% if not song['name'] %}<a href="/songs/{{ song.eid }}/edit">剪輯</a>{% endif %}</td>
             </tr>
         {% endfor %}
     </table>
