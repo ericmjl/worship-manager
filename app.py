@@ -9,6 +9,7 @@ from app.utils import (allowed_file, clean_song_arrangement, search_songs_db,
 
 from flask import (Flask, flash, redirect, render_template,
                    request, send_from_directory)
+from flask_breadcrumbs import Breadcrumbs, register_breadcrumb
 
 from hanziconv import HanziConv
 
@@ -19,6 +20,8 @@ import yaml
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'files/'
+
+Breadcrumbs(app=app)
 
 song_db = TinyDB('song.db')
 coworker_db = TinyDB('coworker.db')
