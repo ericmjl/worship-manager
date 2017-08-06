@@ -27,7 +27,7 @@ def get_lyrics(request, exclude_id=None):
     # Get lyrics
     l = Lyrics()
     for k, v in request.form.items():
-        if 'section' in k:
+        if 'section-' in k:
             idx = int(k.split('-')[-1])
             if idx is not exclude_id:
                 lyrics = convert(request.form[f'lyrics-{idx}'])
