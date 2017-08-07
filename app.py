@@ -8,7 +8,7 @@ from app.utils import (allowed_file, clean_song_arrangement, search_songs_db,
                        update_song_info)
 
 from flask import (Flask, flash, redirect, render_template,
-                   request, send_from_directory)
+                   request, send_file)
 from flask_breadcrumbs import Breadcrumbs
 
 from hanziconv import HanziConv
@@ -49,8 +49,12 @@ def view_songs():
 
 @app.route('/songs/search', methods=['POST'])
 @app.route('/songs/search')
-def search_songs():
-    term = convert(request.form['search'])
+@app.route('/songs/search/<term>')
+def search_songs(term=None):
+    if term:
+        pass
+    elif request.form['search']:
+        term = convert(request.form['search'])
     # Perform a search of all key/value pairs in the database.
     filtered_songs = search_songs_db(term, song_db)
     return render_template('songs.html', all_songs=filtered_songs, term=term)
@@ -100,6 +104,7 @@ def add_lyrics_section(eid):
     update_song_info(request=request, eid=eid, song_db=song_db)
     song = song_db.get(eid=eid)
     sect_ct = len(song['lyrics']) + 1
+    print(sect_ct)
     song['lyrics'][f'section-{sect_ct}'] = f'lyrics-{sect_ct}'
     return render_template('song.html', song=song)
 
@@ -148,7 +153,7 @@ def download_sheet_music(eid):
     Returns the sheet music to be downloaded.
     """
     song = song_db.get(eid=eid)
-    return send_from_directory(song['sheet_music'])
+    return send_file(song['sheet_music'])
 
 
 @app.route('/songs/<int:eid>/sheet_music/delete', methods=['POST'])
@@ -206,13 +211,12 @@ def export_songs_database():
 #         return response
 #     elif fmt == 'pptx':
 #         make_lyrics_presentation(song)
-#         return send_from_directory('tmp/slides.pptx')
+#         return send_file('tmp/slides.pptx')
 
 
 @app.route('/songs/<int:eid>/slides', methods=['POST'])
 @app.route('/songs/<int:eid>/slides')
 def view_song_slides(eid):
-    update_song_info(request=request, eid=eid, song_db=song_db)
     song = song_db.get(eid=eid)
     arrangement = clean_song_arrangement(song['default_arrangement'], song)
     return render_template('slides.html', song=song, arrangement=arrangement,
@@ -250,4 +254,4 @@ if __name__ == '__main__':
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
 
-    app.run(debug=True, port=5678)
+    app.run(debug=True, port=8080)
