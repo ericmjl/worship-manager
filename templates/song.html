@@ -60,10 +60,16 @@
             {{ render_lyrics(section, lyrics, song.eid) }}
         {% endif %}
     </div>
+    <br>
+    <div class="row" id="row-button-update">
+        <div class="col-12">
+            <button class="btn btn-primary btn-sm" type="submit" name="refresh" formaction="/songs/{{ song.eid }}/update">更新</button>
+        </div>
+    </div>
     <hr>
     <div class="row" id="row-add-section-button">
         <div class="col-12">
-            <button class="btn btn-success btn-sm" type="submit" name="button" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">增添曲段</button>
+            <button class="btn btn-success btn-sm" type="submit" name="add-lyrics-section" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">增添曲段</button>
         </div>
     </div>
     <hr>
@@ -86,9 +92,13 @@
             <p>視頻</p>
             {% if song['youtube'] %}
                 <iframe id="youtube" width="100%" height="315" src="{{ song['youtube']|replace('watch?v=', 'embed/') }}" frameborder="0" allowfullscreen></iframe>
+            {% else %}
+                <a target="_blank" class="btn btn-primary btn-sm" href="https://www.youtube.com/results?search_query={{ song['name'] }}+{{ song['composer'] }}+{{ song['copyright'] }}">搜索YouTube</a>
             {% endif %}
+            <p></p>
             <label for="youtube">視頻鏈接</label>
             <input class="form-control" type="text" name="youtube" value="{{ song['youtube'] }}">
+            <p></p>
             <button class="btn btn-success btn-sm" type="submit" name="update_youtube" formaction="/songs/{{ song.eid }}/update">更新鏈接</button>
         </div>
     </div>
