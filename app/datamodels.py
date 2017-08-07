@@ -45,7 +45,10 @@ class Song(object):
         self.sheet_music = None
         self.youtube = youtube
 
-    def _add_lyrics(self, lyrics):
+    def _add_lyrics(self, lyrics=None):
+        """
+        Adds lyrics to the Song object.
+        """
         if lyrics:
             assert isinstance(lyrics, Lyrics)
             self.lyrics = lyrics
@@ -74,3 +77,15 @@ class Lyrics(object):
 
     def to_dict(self):
         return self.sections
+
+
+class Coworker(object):
+    def __init__(self, name="", fellowship="", email="", phone="", service=[]):
+        self.name = name
+        self.fellowship = fellowship
+        self.email = email
+        self.phone = phone
+        self.service = service
+
+    def __repr__(self):
+        return f"{self.name}, {self.fellowship}"
