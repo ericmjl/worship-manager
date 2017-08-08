@@ -9,6 +9,12 @@
 {% block content %}
 <form class="form-group" method="post" enctype=multipart/form-data>
     <div class="row">
+        <div class="col-12">
+            <button class="btn btn-success btn-lg" type="submit" formaction="/songs/{{ song.eid }}/save">儲存</button>
+            <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/{{ song.eid }}/remove">刪除</button>
+        </div>
+    </div>
+    <div class="row">
         <div class="form-group">
             <div name="id" class="form-group">
                 <input type="hidden" name="id" value="{{ song.eid }}"></input>
@@ -43,9 +49,13 @@
 
     </div>
     <div class="row" id="div-default_arrangement">
-        <div class="col-12" name="default_arrangement">
+        <div class="col-9" name="default_arrangement">
             <label for="default_arrangement">默認排版</label>
             <input class="form-control" type="text" name="default_arrangement" value="{{ song['default_arrangement'] }}">
+        </div>
+        <div class="col-3" name="slides_button">
+            <label for="">選項</label>
+            <p><button class="btn btn-primary btn-md" type="submit" formaction="/songs/{{ song.eid }}/slides">幻燈片</button></p>
         </div>
     </div>
     <p>
@@ -107,7 +117,6 @@
         <div class="col-12">
             <button class="btn btn-success btn-lg" type="submit" formaction="/songs/{{ song.eid }}/save">儲存</button>
             <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/{{ song.eid }}/remove">刪除</button>
-            <button class="btn btn-primary btn-lg" type="submit" formaction="/songs/{{ song.eid }}/slides">幻燈片</button>
         </div>
     </div>
 </form>
