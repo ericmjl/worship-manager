@@ -55,6 +55,23 @@ def update_song_info(request, eid, song_db, exclude_id=None):
     song_db.update(data, eids=[eid])
 
 
+def update_coworker_info(request, eid, coworker_db):
+    """
+    Updates coworker information in database.
+
+    Parameters:
+    ===========
+    - request: (dict-like) the `request` object from the Flask app.
+    - eid: (int) the eid of the coworker to be updated in the database.
+    """
+    data = {k: convert(v) for k, v in request.form.items() if k != 'service'}
+    data['service'] = []
+    print(request.form.getlist('service'))
+    for serv in request.form.getlist('service'):
+        data['service'].append(serv)
+    coworker_db.update(data, eids=[eid])
+
+
 def clean_song_arrangement(arrangement, song_data):
     """
     Cleans the song arrangement and turns it into a list.
@@ -149,14 +166,40 @@ def allowed_file(filename):
 def search_songs_db(term, db):
     filtered_songs = list()
     all_songs = db.all()
-    for song in all_songs:
-        for k, v in song.items():
-            print(k, v)
-            if k == 'lyrics':
-                for sec, txt in v.items():
-                    if txt and term in txt and song not in filtered_songs:
+    if term:
+        for song in all_songs:
+            for k, v in song.items():
+                if k == 'lyrics':
+                    for sec, txt in v.items():
+                        if txt and term in txt and song not in filtered_songs:
+                            filtered_songs.append(song)
+                else:
+                    if v and term in v and song not in filtered_songs:
                         filtered_songs.append(song)
-            else:
-                if v and term in v and song not in filtered_songs:
-                    filtered_songs.append(song)
-    return filtered_songs
+        return filtered_songs
+    else:
+        return all_songs
+
+
+def search_coworkers_db(term, db):
+    filtered_coworkers = list()
+    all_coworkers = db.all()
+    if term:
+        for coworker in all_coworkers:
+            for k, v in coworker.items():
+                print(k, v)
+                if k == 'service':
+                    for srvc in v:
+                        if (srvc
+                                and term in srvc
+                                and coworker not in filtered_coworkers):
+                            filtered_coworkers.append(coworker)
+                else:
+                    if (v
+                            and hasattr(v, '__iter__')
+                            and term in v
+                            and coworker not in filtered_coworkers):
+                        filtered_coworkers.append(coworker)
+        return filtered_coworkers
+    else:
+        return all_coworkers

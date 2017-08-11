@@ -80,12 +80,18 @@ class Lyrics(object):
 
 
 class Coworker(object):
-    def __init__(self, name="", fellowship="", email="", phone="", service=[]):
+    def __init__(self, name="", alias="", fellowship="", email="", phone="",
+                 service=[]):
         self.name = name
+        self.alias = alias
         self.fellowship = fellowship
         self.email = email
         self.phone = phone
         self.service = service
+        self.active = True
 
     def __repr__(self):
         return f"{self.name}, {self.fellowship}"
+
+    def to_dict(self):
+        return self.__dict__

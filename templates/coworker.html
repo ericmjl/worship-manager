@@ -1,0 +1,90 @@
+{% extends "master.html" %}
+
+{% block content %}
+<form class="form-group" method="post" enctype=multipart/form-data>
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-success btn-lg" type="submit" formaction="/coworkers/{{ coworker.eid }}/save">儲存</button>
+            <button class="btn btn-danger btn-lg" type="submit" formaction="/coworkers/{{ coworker.eid }}/remove">刪除</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div name="id" class="form-group">
+                <input type="hidden" name="id" value="{{ coworker.eid }}"></input>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row-name-alias-email-phone">
+        <div class="col-3" id="div-name">
+            <div name="name" class="form-group">
+                <label for="name">名字</label>
+                <input class="form-control" name="name" value="{{ coworker['name'] }}"></input>
+            </div>
+        </div>
+        <div class="col-3" id="div-alias">
+            <div name="alias" class="form-group">
+                <label for="alias">另名</label>
+                <input class="form-control" name="alias" value="{{ coworker['alias'] }}"></input>
+            </div>
+        </div>
+        <div class="col-3" id="div-email">
+            <div name="email" class="form-group">
+                <label for="email">郵箱</label>
+                <input class="form-control" type="email" name="email" value="{{ coworker['email'] }}"></input>
+            </div>
+        </div>
+        <div class="col-3" id="div-phone">
+            <div name="phone" class="form-group">
+                <label for="phone">電話</label>
+                <input class="form-control" type="tel" name="phone" value="{{ coworker['phone'] }}"></input>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row-fellowship">
+        <div class="col-3" id="div-fellowship">
+            <div class="form-group" name="fellowship">
+                <label for="fellowship">所屬團契</label>
+                <select class="custom-select" name="fellowship">
+                    {% for fname, fellowship in fellowships.items() %}
+                        {% if coworker['fellowship'] == fname %}
+                            <option value="{{ fname }}" selected>{{ fellowship }}</option>
+                        {% else %}
+                            <option value="{{ fname }}">{{ fellowship }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-3" id="div-service">
+            <div class="form-group" id="div-service">
+                <p>服事：</p>
+                {% for serv, lbl in service.items() %}
+                <label class="custom-control custom-checkbox">
+                    {% if serv in coworker['service'] %}
+                        <input type="checkbox" class="custom-control-input" name="service" value="{{ serv }}" checked>
+                    {% else %}
+                        <input type="checkbox" class="custom-control-input" name="service" value="{{ serv }}">
+                    {% endif %}
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">{{ lbl }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row-button-update">
+        <div class="col-12">
+            <button class="btn btn-primary btn-sm" type="submit" name="refresh" formaction="/coworkers/{{ coworker.eid }}/update">更新</button>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-success btn-lg" type="submit" formaction="/coworkers/{{ coworker.eid }}/save">儲存</button>
+            <button class="btn btn-danger btn-lg" type="submit" formaction="/coworkers/{{ coworker.eid }}/remove">刪除</button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

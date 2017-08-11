@@ -2,10 +2,14 @@ import json
 import os
 import os.path as osp
 
-from app.datamodels import Song
+from app.datamodels import Coworker, Song
 
-from app.utils import (allowed_file, clean_song_arrangement, search_songs_db,
-                       update_song_info)
+from app.static import fellowships, service
+
+from app.utils import (allowed_file,
+                       clean_song_arrangement,
+                       search_coworkers_db, search_songs_db,
+                       update_coworker_info, update_song_info)
 
 from flask import (Flask, flash, redirect, render_template,
                    request, send_file)
@@ -91,7 +95,7 @@ def update_song(eid):
 
 
 @app.route('/songs/<int:eid>/remove', methods=['POST'])
-def delete_song(eid):
+def remove_song(eid):
     song_db.remove(eids=[eid])
     return redirect('/songs')
 
@@ -219,23 +223,71 @@ def export_songs_database():
 def view_song_slides(eid):
     song = song_db.get(eid=eid)
     arrangement = clean_song_arrangement(song['default_arrangement'], song)
-    return render_template('slides.html', song=song, arrangement=arrangement,
+    return render_template('slides.html',
+                           song=song,
+                           arrangement=arrangement,
                            eid=eid)
 
 
 @app.route('/coworkers', methods=['POST'])
+@app.route('/coworkers')
 def view_coworkers():
-    return render_template('coworkers.html')
+    all_coworkers = coworker_db.all()
+    return render_template('coworkers.html',
+                           all_coworkers=all_coworkers,
+                           service=service)
 
 
-@app.route('/coworkers/<int:id>/view', methods=['POST'])
-def view_coworker(id):
-    pass
+@app.route('/coworkers/add', methods=['POST'])
+@app.route('/coworkers/add')
+def new_coworker():
+    data = Coworker().to_dict()
+    eid = coworker_db.insert(data)
+    coworker = coworker_db.get(eid=eid)
+    return render_template('coworker.html',
+                           coworker=coworker,
+                           fellowships=fellowships,
+                           service=service)
 
 
-@app.route('/coworkers/<int:id>/edit', methods=['POST'])
-def edit_coworker(id):
-    pass
+@app.route('/coworkers/<int:eid>/save', methods=['POST'])
+@app.route('/coworkers/<int:eid>/save')
+def save_coworker(eid):
+    update_coworker_info(request=request, eid=eid, coworker_db=coworker_db)
+    return redirect('/coworkers')
+
+
+@app.route('/coworkers/<int:eid>/view', methods=['POST'])
+@app.route('/coworkers/<int:eid>/view')
+@app.route('/coworkers/<int:eid>/edit', methods=['POST'])
+@app.route('/coworkers/<int:eid>/edit')
+def view_coworker(eid):
+    coworker = coworker_db.get(eid=eid)
+    return render_template('coworker.html', coworker=coworker,
+                           fellowships=fellowships, service=service)
+
+
+@app.route('/coworkers/search', methods=['POST'])
+@app.route('/coworkers/search')
+@app.route('/coworkers/search/<term>')
+def search_coworkers(term=None):
+    if term:
+        pass
+    elif request.form['search']:
+        term = convert(request.form['search'])
+    # Perform a search of all key/value pairs in the database.
+    filtered_coworkers = search_coworkers_db(term, coworker_db)
+    return render_template('coworkers.html',
+                           all_coworkers=filtered_coworkers,
+                           term=term,
+                           service=service)
+
+
+@app.route('/coworkers/<int:eid>/remove', methods=['POST'])
+@app.route('/coworkers/<int:eid>/remove')
+def remove_coworker(eid):
+    coworker_db.remove(eids=[eid])
+    return redirect('/coworkers')
 
 
 @app.route('/test/<int:eid>/slides')
