@@ -85,14 +85,15 @@
     <hr>
     <div class="row" id="row-upload-sheet-music-button">
         <div class="col-12">
-            <p>歌譜</p>
             {% if song['sheet_music'] %}
                 <a href="/songs/{{ song.eid }}/sheet_music/download">下載歌譜</a>
                 <button class="btn btn-danger btn-sm" type="submit" name="delete-sheet-music" formaction="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</button>
             {% else %}
-            <label for="file-upload" class="btn btn-default">增添歌譜</label>
+            <label for="file-upload" class="custom-file" class="btn btn-default">
+                增添歌譜
+            </label>
             <input type="file" name="file-upload">
-            <button class="btn btn-success btn-sm" type="submit" name="upload-button" formaction="/songs/{{ song.eid }}/sheet_music/upload">上傳</button>
+            <button class="btn btn-success" type="submit" name="upload-button" formaction="/songs/{{ song.eid }}/sheet_music/upload">上傳</button>
             {% endif %}
         </div>
     </div>
