@@ -46,29 +46,29 @@
                     <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
                     <td>
                         {% if song['composer'] %}
-                        <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a>
+                            <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a>
                         {% endif %}
                     </td>
                     <td>
                         {% if song['copyright'] %}
-                        <a href="/songs/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a>
+                            <a href="/songs/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a>
                         {% endif %}
                     </td>
                     <td>
                         {% if song['default_arrangement'] %}
-                        <a href="/songs/{{ song.eid }}/slides" align="center">
-                            <i class="fa fa-desktop" aria-hidden="true"></i>
-                        </a>
+                            <a href="/songs/{{ song.eid }}/slides" align="center">
+                                <i class="fa fa-desktop" aria-hidden="true"></i>
+                            </a>
                         {% endif %}
                     </td>
                     <td>
                         {% if song['sheet_music'] %}
-                        <a href="/songs/{{ song.eid }}/sheet_music/download"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
+                            <a href="/songs/{{ song.eid }}/sheet_music/download"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
                         {% endif %}
                     </td>
                     <td>
                         {% if song['youtube'] %}
-                        <a href="{{ song['youtube'] }}"><i class="fa fa-play-circle" aria-hidden="true"></i></a>
+                            <a href="{{ song['youtube'] }}"><i class="fa fa-play-circle" aria-hidden="true"></i></a>
                         {% endif %}
                     </td>
 
