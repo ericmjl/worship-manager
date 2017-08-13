@@ -81,7 +81,7 @@ class Lyrics(object):
 
 class Coworker(object):
     def __init__(self, name="", alias="", fellowship="", email="", phone="",
-                 service=[]):
+                 service=[], gender=""):
         self.name = name
         self.alias = alias
         self.fellowship = fellowship
@@ -89,6 +89,7 @@ class Coworker(object):
         self.phone = phone
         self.service = service
         self.active = True
+        self.gender = gender
 
     def __repr__(self):
         return f"{self.name}, {self.fellowship}"

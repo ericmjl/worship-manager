@@ -34,6 +34,7 @@
                 <th>郵箱</th>
                 <th>電話</th>
                 <th>團契</th>
+                <!-- <th>性別</th> -->
                 <th>服事項目</th>
                 <th></th>
             </tr>
@@ -48,6 +49,7 @@
                 <td>
                     <a href="/coworkers/search/{{ coworker['fellowship'] }}">{{ coworker['fellowship'] }}</a>
                 </td>
+                <!-- <td>{{ coworker['gender'] }}</td> -->
                 <td>
                     {% for srv in coworker['service'] %}
                     <a href="/coworkers/search/{{ srv }}">

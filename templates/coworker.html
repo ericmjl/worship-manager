@@ -42,6 +42,20 @@
         </div>
     </div>
     <div class="row" id="row-fellowship">
+        <div class="col-3" id="div-gender">
+            <div class="form-group" name="gender">
+                <label for="gender">性別</label>
+                <select class="custom-select" name="gender">
+                    {% for gname, gender in genders.items() %}
+                        {% if coworker['gender'] == gname %}
+                            <option value="{{ gname }}" selected>{{ gender }}</option>
+                        {% else %}
+                            <option value="{{ gname }}">{{ gender }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
         <div class="col-3" id="div-fellowship">
             <div class="form-group" name="fellowship">
                 <label for="fellowship">所屬團契</label>
