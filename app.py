@@ -4,7 +4,7 @@ import os.path as osp
 
 from app.datamodels import Coworker, Song
 
-from app.static import fellowships, service
+from app.static import fellowships, genders, service
 
 from app.utils import (allowed_file,
                        clean_song_arrangement,
@@ -30,6 +30,7 @@ Breadcrumbs(app=app)
 song_db = TinyDB('song.db')
 coworker_db = TinyDB('coworker.db')
 calendar_db = TinyDB('calendar.db')
+program_db = TinyDB('program.db')
 
 hzc = HanziConv()
 convert = hzc.toTraditional
@@ -264,7 +265,8 @@ def save_coworker(eid):
 def view_coworker(eid):
     coworker = coworker_db.get(eid=eid)
     return render_template('coworker.html', coworker=coworker,
-                           fellowships=fellowships, service=service)
+                           fellowships=fellowships, service=service,
+                           genders=genders)
 
 
 @app.route('/coworkers/search', methods=['POST'])
@@ -306,4 +308,4 @@ if __name__ == '__main__':
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
 
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=8080, host='0.0.0.0')
