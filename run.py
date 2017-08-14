@@ -13,6 +13,7 @@ from app.utils import (allowed_file,
 
 from flask import (Flask, flash, redirect, render_template,
                    request, send_file)
+
 from flask_breadcrumbs import Breadcrumbs
 
 from hanziconv import HanziConv
@@ -144,8 +145,7 @@ def upload_sheet_music(eid):
 
     if f and allowed_file(f.filename):
         fname = f'{song["name"]}-{song["copyright"]}.pdf'
-        fname = osp.join(app.config['UPLOAD_FOLDER'], fname)
-        f.save(fname)
+        f.save(osp.join(app.config['UPLOAD_FOLDER'], fname))
         song_db.update({'sheet_music': fname}, eids=[eid])
         song = song_db.get(eid=eid)
         return render_template('song.html', song=song)
@@ -158,7 +158,10 @@ def download_sheet_music(eid):
     Returns the sheet music to be downloaded.
     """
     song = song_db.get(eid=eid)
-    return send_file(song['sheet_music'])
+    return send_file(osp.join(app.config['UPLOAD_FOLDER'],
+                              song['sheet_music']
+                              )
+                     )
 
 
 @app.route('/songs/<int:eid>/sheet_music/delete', methods=['POST'])
