@@ -1,0 +1,9 @@
+*.DS_Store
+.cache/
+.coverage
+.git/*
+__pycache__/*
+*.db
+files/*
+db/*
+tmp/*
