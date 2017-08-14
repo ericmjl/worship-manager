@@ -3,3 +3,4 @@
 .coverage
 .git/*
 __pycache__/*
+data/*
