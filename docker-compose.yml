@@ -1,0 +1,22 @@
+version: '2.0'
+
+services:
+    web:
+        restart: always
+        build: ./web
+        expose:
+            - "8080"
+        volumes:
+            - /worship-manager/web
+        depends_on:
+            - database
+    database:
+        restart: always
+        build: ./database
+        volumes:
+            - /worship-manager/database
+    files:
+        restart: always
+        build: ./files
+        volumes:
+            - /worship-manager/files

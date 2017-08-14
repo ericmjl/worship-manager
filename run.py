@@ -24,14 +24,18 @@ from tinydb.operations import delete
 import yaml
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = '../files/'
+homefolder = os.path.expanduser('~')
+datafolder = osp.join(homefolder, '.worship-manager/')
+print(datafolder)
+
+app.config['UPLOAD_FOLDER'] = osp.join(datafolder,
+                                       'files/')
 
 Breadcrumbs(app=app)
-
-song_db = TinyDB('../database/song.db')
-coworker_db = TinyDB('../database/coworker.db')
-calendar_db = TinyDB('../database/calendar.db')
-program_db = TinyDB('../database/program.db')
+song_db = TinyDB(osp.join(datafolder, 'database', 'song.db'))
+coworker_db = TinyDB(osp.join(datafolder, 'database', 'coworker.db'))
+calendar_db = TinyDB(osp.join(datafolder, 'database', 'calendar.db'))
+program_db = TinyDB(osp.join(datafolder, 'database', 'program.db'))
 
 hzc = HanziConv()
 convert = hzc.toTraditional
