@@ -8,3 +8,6 @@ dockerrun:
 	docker run -p 8080:8080 -v worshipdata:/worship-manager/data worship
 
 start: dockerbuild dockerrun
+
+test:
+	py.test --cov --cov-report term-missing
