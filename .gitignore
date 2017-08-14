@@ -1,7 +1,8 @@
 # Custom
 *.db
 tmp/*
-files/*
+data/*
+!files/Dockerfile
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

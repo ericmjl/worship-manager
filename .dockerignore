@@ -3,7 +3,4 @@
 .coverage
 .git/*
 __pycache__/*
-*.db
-files/*
-db/*
-tmp/*
+data/*
