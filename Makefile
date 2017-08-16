@@ -2,15 +2,17 @@ run:
 	python run.py
 
 dockerbuild:
+	docker build data/. -t worshipdata
 	docker build . -t worship
 
 dockerrun:
-	docker run \
-		--restart always \
-		-p 9000:8080 \
-		-p 8888:8888
-		-v worshipdata:/worship-manager/data \
-		worship
+	# docker run \
+	# 	-d \
+	# 	--volumes-from worshipdata \
+	# 	--restart always \
+	# 	-p 9000:8080 \
+	# 	-p 8888:8888 \
+	# 	worship
 
 dockerupload:
 	echo "Assumes your Docker username is ericmjl! Hit Ctrl+C if this isn't true."
