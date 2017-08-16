@@ -7,14 +7,14 @@ from app.datamodels import Coworker, Song
 from app.static import fellowships, genders, service
 
 from app.utils import (allowed_file,
-                       clean_song_arrangement,
+                       clean_song_arrangement, makedir,
                        search_coworkers_db, search_songs_db,
                        update_coworker_info, update_song_info)
 
 from flask import (Flask, flash, redirect, render_template,
                    request, send_file)
 
-from flask_breadcrumbs import Breadcrumbs
+# from flask_breadcrumbs import Breadcrumbs
 
 from hanziconv import HanziConv
 
@@ -25,13 +25,15 @@ import yaml
 
 app = Flask(__name__)
 datafolder = 'data/'
-print(datafolder)
 
 app.config['UPLOAD_FOLDER'] = osp.join(datafolder,
                                        'files/')
+makedir(app.config['UPLOAD_FOLDER'])
 
 dbfolder = osp.join(datafolder, 'database')
-Breadcrumbs(app=app)
+makedir(dbfolder)
+
+# Breadcrumbs(app=app)
 song_db = TinyDB(osp.join(dbfolder, 'song.db'))
 coworker_db = TinyDB(osp.join(dbfolder, 'coworker.db'))
 calendar_db = TinyDB(osp.join(dbfolder, 'calendar.db'))

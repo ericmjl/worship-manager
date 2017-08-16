@@ -1,3 +1,5 @@
+import os
+
 from hanziconv import HanziConv
 
 from .datamodels import Lyrics, Song
@@ -9,6 +11,11 @@ song_datamodel = list(Song().to_dict().keys())
 
 # We only allow uploading of PDFs.
 ALLOWED_EXTENSIONS = set(['pdf'])
+
+
+def makedir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 
 def get_lyrics(request, exclude_id=None):
