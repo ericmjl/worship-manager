@@ -1,12 +1,12 @@
 version: "2.0"
 services:
   worshipdata:
-   image: worshipdata:latest
+   image: worshipdata
    volumes:
      - "/worship-manager/data"
 
-  worship-manager:
-    image: worship:latest
+  worshipmanager:
+    image: worship
     volumes_from:
      - worshipdata
     depends_on:
