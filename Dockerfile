@@ -1,16 +1,17 @@
 # Use an official Python runtime as a parent image
-FROM python:3.6-slim
+FROM tiangolo/uwsgi-nginx-flask:python3.6
 
 # Set the working directory to /worship-manager
-WORKDIR /worship-manager
+WORKDIR /app
 
 # Copy the current directory contents into the container at /worship-manager
 # COPY . /worship-manager
-COPY ./static /worship-manager/static
-COPY ./templates /worship-manager/templates
-COPY ./app /worship-manager/app
-COPY ./run.py /worship-manager/run.py
-COPY ./requirements.txt /worship-manager/requirements.txt
+COPY ./static /app/static
+COPY ./templates /app/templates
+COPY ./app /app/app
+COPY ./run.py /app/main.py
+COPY ./requirements.txt /app/requirements.txt
+COPY ./uwsgi.ini /app/uwsgi.ini
 
 
 # Install any needed packages specified in requirements.txt
@@ -21,4 +22,4 @@ EXPOSE 8080
 EXPOSE 8888
 
 # Run app.py when the container launches
-CMD ["python", "run.py"]
+CMD ["python", "main.py"]

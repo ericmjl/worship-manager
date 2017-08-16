@@ -1,15 +1,15 @@
 version: "2.0"
 services:
   worshipdata:
-   image: worshipdata
+   image: ericmjl/worshipdata
    volumes:
      - "/worship-manager/data"
 
   worshipmanager:
-    image: worship
+    image: ericmjl/worship
     volumes_from:
      - worshipdata
     depends_on:
      - worshipdata
     ports:
-     - 8989:8080
+     - 80:8080
