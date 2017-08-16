@@ -6,8 +6,9 @@ dockerbuild:
 
 dockerrun:
 	docker run \
-		--restart-always \
-		-p 8080:8080 \
+		--restart always \
+		-p 9000:8080 \
+		-p 8888:8888
 		-v worshipdata:/worship-manager/data \
 		worship
 
