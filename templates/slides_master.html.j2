@@ -1,5 +1,3 @@
-{% from "macros/slides.html" import render_slide_song %}
-
 <html>
 	<head>
 		<link rel="stylesheet" href="{{ url_for('static', filename='revealjs/css/reveal.css') }}">
@@ -8,7 +6,8 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-                {{ render_slide_song(song, arrangement) }}
+                {% block song_slides %}
+                {% endblock %}
 			</div>
 		</div>
 		<script src="{{ url_for('static', filename='revealjs/js/reveal.js')}}"></script>

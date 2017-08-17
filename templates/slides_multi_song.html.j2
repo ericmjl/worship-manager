@@ -1,0 +1,8 @@
+{% from "macros/slides.html.j2" import render_slide_song %}
+{% extends "slides_master.html.j2" %}
+
+{% block song_slides %}
+    {% for song in songs %}
+        {{ render_slide_song(song, song['default_arrangement']) }}
+    {% endfor %}
+{% endblock %}

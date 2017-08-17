@@ -2,12 +2,14 @@ import json
 import os
 import os.path as osp
 
-from app.datamodels import Coworker, Song
+from app.datamodels import Coworker, Program, Song
 
 from app.static import fellowships, genders, service
 
 from app.utils import (allowed_file,
-                       clean_song_arrangement, makedir,
+                       clean_song_arrangement, fill_program_information,
+                       get_grouped_coworkers, makedir,
+                       save_program_information,
                        search_coworkers_db, search_songs_db,
                        update_coworker_info, update_song_info)
 
@@ -49,14 +51,14 @@ song_datamodel = list(Song().to_dict().keys())
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html.j2')
 
 
 @app.route('/songs', methods=['POST'])
 @app.route('/songs')  # there are two paths to here.
 def view_songs():
     all_songs = song_db.all()
-    return render_template('songs.html', all_songs=all_songs)
+    return render_template('songs.html.j2', all_songs=all_songs)
 
 
 @app.route('/songs/search', methods=['POST'])
@@ -69,7 +71,7 @@ def search_songs(term=None):
         term = convert(request.form['search'])
     # Perform a search of all key/value pairs in the database.
     filtered_songs = search_songs_db(term, song_db)
-    return render_template('songs.html', all_songs=filtered_songs, term=term)
+    return render_template('songs.html.j2', all_songs=filtered_songs, term=term)
 
 
 @app.route('/songs/<int:eid>/view')
@@ -77,7 +79,7 @@ def search_songs(term=None):
 @app.route('/songs/<int:eid>')
 def view_song(eid):
     song = song_db.get(eid=eid)
-    return render_template('song.html', song=song)
+    return render_template('song.html.j2', song=song)
 
 
 @app.route('/songs/add', methods=['POST'])
@@ -86,7 +88,7 @@ def new_song():
     data = Song().to_dict()
     eid = song_db.insert(data)
     song = song_db.get(eid=eid)
-    return render_template('song.html', song=song)
+    return render_template('song.html.j2', song=song)
 
 
 @app.route('/songs/<int:eid>/save', methods=['POST'])
@@ -99,7 +101,7 @@ def save_song(eid):
 def update_song(eid):
     update_song_info(request=request, eid=eid, song_db=song_db)
     song = song_db.get(eid=eid)
-    return render_template('song.html', song=song)
+    return render_template('song.html.j2', song=song)
 
 
 @app.route('/songs/<int:eid>/remove', methods=['POST'])
@@ -118,7 +120,7 @@ def add_lyrics_section(eid):
     sect_ct = len(song['lyrics']) + 1
     print(sect_ct)
     song['lyrics'][f'section-{sect_ct}'] = f'lyrics-{sect_ct}'
-    return render_template('song.html', song=song)
+    return render_template('song.html.j2', song=song)
 
 
 @app.route('/songs/<int:eid>/remove_lyrics_section/<int:section_id>',
@@ -130,7 +132,7 @@ def remove_lyrics_section(eid, section_id):
     update_song_info(request=request, eid=eid, song_db=song_db,
                      exclude_id=section_id)
     song = song_db.get(eid=eid)
-    return render_template('song.html', song=song)
+    return render_template('song.html.j2', song=song)
 
 
 @app.route('/songs/<int:eid>/sheet_music/upload', methods=['POST'])
@@ -142,19 +144,19 @@ def upload_sheet_music(eid):
     song = song_db.get(eid=eid)
     if 'file-upload' not in request.files:
         flash('No file part')
-        return render_template('song.html', song=song)
+        return render_template('song.html.j2', song=song)
     f = request.files['file-upload']
 
     if f.filename == '':
         flash('No selected file')
-        return render_template('song.html', song=song)
+        return render_template('song.html.j2', song=song)
 
     if f and allowed_file(f.filename):
         fname = f'{song["name"]}-{song["copyright"]}.pdf'
         f.save(osp.join(app.config['UPLOAD_FOLDER'], fname))
         song_db.update({'sheet_music': fname}, eids=[eid])
         song = song_db.get(eid=eid)
-        return render_template('song.html', song=song)
+        return render_template('song.html.j2', song=song)
 
 
 @app.route('/songs/<int:eid>/sheet_music/download', methods=['POST'])
@@ -177,7 +179,7 @@ def delete_sheet_music(eid):
     os.system(f'rm {song["sheet_music"]}')
     song_db.update(delete('sheet_music'), eids=[eid])
     song = song_db.get(eid=eid)
-    return render_template("song.html", song=song)
+    return render_template("song.html.j2", song=song)
 
 
 @app.route('/songs/clean', methods=['POST'])
@@ -233,7 +235,7 @@ def export_songs_database():
 def view_song_slides(eid):
     song = song_db.get(eid=eid)
     arrangement = clean_song_arrangement(song['default_arrangement'], song)
-    return render_template('slides.html',
+    return render_template('slides_single_song.html.j2',
                            song=song,
                            arrangement=arrangement,
                            eid=eid)
@@ -243,7 +245,7 @@ def view_song_slides(eid):
 @app.route('/coworkers')
 def view_coworkers():
     all_coworkers = coworker_db.all()
-    return render_template('coworkers.html',
+    return render_template('coworkers.html.j2',
                            all_coworkers=all_coworkers,
                            service=service)
 
@@ -254,10 +256,11 @@ def new_coworker():
     data = Coworker().to_dict()
     eid = coworker_db.insert(data)
     coworker = coworker_db.get(eid=eid)
-    return render_template('coworker.html',
+    return render_template('coworker.html.j2',
                            coworker=coworker,
                            fellowships=fellowships,
-                           service=service)
+                           service=service,
+                           genders=genders)
 
 
 @app.route('/coworkers/<int:eid>/save', methods=['POST'])
@@ -273,7 +276,7 @@ def save_coworker(eid):
 @app.route('/coworkers/<int:eid>/edit')
 def view_coworker(eid):
     coworker = coworker_db.get(eid=eid)
-    return render_template('coworker.html', coworker=coworker,
+    return render_template('coworker.html.j2', coworker=coworker,
                            fellowships=fellowships, service=service,
                            genders=genders)
 
@@ -288,7 +291,7 @@ def search_coworkers(term=None):
         term = convert(request.form['search'])
     # Perform a search of all key/value pairs in the database.
     filtered_coworkers = search_coworkers_db(term, coworker_db)
-    return render_template('coworkers.html',
+    return render_template('coworkers.html.j2',
                            all_coworkers=filtered_coworkers,
                            term=term,
                            service=service)
@@ -310,7 +313,101 @@ def testing_slides(eid):
     """
     song = song_db.get(eid=eid)
     arrangement = clean_song_arrangement(song['default_arrangement'], song)
-    return render_template('slides.html', song=song, arrangement=arrangement)
+    return render_template('slides_single_song.html.j2',
+                           song=song,
+                           arrangement=arrangement)
+
+
+@app.route('/programs/add', methods=['POST'])
+@app.route('/programs/add')
+def new_program():
+    """
+    Creates a new program
+    """
+    program_model = Program().to_dict()
+    eid = program_db.insert(program_model)
+    program = program_db.get(eid=eid)
+
+    songs = song_db.all()
+    coworkers = get_grouped_coworkers(coworker_db)
+
+    return render_template('program.html.j2',
+                           program=program,
+                           songs=songs,
+                           coworkers=coworkers)
+
+
+@app.route('/programs', methods=['POST'])
+@app.route('/programs')
+def view_programs():
+    all_programs = program_db.all()
+    for program in all_programs:
+        program = fill_program_information(program=program,
+                                           coworker_db=coworker_db,
+                                           song_db=song_db)
+    return render_template('programs.html.j2', all_programs=all_programs)
+
+
+@app.route('/programs/<int:eid>/view')
+@app.route('/programs/<int:eid>/edit')
+def view_program(eid):
+    program = fill_program_information(program_db.get(eid=eid),
+                                       coworker_db=coworker_db,
+                                       song_db=song_db)
+    print(program)
+    songs = song_db.all()
+    coworkers = get_grouped_coworkers(coworker_db)
+    return render_template('program.html.j2',
+                           program=program,
+                           coworkers=coworkers,
+                           songs=songs)
+
+
+@app.route('/programs/<int:eid>/update', methods=['POST'])
+def update_program(eid):
+    """
+    Used for updating the list of available coworkers.
+    """
+    save_program_information(request, eid, program_db)
+    program = program_db.get(eid=eid)
+    coworkers = get_grouped_coworkers(coworker_db)
+    songs = song_db.all()
+    return render_template('program.html.j2',
+                           program=program,
+                           coworkers=coworkers,
+                           songs=songs)
+
+
+@app.route('/programs/<int:eid>/save', methods=['POST'])
+def save_program(eid):
+    """
+    Saves the program to the program_db.
+    """
+    # Collect the form data into a dictionary.
+    save_program_information(request, eid, program_db)
+    return redirect('/programs')
+
+
+@app.route('/programs/<int:eid>/slides', methods=['POST'])
+@app.route('/programs/<int:eid>/slides')
+def view_program_slides(eid):
+    """
+    Creates the HTML slides for the songs associated with a program sheet.
+    """
+    program = fill_program_information(program_db.get(eid=eid),
+                                       coworker_db=coworker_db,
+                                       song_db=song_db)
+    songs = [
+             program['song1'],
+             program['song2'],
+             program['song3'],
+             program['offering']
+             ]
+
+    for song in songs:
+        song['default_arrangement'] = \
+            clean_song_arrangement(song['default_arrangement'], song)
+    return render_template('slides_multi_song.html.j2', songs=songs)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,29 @@
+{% macro render_coworker_select(position, names, selected=None) %}
+<div class="col-md-4" id="col-{{ position }}">
+    <label for="{{ position }}">{{ position|capitalize }}</label>
+    <select class="custom-select" name="{{ position }}">
+        {% for p in names %}
+            {% if selected and p['name'] == selected['name'] %}
+                <option value="{{ p['eid'] }}" selected>{{ p['name'] }}</option>
+            {% else %}
+                <option value="{{ p['eid'] }}">{{ p['name'] }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+{% macro render_song_select(song_type, songs, selected) %}
+<div class="col-md-3" id="col-song-{{ song_number }}">
+    <label for="{{ song_type }}">{{ song_type|capitalize }}</label>
+    <select class="custom-select" name="{{ song_type }}">
+        {% for s in songs|sort(attribute='pinyin') %}
+            {% if selected and s['name'] == selected['name'] %}
+                <option value="{{ s['eid'] }}" selected>{{ s['name'] }}</option>
+            {% else %}
+                <option value="{{ s['eid'] }}">{{ s['name'] }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}

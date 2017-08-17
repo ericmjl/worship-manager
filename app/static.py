@@ -4,7 +4,7 @@ fellowships = {
     'BSF': 'BSF 學生團契',
     'ROD': 'ROD 樂河團契',
     'Malden': 'Malden 學生事工',
-    'COM': 'CBCGB-COM 同工'
+    'COM': 'CBCGB-COM 同工',  # for those whose primary roles cross fellowships
     }
 
 

@@ -2,7 +2,11 @@ import os
 
 from hanziconv import HanziConv
 
-from .datamodels import Lyrics, Song
+import pinyin
+
+from tinydb import Query
+
+from .datamodels import Lyrics, Program, Song
 
 hzc = HanziConv()
 convert = hzc.toTraditional
@@ -56,6 +60,7 @@ def update_song_info(request, eid, song_db, exclude_id=None):
     data = {k: convert(v)
             for k, v in request.form.items()
             if k in song_datamodel}
+    data['pinyin'] = pinyin.get(data['name'], format="strip", delimiter=" ")
 
     lyrics = get_lyrics(request=request, exclude_id=exclude_id)
     data['lyrics'] = lyrics.to_dict()
@@ -210,3 +215,41 @@ def search_coworkers_db(term, db):
         return filtered_coworkers
     else:
         return all_coworkers
+
+
+def get_grouped_coworkers(coworker_db):
+
+    p = Query()
+    coworkers = dict()
+    coworkers['presiders'] = coworker_db.search(p.service.any(['presider']))
+    coworkers['vocalists'] = coworker_db.search(p.service.any(['vocalist']))
+    coworkers['pianists'] = coworker_db.search(p.service.any(['pianist']))
+    coworkers['speakers'] = coworker_db.search(p.service.any(['speaker']))
+    coworkers['audios'] = coworker_db.search(p.service.any(['audio']))
+    coworkers['powerpoints'] = coworker_db.search(p.service.any(['powerpoint']))  # noqa
+
+    return coworkers
+
+
+def fill_program_information(program, coworker_db, song_db):
+    roles = ['presider', 'vocalist1', 'vocalist2', 'vocalist3', 'pianist',
+             'audio', 'powerpoint', 'speaker']
+    for role in roles:
+        if program[role]:
+            program[role] = coworker_db.get(eid=int(program[role]))
+
+    songs = ['song1', 'song2', 'song3', 'offering']
+    for song in songs:
+        if program[song]:
+            program[song] = song_db.get(eid=int(program[song]))
+
+    return program
+
+
+def save_program_information(request, eid, program_db):
+    program_model = Program().to_dict()
+    form_data = {k: v
+                 for k, v in request.form.items()
+                 if k in program_model.keys()}
+    print(form_data)
+    program_db.update(form_data, eids=[eid])

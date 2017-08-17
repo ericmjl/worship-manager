@@ -3,6 +3,9 @@ Data models used in the project.
 """
 
 
+import pinyin
+
+
 class Song(object):
     def __init__(self, name='', copyright='',
                  composer='', lyrics=None, ccli='',
@@ -32,6 +35,7 @@ class Song(object):
         :type youtube: str
         """
         self.name = name
+        self.pinyin_name = pinyin.get(self.name, format="strip", delimiter=" ")
         self.copyright = copyright
         self.composer = composer
         self.ccli = ccli
@@ -93,6 +97,28 @@ class Coworker(object):
 
     def __repr__(self):
         return f"{self.name}, {self.fellowship}"
+
+    def to_dict(self):
+        return self.__dict__
+
+
+class Program(object):
+    def __init__(self, presider='', pianist='', vocalist1='', vocalist2='',
+                 vocalist3='', audio='', powerpoint='', speaker='', song1='',
+                 song2='', song3='', offering='', date=''):
+        self.date = date
+        self.presider = presider
+        self.pianist = pianist
+        self.vocalist1 = vocalist1
+        self.vocalist2 = vocalist2
+        self.vocalist3 = vocalist3
+        self.audio = audio
+        self.powerpoint = powerpoint
+        self.speaker = speaker
+        self.song1 = song1
+        self.song2 = song2
+        self.song3 = song3
+        self.offering = offering
 
     def to_dict(self):
         return self.__dict__

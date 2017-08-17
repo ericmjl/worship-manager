@@ -1,6 +1,6 @@
-{% extends "master.html" %}
+{% extends "master.html.j2" %}
 
-{% from "macros/lyrics.html" import render_lyrics %}
+{% from "macros/lyrics.html.j2" import render_lyrics %}
 
 {% block title_extension %}
     {{ song['name'] }}
