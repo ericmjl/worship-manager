@@ -51,11 +51,13 @@ def to_request(song_data):
 song1_data = {'lyrics': {'A': 'lyrics1', 'B': 'lyrics2', 'C': 'lyrics3'},
               'name': 'test_song',
               'composer': '',
-              'copyright': 'copyright'}
+              'copyright': 'copyright',
+              'pinyin': 't e s t _ s o n g'}
 song2_data = {'lyrics': {'A': 'lyrics1', 'B': 'lyrics2', 'C': 'lyrics3'},
               'name': 'test_song2',
               'composer': '',
-              'copyright': 'copyright'}
+              'copyright': 'copyright',
+              'pinyin': 't e s t _ s o n g 2'}
 request = to_request(song1_data)
 
 song_db = Database()

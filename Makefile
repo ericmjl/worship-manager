@@ -27,4 +27,4 @@ start: dockerbuild dockerrun
 push: dockerbuild dockerpush
 
 test:
-	py.test --cov --cov-report term-missing
+	py.test --cov --cov-report term-missing -v
