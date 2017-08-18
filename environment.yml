@@ -6,11 +6,12 @@ channels:
 dependencies:
 - python=3.6
 - flask=0.12
-- tinydb=3.3.1
 - pyyaml
 - pytest=3.2.0
 - pytest-cov=2.5.1
 - pip:
     - hanziconv
-    - flask-breadcrumbs=0.4
+    - flask-breadcrumbs==0.4
     - pinyin
+    - tinydb==3.3.1
+
