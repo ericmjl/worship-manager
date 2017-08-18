@@ -13,3 +13,4 @@ dependencies:
 - pip:
     - hanziconv
     - flask-breadcrumbs=0.4
+    - pinyin
