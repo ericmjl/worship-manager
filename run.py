@@ -7,7 +7,7 @@ from app.datamodels import Coworker, Program, Song
 from app.static import fellowships, genders, service
 
 from app.utils import (allowed_file,
-                       clean_song_arrangement, fill_program_information,
+                       clean_arrangement, fill_program_information,
                        get_grouped_coworkers, makedir,
                        save_program_information,
                        search_coworkers_db, search_songs_db,
@@ -15,8 +15,6 @@ from app.utils import (allowed_file,
 
 from flask import (Flask, flash, redirect, render_template,
                    request, send_file)
-
-# from flask_breadcrumbs import Breadcrumbs
 
 from hanziconv import HanziConv
 
@@ -35,7 +33,6 @@ makedir(app.config['UPLOAD_FOLDER'])
 dbfolder = osp.join(datafolder, 'database')
 makedir(dbfolder)
 
-# Breadcrumbs(app=app)
 song_db = TinyDB(osp.join(dbfolder, 'song.db'))
 coworker_db = TinyDB(osp.join(dbfolder, 'coworker.db'))
 calendar_db = TinyDB(osp.join(dbfolder, 'calendar.db'))
@@ -52,6 +49,8 @@ song_datamodel = list(Song().to_dict().keys())
 @app.route('/')
 def home():
     return render_template('index.html.j2')
+
+# -------- songs section -------- #
 
 
 @app.route('/songs', methods=['POST'])
@@ -71,7 +70,9 @@ def search_songs(term=None):
         term = convert(request.form['search'])
     # Perform a search of all key/value pairs in the database.
     filtered_songs = search_songs_db(term, song_db)
-    return render_template('songs.html.j2', all_songs=filtered_songs, term=term)
+    return render_template('songs.html.j2',
+                           all_songs=filtered_songs,
+                           term=term)
 
 
 @app.route('/songs/<int:eid>/view')
@@ -118,7 +119,7 @@ def add_lyrics_section(eid):
     update_song_info(request=request, eid=eid, song_db=song_db)
     song = song_db.get(eid=eid)
     sect_ct = len(song['lyrics']) + 1
-    print(sect_ct)
+    # print(sect_ct)
     song['lyrics'][f'section-{sect_ct}'] = f'lyrics-{sect_ct}'
     return render_template('song.html.j2', song=song)
 
@@ -209,37 +210,18 @@ def export_songs_database():
     return yaml.dump(data, default_flow_style=False)
 
 
-# @app.route('/songs/<int:eid>/export/<fmt>', methods=['POST'])
-# @app.route('/songs/<int:eid>/export/<fmt>')
-# def export_song_lyrics(eid, fmt):
-#     """
-#     Exports a song's lyrics as a string.
-#     """
-#     song = song_db.get(eid=eid)
-#     arrangement = clean_song_arrangement(
-#         arrangement=song['default_arrangement'], song_data=song)
-#     arr_lyrics = arrange_lyrics(arrangement=arrangement, song_data=song)
-#
-#     if fmt == 'txt':
-#         response = make_response(arr_lyrics)
-#         response.headers["Content-Disposition"] = "attachment; filename=lyrics.txt"  # noqa
-#
-#         return response
-#     elif fmt == 'pptx':
-#         make_lyrics_presentation(song)
-#         return send_file('tmp/slides.pptx')
-
-
 @app.route('/songs/<int:eid>/slides', methods=['POST'])
 @app.route('/songs/<int:eid>/slides')
 def view_song_slides(eid):
     song = song_db.get(eid=eid)
-    arrangement = clean_song_arrangement(song['default_arrangement'], song)
+    arrangement = clean_arrangement(song['default_arrangement'], song)
     return render_template('slides_single_song.html.j2',
                            song=song,
                            arrangement=arrangement,
                            eid=eid)
 
+
+# -------- coworkers section -------- #
 
 @app.route('/coworkers', methods=['POST'])
 @app.route('/coworkers')
@@ -312,10 +294,12 @@ def testing_slides(eid):
     THIS! Feel free to delete at later date.
     """
     song = song_db.get(eid=eid)
-    arrangement = clean_song_arrangement(song['default_arrangement'], song)
+    arrangement = clean_arrangement(song['default_arrangement'], song)
     return render_template('slides_single_song.html.j2',
                            song=song,
                            arrangement=arrangement)
+
+# -------- programs section -------- #
 
 
 @app.route('/programs/add', methods=['POST'])
@@ -354,7 +338,7 @@ def view_program(eid):
     program = fill_program_information(program_db.get(eid=eid),
                                        coworker_db=coworker_db,
                                        song_db=song_db)
-    print(program)
+    # print(program)
     songs = song_db.all()
     coworkers = get_grouped_coworkers(coworker_db)
     return render_template('program.html.j2',
@@ -368,14 +352,8 @@ def update_program(eid):
     """
     Used for updating the list of available coworkers.
     """
-    save_program_information(request, eid, program_db)
-    program = program_db.get(eid=eid)
-    coworkers = get_grouped_coworkers(coworker_db)
-    songs = song_db.all()
-    return render_template('program.html.j2',
-                           program=program,
-                           coworkers=coworkers,
-                           songs=songs)
+    save_program_information(request, eid, program_db, song_db)
+    return redirect(f'/programs/{eid}/view')
 
 
 @app.route('/programs/<int:eid>/save', methods=['POST'])
@@ -384,7 +362,7 @@ def save_program(eid):
     Saves the program to the program_db.
     """
     # Collect the form data into a dictionary.
-    save_program_information(request, eid, program_db)
+    save_program_information(request, eid, program_db, song_db)
     return redirect('/programs')
 
 
@@ -398,15 +376,18 @@ def view_program_slides(eid):
                                        coworker_db=coworker_db,
                                        song_db=song_db)
     songs = [
-             program['song1'],
-             program['song2'],
-             program['song3'],
-             program['offering']
+             [program['song1'], program['song1_arrangement']],
+             [program['song2'], program['song2_arrangement']],
+             [program['song3'], program['song3_arrangement']],
+             [program['offering'], program['offering_arrangement']]
              ]
 
-    for song in songs:
-        song['default_arrangement'] = \
-            clean_song_arrangement(song['default_arrangement'], song)
+    for i, (song, arr) in enumerate(songs):
+        if arr:
+            songs[i][1] = clean_arrangement(arr, song)
+        else:
+            songs[i][1] = clean_arrangement(song['default_arrangement'], song)  # noqa
+    print(songs)
     return render_template('slides_multi_song.html.j2', songs=songs)
 
 

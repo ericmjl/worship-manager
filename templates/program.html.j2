@@ -2,12 +2,20 @@
 {% from "macros/program.html.j2" import render_coworker_select, render_song_select %}
 {% extends "master.html.j2" %}
 
+{% block extraheader %}
+<script type="text/javascript">
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}
+
 {% block title_extension %}
 主日崇拜程序
 {% endblock %}
 
 {% block content %}
-<form class="form-group" action="/programs/{{ program.eid }}/save" method="post">
+<form class="form-group" action="/programs/{{ program.eid }}/update" method="post">
     <div class="form-group">
         <div name="id" class="form-group">
             <input type="hidden" name="id" value="{{ program.eid }}"></input>
@@ -45,10 +53,10 @@
     </div>
     <hr>
     <div class="row" id="row-songs">
-        {{ render_song_select('song1', songs, selected=program['song1']) }}
-        {{ render_song_select('song2', songs, selected=program['song2']) }}
-        {{ render_song_select('song3', songs, selected=program['song3']) }}
-        {{ render_song_select('offering', songs, selected=program['offering']) }}
+        {{ render_song_select('song1', songs, selected=program['song1'], arrangement=program['song1_arrangement']) }}
+        {{ render_song_select('song2', songs, selected=program['song2'], arrangement=program['song2_arrangement']) }}
+        {{ render_song_select('song3', songs, selected=program['song3'], arrangement=program['song3_arrangement']) }}
+        {{ render_song_select('offering', songs, selected=program['offering'], arrangement=program['offering_arrangement']) }}
     </div>
     <hr>
     <div class="row" id="row-buttons">

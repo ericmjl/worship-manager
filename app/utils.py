@@ -8,6 +8,10 @@ from tinydb import Query
 
 from .datamodels import Lyrics, Program, Song
 
+from .static import (standard_program_roles,
+                     standard_program_song_arrangements,
+                     standard_program_songs)
+
 hzc = HanziConv()
 convert = hzc.toTraditional
 # Keep a list of song keys
@@ -78,36 +82,10 @@ def update_coworker_info(request, eid, coworker_db):
     """
     data = {k: convert(v) for k, v in request.form.items() if k != 'service'}
     data['service'] = []
-    print(request.form.getlist('service'))
+    # print(request.form.getlist('service'))
     for serv in request.form.getlist('service'):
         data['service'].append(serv)
     coworker_db.update(data, eids=[eid])
-
-
-def clean_song_arrangement(arrangement, song_data):
-    """
-    Cleans the song arrangement and turns it into a list.
-
-    Parameters:
-    ===========
-    - arrangement: (str) a string containing the arrangement of the song.
-    - song_data: (dict) a data dictionary. Keys are the data model fields as
-                 specified in `datamodels.py`. One of the keys has to be
-                 `lyrics`.
-
-    Returns:
-    ========
-    - arrangement: (list of str) a list of strings, each of which is a key in
-                   song's lyrics dictionary.
-    """
-    print(arrangement)
-    arrangement = arrangement.split(',')
-    arrangement = [a.strip(' ') for a in arrangement]
-    for section in arrangement:
-        assert section in song_data['lyrics'].keys(), (
-            f'{section} not present in lyrics.')
-
-    return arrangement
 
 
 def arrange_lyrics(arrangement, song_data):
@@ -127,44 +105,12 @@ def arrange_lyrics(arrangement, song_data):
                        arrangement.
     """
     # Now, we allow the default arrangement to be set.
-    print(arrangement)
     arranged_lyrics = ''
     for a in arrangement:
         arranged_lyrics += song_data['lyrics'][a]
         arranged_lyrics += '\n\n'
-    print(arranged_lyrics)
+    # print(arranged_lyrics)
     return arranged_lyrics
-
-
-# def make_lyrics_presentation(song_data):
-#     """
-#     DEPRECATED.
-#
-#     Makes a set of slides from the lyrics.
-#
-#     Parameters:
-#     ===========
-#     - song_data: (dict) the song's data dictionary conforming to the
-#                  specification in `datamodels.py`. One of the keys is
-#                  `lyrics`.
-#     """
-#     prs = Presentation()
-#     bullet_slide_layout = prs.slide_layouts[1]
-#     for sld, lyr in song_data['lyrics'].items():
-#         slide = prs.slides.add_slide(bullet_slide_layout)
-#         shapes = slide.shapes
-#         title_shape = shapes.title
-#         body_shape = shapes.placeholders[1]
-#         title_shape.text = sld
-#         tf = body_shape.text_frame
-#         tf.text = lyr
-#     prs.save('tmp/slides.pptx')
-
-
-# def ensure_dir(file_path):
-#     directory = os.path.dirname(file_path)
-#     if not os.path.exists(directory):
-#         os.makedirs(directory)
 
 
 def allowed_file(filename):
@@ -199,7 +145,7 @@ def search_coworkers_db(term, db):
     if term:
         for coworker in all_coworkers:
             for k, v in coworker.items():
-                print(k, v)
+                # print(k, v)
                 if k == 'service':
                     for srvc in v:
                         if (srvc
@@ -232,24 +178,76 @@ def get_grouped_coworkers(coworker_db):
 
 
 def fill_program_information(program, coworker_db, song_db):
-    roles = ['presider', 'vocalist1', 'vocalist2', 'vocalist3', 'pianist',
-             'audio', 'powerpoint', 'speaker']
-    for role in roles:
+    for role in standard_program_roles:
         if program[role]:
             program[role] = coworker_db.get(eid=int(program[role]))
 
-    songs = ['song1', 'song2', 'song3', 'offering']
-    for song in songs:
+    for song in standard_program_songs:
         if program[song]:
             program[song] = song_db.get(eid=int(program[song]))
 
     return program
 
 
-def save_program_information(request, eid, program_db):
+def save_program_information(request, eid, program_db, song_db):
+    """
+    Commits program information to the program DB.
+    """
     program_model = Program().to_dict()
     form_data = {k: v
                  for k, v in request.form.items()
                  if k in program_model.keys()}
-    print(form_data)
+
+    # Validate song arrangements
+    for song_label, song_arrangement in \
+            zip(standard_program_songs, standard_program_song_arrangements):
+        arrangement = clean_arrangement(form_data[song_arrangement])
+        song = song_db.get(eid=int(form_data[song_label]))
+        if not is_valid_arrangement(arrangement, song):
+            form_data[song_arrangement] = song['default_arrangement']
     program_db.update(form_data, eids=[eid])
+
+
+def clean_arrangement(arrangement):
+    """
+    Cleans the song arrangement and turns it into a list.
+
+    Parameters:
+    ===========
+    - arrangement: (str) a string containing the arrangement of the song.
+    - song_data: (dict) a data dictionary. Keys are the data model fields as
+                 specified in `datamodels.py`. One of the keys has to be
+                 `lyrics`.
+
+    Returns:
+    ========
+    - arrangement: (list of str) a list of strings, each of which is a key in
+                   song's lyrics dictionary.
+    """
+    arrangement = [a.strip(' ') for a in arrangement.split(',')]
+    return arrangement
+
+
+def is_valid_arrangement(arrangement, song):
+    """
+    Validates an arrangement against a song. Returns True (valid) or
+    False (invalid). Valid means that every section specified in the
+    arrangement exists in the song's specified sections.
+
+    Inputs:
+    =======
+    - song: a dictionary conforming to the Song object data model.
+    - arrangement: a list specifying the arrangement of the song.
+
+    Returns:
+    ========
+    - is_valid: boolean indicating whether the arrangement is valid.
+    """
+
+    is_valid = True
+    for section in arrangement:
+        if section not in song['lyrics'].keys():
+            is_valid = False
+            print(f'{section} not in {song["lyrics"].keys()}')
+            break
+    return is_valid

@@ -103,9 +103,15 @@ class Coworker(object):
 
 
 class Program(object):
-    def __init__(self, presider='', pianist='', vocalist1='', vocalist2='',
-                 vocalist3='', audio='', powerpoint='', speaker='', song1='',
-                 song2='', song3='', offering='', date=''):
+    def __init__(self, date='',
+                 presider='',
+                 pianist='',
+                 vocalist1='', vocalist2='', vocalist3='',
+                 speaker='',
+                 audio='', powerpoint='',
+                 song1='', song2='', song3='', offering='', response=''):
+
+        # Coworkers
         self.date = date
         self.presider = presider
         self.pianist = pianist
@@ -115,10 +121,18 @@ class Program(object):
         self.audio = audio
         self.powerpoint = powerpoint
         self.speaker = speaker
+
+        # Songs + Arrangements
         self.song1 = song1
+        self.song1_arrangement = None
         self.song2 = song2
+        self.song2_arrangement = None
         self.song3 = song3
+        self.song3_arrangement = None
         self.offering = offering
+        self.offering_arrangement = None
+        self.response = None
+        self.response_arrangement = None
 
     def to_dict(self):
         return self.__dict__

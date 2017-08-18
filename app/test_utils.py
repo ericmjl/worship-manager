@@ -6,10 +6,12 @@ from .datamodels import Lyrics
 
 from .utils import (allowed_file,
                     arrange_lyrics,
-                    clean_song_arrangement,
+                    clean_arrangement,
                     get_lyrics,
+                    is_valid_arrangement,
                     search_songs_db,
-                    update_song_info)
+                    update_song_info,
+                    )
 
 
 # Define a mock "request" class to mimick the real "request" object returned.
@@ -65,20 +67,29 @@ song_db.update(song1_data, [1])
 song_db.update(song2_data, [2])
 
 
-def test_clean_song_arrangement():
+def test_clean_arrangement():
     # This first test is a "correctness" test - we give a valid input and
     # check to make sure that the output is valid too.
     arrangement = 'A, B, A, C'
-    new_arrangement = clean_song_arrangement(arrangement, song1_data)
+    new_arrangement = clean_arrangement(arrangement)
 
     assert new_arrangement == ['A', 'B', 'A', 'C']
 
     # This second test is an "incorrectness" test - we give it an invalid input
     # and check that an error is raised.
+    # with pytest.raises(AssertionError):
+    #     invalid_arrangement = 'A, B, A, D'
+    #     new_arrangement = clean_arrangement(invalid_arrangement,
+    #                                              )
+
+
+def test_is_valid_arrangement():
+    arrangement = 'A, B, A, C'
+    cleaned_arrangement = clean_arrangement(arrangement)
+    assert is_valid_arrangement(cleaned_arrangement, song1_data)
+
     with pytest.raises(AssertionError):
-        invalid_arrangement = 'A, B, A, D'
-        new_arrangement = clean_song_arrangement(invalid_arrangement,
-                                                 song1_data)
+        assert is_valid_arrangement('A, B, A, D', song1_data)
 
 
 def test_arrange_lyrics():

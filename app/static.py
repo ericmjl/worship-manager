@@ -27,3 +27,14 @@ genders = {
     'male': '男',
     'female': '女'
 }
+
+# Standard song types each week
+standard_program_songs = ['song1', 'song2', 'song3', 'offering']
+standard_program_song_arrangements = ['song1_arrangement',
+                                      'song2_arrangement',
+                                      'song3_arrangement',
+                                      'offering_arrangement']
+
+# Standard roles each week
+standard_program_roles = ['presider', 'vocalist1', 'vocalist2', 'vocalist3',
+                          'pianist', 'audio', 'powerpoint', 'speaker']
