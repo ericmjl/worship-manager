@@ -7,33 +7,31 @@ import pinyin
 
 
 class Song(object):
+    """
+    :name: Name of the song.
+    :type name: str
+
+    :copyright: Organization that owns the copyright of the songs.
+    :type copyright: str
+
+    :composer: Name of the composer(s).
+    :type composer: str
+
+    :lyrics: The lyrics of the song.
+    :type lyrics: Lyrics object.
+
+    :ccli: The CCLI number.
+    :type ccli: str
+
+    :default_arrangement: How the songs are arranged.
+    :type default_arrangement: str
+
+    :youtube: URL to a YouTube video.
+    :type youtube: str
+    """
     def __init__(self, name='', copyright='',
                  composer='', lyrics=None, ccli='',
                  default_arrangement=None, youtube=''):
-        """
-        Initialization.
-
-        :name: Name of the song.
-        :type name: str
-
-        :copyright: Organization that owns the copyright of the songs.
-        :type copyright: str
-
-        :composer: Name of the composer(s).
-        :type composer: str
-
-        :lyrics: The lyrics of the song.
-        :type lyrics: Lyrics object.
-
-        :ccli: The CCLI number.
-        :type ccli: str
-
-        :default_arrangement: How the songs are arranged.
-        :type default_arrangement: str
-
-        :youtube: URL to a YouTube video.
-        :type youtube: str
-        """
         self.name = name
         self.pinyin_name = pinyin.get(self.name, format="strip", delimiter=" ")
         self.copyright = copyright
@@ -58,6 +56,9 @@ class Song(object):
             self.lyrics = lyrics
 
     def to_dict(self):
+        """
+        :returns: `dict` representation of Song object.
+        """
         return self.__dict__
 
     def _add_default_arrangement(self, default_arrangement):
@@ -77,13 +78,49 @@ class Lyrics(object):
         self.sections = dict()
 
     def add_section(self, section, lyrics):
+        """
+        Adds a section to the Lyrics object.
+
+        :param section: The name of the section. (e.g. `V1`, `A`, `Chorus` etc.)
+        :type section: `str`
+
+        :param lyrics: The lyrics of that section.
+        :type lyrics: `str`
+        """
         self.sections[section] = lyrics
 
     def to_dict(self):
+        """
+        :returns: a `dict` representation of the Lyrics object.
+        """
         return self.sections
 
 
 class Coworker(object):
+    """
+    Data model for a coworker.
+
+    :param name: Coworker's name
+    :type name: `str`
+
+    :param alias: Alternative names for the coworker.
+    :type alias: `str`
+
+    :param fellowship: Coworker's primary fellowship. One of 'MIT', 'Malden', 'BSF', 'Longwood' and 'ROD'.
+    :type fellowship: `str`
+
+    :param email: Coworker's email address.
+    :type email: `str`
+
+    :param phone: Coworker's phone number.
+    :type phone: `str`. Should be of format `###-###-####`
+
+    :param service: List of roles that a coworker serves in.
+    :type service: `list` of `str`
+
+    :param gender: Coworker's gender. Genesis 1:26-27
+    :type gender: `str`, one of "M" or "F".
+    """
     def __init__(self, name="", alias="", fellowship="", email="", phone="",
                  service=[], gender=""):
         self.name = name
