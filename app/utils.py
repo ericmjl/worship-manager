@@ -1,3 +1,7 @@
+"""
+General purpose utility functions for use in this project.
+"""
+
 import os
 
 from hanziconv import HanziConv
@@ -22,6 +26,12 @@ ALLOWED_EXTENSIONS = set(['pdf'])
 
 
 def makedir(path):
+    """
+    Creates a path if it doesn't already exist.
+
+    :param path: Path to be created.
+    :type path: `str`
+    """
     if not os.path.exists(path):
         os.makedirs(path)
 
@@ -30,10 +40,12 @@ def get_lyrics(request, exclude_id=None):
     """
     Utility function that returns a Lyrics object containing the song lyrics.
 
-    Parameters:
-    ===========
-    - request: pass in `request` from Flask app.
-    - exclude_id: (int) used in excluding a particular lyrics section.
+
+    :param request: `request` object from the Flask app.
+    :type request: `flask.request` object, `dict`-like.
+
+    :param exclude_id: an integer identifying which lyrics section to exclude.
+    :type exclude_id: `int`
     """
     # Defensive programming checks
     if exclude_id:
@@ -56,10 +68,11 @@ def update_song_info(request, eid, song_db, exclude_id=None):
     """
     Updates song information in database.
 
-    Parameters:
-    ===========
-    - request: (dict-like) the `request` object from the Flask app.
-    - eid: (int) the eid of the song to be updated in the database.
+    :param request: `request` object from the Flask app.
+    :type request: `flask.request` object, `dict`-like.
+
+    :param eid: the eid of the song to be updated in the database.
+    :type eid: `int`
     """
     data = {k: convert(v)
             for k, v in request.form.items()
@@ -75,10 +88,11 @@ def update_coworker_info(request, eid, coworker_db):
     """
     Updates coworker information in database.
 
-    Parameters:
-    ===========
-    - request: (dict-like) the `request` object from the Flask app.
-    - eid: (int) the eid of the coworker to be updated in the database.
+    :param request: `request` object from the Flask app.
+    :type request: `flask.request` object, `dict`-like.
+
+    :param eid: the eid of the coworker to be updated in the database.
+    :type eid: `int`
     """
     data = {k: convert(v) for k, v in request.form.items() if k != 'service'}
     data['service'] = []
@@ -92,17 +106,17 @@ def arrange_lyrics(arrangement, song_data):
     """
     Returns the lyrics of a song arranged by the song data.
 
-    Parameters:
-    ===========
-    - arrangement: (list of str) a list of strings, each of which is a key in
-                   the song's lyrics dictionary.
-    - song_data: (dict) the song's data dictionary conforming to the
-                 specification in `datamodels.py`. One of the keys is `lyrics`.
+    :param arrangement: A list of strings describing the arrangement of the
+                        lyrics. We do not do checking in this function, so the
+                        type must be correct.
+    :type arrangement: `list` of `str`
 
-    Returns:
-    ========
-    - arranged_lyrics: (str) the lyrics arranged according to the specified
-                       arrangement.
+    :param song_data: Song information, conforming to the model sepecification
+                      in `datamodels.py`. One of the keys has to be `lyrics`.
+    :type song_data: `dict`
+
+    :returns: `arranged_lyrics` (`str`), the lyrics arranged according to the specified
+              arrangement.
     """
     # Now, we allow the default arrangement to be set.
     arranged_lyrics = ''
@@ -116,12 +130,33 @@ def arrange_lyrics(arrangement, song_data):
 def allowed_file(filename):
     """
     Utility function that checks that the filename has an allowed extension.
+    Used when uploading the file. Checks the module-level variable
+    `ALLOWED_EXTENSIONS` for allowed uploads.
+
+    :param filename: The name of the file that is being uploaded.
+    :type filename: `str`
     """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def search_songs_db(term, db):
+    """
+    Performs a search of the songs database. Searches all fields' values, as
+    well as all lyrics' values.
+
+    The search performed is strictly a sub-string search; capitalization must
+    match in order for the search to be done right.
+
+    :param term: Search term.
+    :type term: `str`
+
+    :param db: The database object to search. In this project, we use TinyDB
+               for simplicity and portability (it's very, very small).
+    :type db: `tinydb.TinyDB()`
+
+    :returns: one of `filtered_songs` or `all_songs`, the search results.
+    """
     filtered_songs = list()
     all_songs = db.all()
     if term:
@@ -164,7 +199,14 @@ def search_coworkers_db(term, db):
 
 
 def get_grouped_coworkers(coworker_db):
+    """
+    Gets coworkers grouped together by their type. A very hacky function.
 
+    :param coworker_db: The coworker database.
+    :type coworker_db: `tinydb.TinyDB()`
+
+    :returns: `coworkers` (`dict`)
+    """
     p = Query()
     coworkers = dict()
     coworkers['presiders'] = coworker_db.search(p.service.any(['presider']))
@@ -178,6 +220,26 @@ def get_grouped_coworkers(coworker_db):
 
 
 def fill_program_information(program, coworker_db, song_db):
+    """
+    Fills in program information given the program.
+
+    In the program database, only `eid` numbers are stored for each of the
+    coworkers and the songs. Thus, the program dictinary has to be populated
+    with the correct information.
+
+    :param program: A dictionary returned from the program database. This maps
+                    to one entry in the database.
+    :type program: `dict`
+
+    :param coworker_db: The coworker database object.
+    :type coworker_db: `tinydb.TinyDB()`
+
+    :param song_db: The song database object.
+    :type song_db: `tinydb.TinyDB()`
+
+    :returns: `program` (`dict`), with song information and coworker
+              information populated.
+    """
     for role in standard_program_roles:
         if program[role]:
             program[role] = coworker_db.get(eid=int(program[role]))

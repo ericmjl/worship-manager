@@ -106,7 +106,8 @@ class Coworker(object):
     :param alias: Alternative names for the coworker.
     :type alias: `str`
 
-    :param fellowship: Coworker's primary fellowship. One of 'MIT', 'Malden', 'BSF', 'Longwood' and 'ROD'.
+    :param fellowship: Coworker's primary fellowship. Refer to `static.py` for
+                       the full list of fellowships.
     :type fellowship: `str`
 
     :param email: Coworker's email address.
