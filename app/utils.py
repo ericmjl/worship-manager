@@ -135,6 +135,18 @@ def allowed_file(filename):
 
     :param filename: The name of the file that is being uploaded.
     :type filename: `str`
+
+    :example:
+    >>> ALLOWED_EXTENSIONS = ['.pdf', '.jpg']  # module-level variable
+    >>> file1 = 'my_file.txt'
+    >>> allowed_file(file1)
+    False
+    >>> file2 = 'my_file'
+    >>> allowed_file(file2)
+    False
+    >>> file3 = 'my_file.jpg'
+    >>> allowed_file(file3)
+    True
     """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -240,11 +252,11 @@ def fill_program_information(program, coworker_db, song_db):
     :returns: `program` (`dict`), with song information and coworker
               information populated.
     """
-    for role in standard_program_roles:
+    for role in standard_program_roles():
         if program[role]:
             program[role] = coworker_db.get(eid=int(program[role]))
 
-    for song in standard_program_songs:
+    for song in standard_program_songs():
         if program[song]:
             program[song] = song_db.get(eid=int(program[song]))
 
@@ -262,7 +274,7 @@ def save_program_information(request, eid, program_db, song_db):
 
     # Validate song arrangements
     for song_label, song_arrangement in \
-            zip(standard_program_songs, standard_program_song_arrangements):
+            zip(standard_program_songs(), standard_program_song_arrangements()):  # noqa
         arrangement = clean_arrangement(form_data[song_arrangement])
         song = song_db.get(eid=int(form_data[song_label]))
         if not is_valid_arrangement(arrangement, song):
@@ -274,17 +286,21 @@ def clean_arrangement(arrangement):
     """
     Cleans the song arrangement and turns it into a list.
 
-    Parameters:
-    ===========
-    - arrangement: (str) a string containing the arrangement of the song.
-    - song_data: (dict) a data dictionary. Keys are the data model fields as
-                 specified in `datamodels.py`. One of the keys has to be
-                 `lyrics`.
+    :param arrangement: a string containing the arrangement of the song.
+    :type arrangement: `str`
 
-    Returns:
-    ========
-    - arrangement: (list of str) a list of strings, each of which is a key in
-                   song's lyrics dictionary.
+    :param song_data: a data dictionary. Keys are the data model fields as
+                      specified in `datamodels.py`. One of the keys has to be
+                      `lyrics`.
+    :type song_data: `dict`
+
+    :returns: arrangement (`list` of `str`) a list of strings, each of which is
+              a key in song's lyrics dictionary.
+
+    :example:
+    >>> str_arr = 'V, C, V, C'
+    >>> clean_arrangement(str_arr)
+    ['V', 'C', 'V', 'C']
     """
     arrangement = [a.strip(' ') for a in arrangement.split(',')]
     return arrangement

@@ -10,6 +10,13 @@ Welcome to Worship Manager's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   readme
+   static
+   utils
+   datamodels
+   storage
+   validation
+
 
 
 Indices and tables
