@@ -214,7 +214,7 @@ def export_songs_database():
 @app.route('/songs/<int:eid>/slides')
 def view_song_slides(eid):
     song = song_db.get(eid=eid)
-    arrangement = clean_arrangement(song['default_arrangement'], song)
+    arrangement = clean_arrangement(song['default_arrangement'])
     return render_template('slides_single_song.html.j2',
                            song=song,
                            arrangement=arrangement,
@@ -240,9 +240,9 @@ def new_coworker():
     coworker = coworker_db.get(eid=eid)
     return render_template('coworker.html.j2',
                            coworker=coworker,
-                           fellowships=fellowships,
-                           service=service,
-                           genders=genders)
+                           fellowships=fellowships(),
+                           service=service(),
+                           genders=genders())
 
 
 @app.route('/coworkers/<int:eid>/save', methods=['POST'])
@@ -258,9 +258,11 @@ def save_coworker(eid):
 @app.route('/coworkers/<int:eid>/edit')
 def view_coworker(eid):
     coworker = coworker_db.get(eid=eid)
-    return render_template('coworker.html.j2', coworker=coworker,
-                           fellowships=fellowships, service=service,
-                           genders=genders)
+    return render_template('coworker.html.j2',
+                           coworker=coworker,
+                           fellowships=fellowships(),
+                           service=service(),
+                           genders=genders())
 
 
 @app.route('/coworkers/search', methods=['POST'])
@@ -276,7 +278,7 @@ def search_coworkers(term=None):
     return render_template('coworkers.html.j2',
                            all_coworkers=filtered_coworkers,
                            term=term,
-                           service=service)
+                           service=service())
 
 
 @app.route('/coworkers/<int:eid>/remove', methods=['POST'])
@@ -384,9 +386,9 @@ def view_program_slides(eid):
 
     for i, (song, arr) in enumerate(songs):
         if arr:
-            songs[i][1] = clean_arrangement(arr, song)
+            songs[i][1] = clean_arrangement(arr)
         else:
-            songs[i][1] = clean_arrangement(song['default_arrangement'], song)  # noqa
+            songs[i][1] = clean_arrangement(song['default_arrangement'])  # noqa
     print(songs)
     return render_template('slides_multi_song.html.j2', songs=songs)
 
