@@ -2,7 +2,7 @@ Utility Functions
 =================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
 .. automodule:: app.utils
