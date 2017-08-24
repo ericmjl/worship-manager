@@ -112,14 +112,15 @@ def arrange_lyrics(arrangement, song_data):
     :param arrangement: A list of strings describing the arrangement of the
                         lyrics. We do not do checking in this function, so the
                         type must be correct.
-    :type arrangement: `list` of `str`
+    :type arrangement: `list(str)`
 
     :param song_data: Song information, conforming to the model sepecification
                       in `datamodels.py`. One of the keys has to be `lyrics`.
     :type song_data: `dict`
 
-    :returns: `arranged_lyrics` (`str`), the lyrics arranged according to the
+    :returns: `arranged_lyrics`, the lyrics arranged according to the
               specified arrangement.
+    :rtype: `str`
     """
     # Now, we allow the default arrangement to be set.
     arranged_lyrics = ''
@@ -171,6 +172,7 @@ def search_songs_db(term, db):
     :type db: `tinydb.TinyDB()`
 
     :returns: one of `filtered_songs` or `all_songs`, the search results.
+    :rtype: `iterable(dict)`
     """
     filtered_songs = list()
     all_songs = db.all()
@@ -190,6 +192,20 @@ def search_songs_db(term, db):
 
 
 def search_coworkers_db(term, db):
+    """
+    Searches the coworkers database.
+
+    :param term: Search term for the database.
+    :type term: str
+
+    :param db: The database object containing the coworkers database.
+    :type db: `tinydb.TinyDB` object.
+
+    :returns: `filtered_coworkers` or `all_coworkers`, an iterable of
+              dictionaries, in which each dictionary is one entry in the
+              database.
+    :rtype: `iterable(dict)`
+    """
     filtered_coworkers = list()
     all_coworkers = db.all()
     if term:

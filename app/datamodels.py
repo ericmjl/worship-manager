@@ -8,26 +8,26 @@ import pinyin
 
 class Song(object):
     """
-    :name: Name of the song.
-    :type name: str
+    :param name: Name of the song.
+    :type name: `str`
 
-    :copyright: Organization that owns the copyright of the songs.
-    :type copyright: str
+    :param copyright: Organization that owns the copyright of the songs.
+    :type copyright: `str`
 
-    :composer: Name of the composer(s).
-    :type composer: str
+    :param composer: Name of the composer(s).
+    :type composer: `str`
 
-    :lyrics: The lyrics of the song.
-    :type lyrics: Lyrics object.
+    :param lyrics: The lyrics of the song.
+    :type lyrics: `Lyrics` object.
 
-    :ccli: The CCLI number.
-    :type ccli: str
+    :param ccli: The CCLI number.
+    :type ccli: `str`
 
-    :default_arrangement: How the songs are arranged.
-    :type default_arrangement: str
+    :param default_arrangement: How the songs are arranged.
+    :type default_arrangement: `str`
 
-    :youtube: URL to a YouTube video.
-    :type youtube: str
+    :param youtube: URL to a YouTube video.
+    :type youtube: `str`
     """
     def __init__(self, name='', copyright='',
                  composer='', lyrics=None, ccli='',
@@ -50,6 +50,8 @@ class Song(object):
     def _add_lyrics(self, lyrics=None):
         """
         Adds lyrics to the Song object.
+
+        :param lyrics: A Lyrics object
         """
         if lyrics:
             assert isinstance(lyrics, Lyrics)
@@ -74,6 +76,11 @@ class Song(object):
 
 
 class Lyrics(object):
+    """
+    Data model for a song's lyrics.
+
+    :attr sections: A key-value pairing of section to lyrics.
+    """
     def __init__(self):
         self.sections = dict()
 
@@ -81,7 +88,8 @@ class Lyrics(object):
         """
         Adds a section to the Lyrics object.
 
-        :param section: The name of the section. (e.g. `V1`, `A`, `Chorus` etc.)
+        :param section: The name of the section. (e.g. `V1`, `A`, `Chorus`
+                        etc.)
         :type section: `str`
 
         :param lyrics: The lyrics of that section.
@@ -113,8 +121,8 @@ class Coworker(object):
     :param email: Coworker's email address.
     :type email: `str`
 
-    :param phone: Coworker's phone number.
-    :type phone: `str`. Should be of format `###-###-####`
+    :param phone: Coworker's phone number. Should be of format `###-###-####`.
+    :type phone: `str`
 
     :param service: List of roles that a coworker serves in.
     :type service: `list` of `str`
@@ -141,6 +149,54 @@ class Coworker(object):
 
 
 class Program(object):
+    """
+    Data model for a program.
+
+    :param date: The worship service date.
+    :type date: `str`
+
+    :param presider: The name of the presider.
+    :type presider: `str`
+
+    :param pianist: The name of the pianist.
+    :type pianist: `str`
+
+    :param vocalist1: The name of vocalist #1.
+    :type vocalist1: `str`
+
+    :param vocalist2: The name of vocalist #2.
+    :type vocalist2: `str`
+
+    :param vocalist3: The name of vocalist #3.
+    :type vocalist3: `str`
+
+    :param speaker: The name of the speaker.
+    :type speaker: `str`
+
+    :param audio: The name of the audio controller coworker.
+    :type audio: `str`
+
+    :param powerpoint: The name of the slides controller coworker.
+    :type powerpoint: `str`
+
+    :param song1: The eid of the first worship song.
+    :type song1: `int`
+
+    :param song2: The eid of the second worship song.
+    :type song2: `int`
+
+    :param song3: The eid of the third worship song.
+    :type song3: `int`
+
+    :param offering: The eid of the offering song.
+    :type offering: `int`
+
+    :param response: The eid of the response song.
+    :type response: `int`
+
+    .. note:: Arrangements are stored in the corresponding `{song}_arrangement`
+              object attribute.
+    """
     def __init__(self, date='',
                  presider='',
                  pianist='',
