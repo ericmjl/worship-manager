@@ -161,6 +161,12 @@ class Program(object):
     :param pianist: The name of the pianist.
     :type pianist: `str`
 
+    :param drummer: The name of the drummer.
+    :type drummer: `str`
+
+    :param guitarist: The name of the guitarist.
+    :type guitarist: `str`
+
     :param vocalist1: The name of vocalist #1.
     :type vocalist1: `str`
 
@@ -199,7 +205,7 @@ class Program(object):
     """
     def __init__(self, date='',
                  presider='',
-                 pianist='',
+                 pianist='', guitarist='', drummer='',
                  vocalist1='', vocalist2='', vocalist3='',
                  speaker='',
                  audio='', powerpoint='',
@@ -215,6 +221,8 @@ class Program(object):
         self.audio = audio
         self.powerpoint = powerpoint
         self.speaker = speaker
+        self.guitarist = guitarist
+        self.drummer = drummer
 
         # Songs + Arrangements
         self.song1 = song1

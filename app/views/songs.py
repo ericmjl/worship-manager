@@ -5,12 +5,11 @@ import os.path as osp
 from flask import (Blueprint, flash, redirect, render_template, request,
                    send_file)
 
-from hanziconv import HanziConv
-
-from tinydb import TinyDB
 from tinydb.operations import delete
 
 import yaml
+
+from .__init__ import convert, song_db, upload_folder
 
 from ..datamodels import Song
 
@@ -18,21 +17,7 @@ from ..utils import (allowed_file, clean_arrangement, search_songs_db,
                      update_song_info)
 
 
-# from .utils import makedir
-
 mod = Blueprint('songs', __name__, url_prefix='/songs')
-
-
-data_folder = 'data/'
-db_folder = osp.join(data_folder, 'database')
-upload_folder = osp.join(data_folder, 'files')  # upload folder
-
-# Connect to the database
-song_db = TinyDB(osp.join(db_folder, 'song.db'))
-
-# Other setup
-hzc = HanziConv()
-convert = hzc.toTraditional
 
 song_datamodel = list(Song().to_dict().keys())
 

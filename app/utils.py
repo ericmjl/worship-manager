@@ -134,8 +134,8 @@ def arrange_lyrics(arrangement, song_data):
 def allowed_file(filename):
     """
     Utility function that checks that the filename has an allowed extension.
-    Used when uploading the file. Checks the module-level variable
-    `ALLOWED_EXTENSIONS` for allowed uploads.
+        Used when uploading the file. Checks the module-level variable
+        `ALLOWED_EXTENSIONS` for allowed uploads.
 
     :param filename: The name of the file that is being uploaded.
     :type filename: `str`
@@ -231,7 +231,10 @@ def search_coworkers_db(term, db):
 
 def get_grouped_coworkers(coworker_db):
     """
-    Gets coworkers grouped together by their type. A very hacky function.
+    Gets coworkers grouped together by their type.
+
+    .. note:: This is a very hacky function. If the coworkers' datamodel
+              changes, this needs to be updated as well.
 
     :param coworker_db: The coworker database.
     :type coworker_db: `tinydb.TinyDB()`
@@ -246,6 +249,8 @@ def get_grouped_coworkers(coworker_db):
     coworkers['speakers'] = coworker_db.search(p.service.any(['speaker']))
     coworkers['audios'] = coworker_db.search(p.service.any(['audio']))
     coworkers['powerpoints'] = coworker_db.search(p.service.any(['powerpoint']))  # noqa
+    coworkers['guitarists'] = coworker_db.search(p.service.any(['guitarist']))
+    coworkers['drummers'] = coworker_db.search(p.service.any(['drummer']))
 
     return coworkers
 
@@ -272,7 +277,7 @@ def fill_program_information(program, coworker_db, song_db):
               information populated.
     """
     for role in standard_program_roles():
-        if program[role]:
+        if role in program.keys() and program[role]:
             program[role] = coworker_db.get(eid=int(program[role]))
 
     for song in standard_program_songs():
@@ -306,21 +311,22 @@ def clean_arrangement(arrangement):
     """
     Cleans the song arrangement and turns it into a list.
 
-    :param arrangement: a string containing the arrangement of the song.
-    :type arrangement: `str`
-
-    :param song_data: a data dictionary. Keys are the data model fields as
-                      specified in `datamodels.py`. One of the keys has to be
-                      `lyrics`.
-    :type song_data: `dict`
-
-    :returns: arrangement (`list` of `str`) a list of strings, each of which is
-              a key in song's lyrics dictionary.
-
     :example:
     >>> str_arr = 'V, C, V, C'
     >>> clean_arrangement(str_arr)
     ['V', 'C', 'V', 'C']
+
+    :param arrangement: a comma-delimited string containing the arrangement of
+        the song.
+    :type arrangement: `str`
+
+    :param song_data: a data dictionary. Keys are the data model fields as
+        specified in `datamodels.py`. One of the keys has to be "lyrics".
+    :type song_data: `dict`
+
+    :returns: arrangement a list of strings, each of which is a key in song's
+        lyrics dictionary.
+    :rtype: `list(str)`
     """
     arrangement = [a.strip(' ') for a in arrangement.split(',')]
     return arrangement
@@ -332,14 +338,11 @@ def is_valid_arrangement(arrangement, song):
     False (invalid). Valid means that every section specified in the
     arrangement exists in the song's specified sections.
 
-    Inputs:
-    =======
-    - song: a dictionary conforming to the Song object data model.
-    - arrangement: a list specifying the arrangement of the song.
+    :param song: a dictionary conforming to the Song object data model.
+    :param arrangement: a list specifying the arrangement of the song.
 
-    Returns:
-    ========
-    - is_valid: boolean indicating whether the arrangement is valid.
+    :returns: `is_valid`, indicating whether the arrangement is valid.
+    :rtype: `bool`
     """
 
     is_valid = True
