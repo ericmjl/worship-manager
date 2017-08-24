@@ -13,7 +13,10 @@ mod = Blueprint('programs', __name__, url_prefix='/programs')
 @mod.route('/add')
 def new():
     """
-    Creates a new program
+    Adds a new program to the database. To ensure that the program is entered
+    into the database, we first create the program in the db, and then return
+    the empty information to Jinja, including the eid. In this way, we are
+    guaranteed an eid for the /save function (below).
     """
     program_model = Program().to_dict()
     eid = program_db.insert(program_model)
@@ -31,6 +34,11 @@ def new():
 @mod.route('/', methods=['POST'])
 @mod.route('/')
 def view_all():
+    """
+    Master view for all weekly programs in the database.
+
+    :returns: Renders an HTML table of all programs.
+    """
     all_programs = program_db.all()
     for program in all_programs:
         program = fill_program_information(program=program,
@@ -41,7 +49,16 @@ def view_all():
 
 @mod.route('/<int:eid>/view')
 @mod.route('/<int:eid>/edit')
-def view_program(eid):
+def view(eid):
+    """
+    Displays a page to view a particular week's program. The view page doubles
+    up as the edit page as well.
+
+    :param eid: The eid of the program to be viewed.
+    :type eid: int
+
+    :returns: Renders the view of the individual program.
+    """
     program = fill_program_information(program_db.get(eid=eid),
                                        coworker_db=coworker_db,
                                        song_db=song_db)
@@ -55,18 +72,29 @@ def view_program(eid):
 
 
 @mod.route('/<int:eid>/update', methods=['POST'])
-def update_program(eid):
+def update(eid):
     """
-    Used for updating the list of available coworkers.
+    Updates the program information to the database. In contrast to save(eid),
+    this function will come back to the song page.
+
+    :param eid: The eid of the program to be updated.
+    :type eid: int
+
+    :returns: Redirects to view the same program.
     """
     save_program_information(request, eid, program_db, song_db)
     return redirect(f'/programs/{eid}/view')
 
 
 @mod.route('/<int:eid>/save', methods=['POST'])
-def save_program(eid):
+def save(eid):
     """
     Saves the program to the program_db.
+
+    :param eid: The eid of the program to save.
+    :type eid: int
+
+    :returns: Redirects back to the master view.
     """
     # Collect the form data into a dictionary.
     save_program_information(request, eid, program_db, song_db)
@@ -78,6 +106,12 @@ def save_program(eid):
 def view_program_slides(eid):
     """
     Creates the HTML slides for the songs associated with a program sheet.
+
+    :param eid: The eid of the program for which the HTML slides are to be
+                made.
+    :type eid: int
+
+    :returns: Renders the HTML slides.
     """
     program = fill_program_information(program_db.get(eid=eid),
                                        coworker_db=coworker_db,
@@ -93,6 +127,5 @@ def view_program_slides(eid):
         if arr:
             songs[i][1] = clean_arrangement(arr)
         else:
-            songs[i][1] = clean_arrangement(song['default_arrangement'])  # noqa
-    print(songs)
+            songs[i][1] = clean_arrangement(song['default_arrangement'])
     return render_template('slides_multi_song.html.j2', songs=songs)

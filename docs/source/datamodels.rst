@@ -1,5 +1,5 @@
 Data Models
-=====
+===========
 
 .. toctree::
    :maxdepth: 4
