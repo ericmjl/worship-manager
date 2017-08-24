@@ -1,5 +1,5 @@
-View Functions
-==============
+View Functions API
+==================
 
 .. toctree::
    :maxdepth: 4
@@ -16,6 +16,12 @@ Song Views
 Coworker Views
 --------------
 
+.. automodule:: app.views.coworkers
+   :members:
+
 
 Program Views
 -------------
+
+.. automodule:: app.views.programs
+   :members:

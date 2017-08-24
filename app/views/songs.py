@@ -42,7 +42,7 @@ def search(term=None):
     search by calling on `app.utils.search_songs_db`.
 
     :param term: The search term.
-    :type term: `str`
+    :type term: str
 
     :returns: Renders an HTML table of songs.
     """
@@ -66,7 +66,7 @@ def view(eid):
     edit page as well.
 
     :param eid: The eid of the song in the database.
-    :type eid: `int`
+    :type eid: int
 
     :returns: Renders the view page for a single song.
     """
@@ -99,7 +99,7 @@ def save(eid):
     `app.utils.update_song_info` function.
 
     :param eid: The eid of the song to be saved.
-    :type eid: `int`
+    :type eid: int
 
     :returns: Redirects to the `/songs/` page (master table).
     """
@@ -114,7 +114,7 @@ def update(eid):
     this function will come back to the song page.
 
     :param eid: The eid of the song to be updated.
-    :type eid: `int`
+    :type eid: int
 
     :returns: Renders the view page for the song that was updated.
     """
@@ -129,7 +129,7 @@ def remove(eid):
     Removes a song from the database.
 
     :param eid: The eid of the song to be removed.
-    :type eid: `int`
+    :type eid: int
 
     :returns: Redirects to the `/songs/` page (master table).
     """
@@ -143,7 +143,7 @@ def add_lyrics_section(eid):
     Adds a lyrics section to the song.
 
     :param eid: The eid of the song to add a lyrics section to.
-    :type eid: `int`
+    :type eid: int
 
     :returns: Renders the view page for a song, but with an added lyrics
               section to the song.
@@ -163,10 +163,10 @@ def remove_lyrics_section(eid, section_id):
     Removes a lyric section from the song.
 
     :param eid: The eid of the song to remove a section from.
-    :type eid: `int`
+    :type eid: int
 
     :param section_id: The section ID to be removed.
-    :type section_id: `str`
+    :type section_id: str
 
     .. note:: `section_id` comes from the HTML form that is submitted. It
               should be of the form `section-1` or `section-2` (for example).
@@ -187,7 +187,7 @@ def upload_sheet_music(eid):
     Uploads a PDF of the sheet music for the song.
 
     :param eid: The eid of the song for which a sheet music is to be attached.
-    :type eid: `int`
+    :type eid: int
 
     .. note:: The only acceptable upload formats are indicated in
               `app.utils.ALLOWED_EXTENSIONS`.
@@ -219,7 +219,7 @@ def download_sheet_music(eid):
     Returns the sheet music to be downloaded.
 
     :param eid: The eid of the song.
-    :type eid: `int`
+    :type eid: int
 
     :returns: The song sheet PDF.
 
@@ -246,6 +246,7 @@ def delete_sheet_music(eid):
     .. todo:: Make sure to fix the problem indicated in the note above.
 
     :param eid: The eid of the song to remove sheet music from.
+    :type eid: int
     """
     song = song_db.get(eid=eid)
     song_db.update(delete('sheet_music'), eids=[eid])
@@ -295,7 +296,7 @@ def view_slides(eid):
     arrangement specified in the song's database entry.
 
     :param eid: The eid of the song to create slides for.
-    :type eid: `int`
+    :type eid: int
 
     :returns: Renders the HTML slides for that song.
     """
