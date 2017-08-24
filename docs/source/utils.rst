@@ -1,5 +1,5 @@
-Utility Functions
-=================
+Utility Functions API
+=====================
 
 .. toctree::
    :maxdepth: 4

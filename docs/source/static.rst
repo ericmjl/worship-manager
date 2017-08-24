@@ -1,5 +1,5 @@
-Static
-======
+Static Elements
+===============
 
 .. toctree::
    :maxdepth: 4
