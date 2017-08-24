@@ -231,7 +231,10 @@ def search_coworkers_db(term, db):
 
 def get_grouped_coworkers(coworker_db):
     """
-    Gets coworkers grouped together by their type. A very hacky function.
+    Gets coworkers grouped together by their type.
+
+    .. note:: This is a very hacky function. If the coworkers' datamodel
+              changes, this needs to be updated as well.
 
     :param coworker_db: The coworker database.
     :type coworker_db: `tinydb.TinyDB()`

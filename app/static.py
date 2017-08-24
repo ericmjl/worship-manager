@@ -51,7 +51,8 @@ def genders():
     """
     genders = {
         'male': '男',
-        'female': '女'
+        'female': '女',
+        'group': '团体'
     }
     return genders
 

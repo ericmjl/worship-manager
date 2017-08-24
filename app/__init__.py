@@ -6,10 +6,12 @@ from tinydb import TinyDB
 
 from .utils import makedir
 
-from .views import songs
+from .views import coworkers, programs, songs
 
 app = Flask(__name__)
 app.register_blueprint(songs.mod)
+app.register_blueprint(coworkers.mod)
+app.register_blueprint(programs.mod)
 
 datafolder = 'data/'
 
