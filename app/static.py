@@ -19,7 +19,7 @@ def fellowships():
         'BSF': 'BSF 學生團契',
         'ROD': 'ROD 樂河團契',
         'Malden': 'Malden 學生事工',
-        'COM': 'CBCGB-COM 同工',  # for those whose primary roles cross fellowships
+        'COM': 'CBCGB-COM 同工',  # for those whose primary roles cross fellowships  # noqa
         }
     return fellowships
 
@@ -96,6 +96,9 @@ def standard_program_roles():
         'vocalist2',
         'vocalist3',
         'pianist',
+        'guitarist',
+        'drummer',
+        'bassist',
         'audio',
         'powerpoint',
         'speaker'

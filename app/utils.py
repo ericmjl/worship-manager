@@ -249,7 +249,8 @@ def get_grouped_coworkers(coworker_db):
     coworkers['speakers'] = coworker_db.search(p.service.any(['speaker']))
     coworkers['audios'] = coworker_db.search(p.service.any(['audio']))
     coworkers['powerpoints'] = coworker_db.search(p.service.any(['powerpoint']))  # noqa
-    coworkers['guitarists'] = coworker_db.search(p.service.any(['guitarist']))  # noqa
+    coworkers['guitarists'] = coworker_db.search(p.service.any(['guitarist']))
+    coworkers['drummers'] = coworker_db.search(p.service.any(['drummer']))
 
     return coworkers
 
