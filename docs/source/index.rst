@@ -16,6 +16,7 @@ Welcome to Worship Manager's documentation!
    datamodels
    storage
    validation
+   views
 
 
 

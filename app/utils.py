@@ -46,6 +46,9 @@ def get_lyrics(request, exclude_id=None):
 
     :param exclude_id: an integer identifying which lyrics section to exclude.
     :type exclude_id: `int`
+
+    :returns: A Lyrics object containing the song's lyrics in a structured
+              format.
     """
     # Defensive programming checks
     if exclude_id:
