@@ -33,32 +33,38 @@
         <table class="table table-hover">
             <tr>
                 <th>日期</th>
+                <th>講員</th>
                 <th>領會</th>
                 <th>領唱</th>
                 <th>司琴</th>
-                <th>講員</th>
-                <th>音控</th>
                 <th>幻燈</th>
+                <th>音控</th>
                 <th>播放</th>
                 <th></th>
             </tr>
-            {% for program in all_programs|sort(attribute='date') %}
+            {% for program in all_programs|sort(attribute='date')|reverse %}
                 <tr>
                     <td>
                         <a href="/programs/{{ program.eid }}/edit">{{ program['date'] }}</a>
                     </td>
+                    <td>{{ render_link_names(program['speaker']) }}</td>
                     <td>
                         {{ render_link_names(program['presider']) }}
                     </td>
                     <td>
-                        {{ render_link_names(program['vocalist1']) }},
-                        {{ render_link_names(program['vocalist2']) }},
-                        {{ render_link_names(program['vocalist3']) }}
+                        {% if program['vocalist1'] %}
+                            {{ render_link_names(program['vocalist1']) }}
+                        {% endif %}
+                        {% if program['vocalist2'] %}
+                            , {{ render_link_names(program['vocalist2']) }}
+                        {% endif %}
+                        {% if program['vocalist3'] %}
+                            , {{ render_link_names(program['vocalist3']) }}
+                        {% endif %}
                     </td>
                     <td>{{ render_link_names(program['pianist']) }}</td>
-                    <td>{{ render_link_names(program['speaker']) }}</td>
-                    <td>{{ render_link_names(program['audio']) }}</td>
                     <td>{{ render_link_names(program['powerpoint']) }}</td>
+                    <td>{{ render_link_names(program['audio']) }}</td>
                     <td>
                         <a href="/programs/{{ program.eid }}/slides">
                             <i class="fa fa-desktop" aria-hidden="true"></i>

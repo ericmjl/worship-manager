@@ -14,7 +14,7 @@
 </div>
 {% endmacro %}
 
-{% macro render_song_select(song_type, songs, selected, arrangement=None) %}
+{% macro render_song_select(song_type, songs, selected=None, arrangement=None) %}
 <div class="col-md-3" id="col-song-{{ song_number }}">
     <p>
         <!-- Create dropdown menu for the songs, sorted by pinyin. -->
@@ -40,9 +40,11 @@
     </p>
     <p>詩歌曲段</p>
     <p>
-        {% for key, value in selected['lyrics'].items() %}
-            <button class="btn btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="{{ value }}">{{ key }}</button>
-        {% endfor %}
+        {% if selected %}
+            {% for key, value in selected['lyrics'].items() %}
+                <button class="btn btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="{{ value }}">{{ key }}</button>
+            {% endfor %}
+        {% endif %}
     </p>
 </div>
 {% endmacro %}

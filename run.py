@@ -229,7 +229,7 @@ def view_coworkers():
     all_coworkers = coworker_db.all()
     return render_template('coworkers.html.j2',
                            all_coworkers=all_coworkers,
-                           service=service)
+                           service=service())
 
 
 @app.route('/coworkers/add', methods=['POST'])

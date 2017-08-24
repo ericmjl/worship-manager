@@ -115,8 +115,8 @@ def arrange_lyrics(arrangement, song_data):
                       in `datamodels.py`. One of the keys has to be `lyrics`.
     :type song_data: `dict`
 
-    :returns: `arranged_lyrics` (`str`), the lyrics arranged according to the specified
-              arrangement.
+    :returns: `arranged_lyrics` (`str`), the lyrics arranged according to the
+              specified arrangement.
     """
     # Now, we allow the default arrangement to be set.
     arranged_lyrics = ''
@@ -257,7 +257,7 @@ def fill_program_information(program, coworker_db, song_db):
             program[role] = coworker_db.get(eid=int(program[role]))
 
     for song in standard_program_songs():
-        if program[song]:
+        if song in program.keys() and program[song]:
             program[song] = song_db.get(eid=int(program[song]))
 
     return program
@@ -276,9 +276,10 @@ def save_program_information(request, eid, program_db, song_db):
     for song_label, song_arrangement in \
             zip(standard_program_songs(), standard_program_song_arrangements()):  # noqa
         arrangement = clean_arrangement(form_data[song_arrangement])
-        song = song_db.get(eid=int(form_data[song_label]))
-        if not is_valid_arrangement(arrangement, song):
-            form_data[song_arrangement] = song['default_arrangement']
+        if form_data[song_label]:
+            song = song_db.get(eid=int(form_data[song_label]))
+            if not is_valid_arrangement(arrangement, song):
+                form_data[song_arrangement] = song['default_arrangement']
     program_db.update(form_data, eids=[eid])
 
 
