@@ -1,4 +1,5 @@
 run:
+	bash activate.sh
 	python run.py
 
 dockerbuild:
@@ -6,13 +7,7 @@ dockerbuild:
 	docker build . -t ericmjl/worship
 
 dockerrun:
-	# docker run \
-	# 	-d \
-	# 	--volumes-from worshipdata \
-	# 	--restart always \
-	# 	-p 9000:8080 \
-	# 	-p 8888:8888 \
-	# 	worship
+	docker-compose up
 
 dockerpush:
 	echo "Assumes your Docker username is ericmjl! Hit Ctrl+C if this isn't true."
@@ -27,4 +22,5 @@ start: dockerbuild dockerrun
 push: dockerbuild dockerpush
 
 test:
+	bash activate.sh
 	py.test --cov --cov-report term-missing -v

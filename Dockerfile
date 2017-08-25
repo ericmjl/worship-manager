@@ -5,9 +5,6 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6
 WORKDIR /app
 
 # Copy the current directory contents into the container at /worship-manager
-# COPY . /worship-manager
-COPY ./static /app/static
-COPY ./templates /app/templates
 COPY ./app /app/app
 COPY ./run.py /app/main.py
 COPY ./requirements.txt /app/requirements.txt
