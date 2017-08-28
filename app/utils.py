@@ -4,7 +4,7 @@ General purpose utility functions for use in this project.
 
 import os
 
-from hanziconv import HanziConv
+# from hanziconv import HanziConv
 
 import pinyin
 
@@ -16,8 +16,10 @@ from .static import (standard_program_roles,
                      standard_program_song_arrangements,
                      standard_program_songs)
 
-hzc = HanziConv()
-convert = hzc.toTraditional
+from .views import convert
+
+# hzc = HanziConv()
+# convert = hzc.toTraditional
 # Keep a list of song keys
 song_datamodel = list(Song().to_dict().keys())
 
