@@ -104,3 +104,63 @@ def standard_program_roles():
         'speaker'
         ]
     return standard_program_roles
+
+
+def gsheets_template():
+    """
+    Key-value pairs that specify what content goes into which cells on the
+    standard weekly program sheet. Only non-dynamic information is stored here;
+    all dynamic information has to be updated in a separate function.
+    """
+
+    gsheets_template = {
+        'A1': '时间',
+        'B1': '程序',
+        'C1': '内容',
+        'D1': '负责同工',
+        'E1': '参与团队',
+
+        'B2': '序乐',
+        'D2': '【司琴】',
+        'E2': '会众',
+
+        'B3': '宣召',
+        'C3': '【宣召经文】',
+        'D3': '【领会】\n【领诗】',
+
+        'B4': '音乐敬拜',
+        'C4': '【诗歌（一）】\n【诗歌（二）】\n【诗歌（三）】',
+        'D4': '【领会】\n【领诗】',
+
+        'A5': '1点20分',
+        'B5': '奉献',
+        'C5': '【奉献诗歌】',
+        'D5': '【领会】',
+        'E5': '会众\n【敬拜团】',
+
+        'B6': '读经',
+        'C6': '【经文】',
+        'D6': '【领会】',
+
+        'A7': '1点25分',
+        'B7': '证道',
+        'C7': '【讲道题目】',
+        'D7': '【讲员】',
+
+        'A8': '2点',
+        'B8': '圣餐／回应',
+        'E8': '圣餐同工／敬拜团',
+
+        'B9': '欢迎与报告',
+        'D9': '牧师／长老',
+
+        'B10': '三一颂／祝祷',
+        'D10': '牧师\n长老',
+
+        'A11': '2点15分',
+        'B11': '殿乐',
+        'D11': '司琴',
+        'E11': '会众',
+    }
+
+    return gsheets_template
