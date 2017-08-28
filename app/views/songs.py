@@ -197,19 +197,22 @@ def upload_sheet_music(eid):
     song = song_db.get(eid=eid)
     if 'file-upload' not in request.files:
         flash('No file part')
-        return render_template('song.html.j2', song=song)
+        # return render_template('song.html.j2', song=song)
+        return redirect(f'/songs/{eid}')
     f = request.files['file-upload']
 
     if f.filename == '':
         flash('No selected file')
-        return render_template('song.html.j2', song=song)
+        # return render_template('song.html.j2', song=song)
+        return redirect(f'/songs/{eid}')
 
     if f and allowed_file(f.filename):
         fname = f'{song["name"]}-{song["copyright"]}.pdf'
         f.save(osp.join(upload_folder, fname))
         song_db.update({'sheet_music': fname}, eids=[eid])
         song = song_db.get(eid=eid)
-        return render_template('song.html.j2', song=song)
+        # return render_template('song.html.j2', song=song)
+        return redirect(f'/songs/{eid}')
 
 
 @mod.route('/<int:eid>/sheet_music/download', methods=['POST'])
@@ -248,10 +251,11 @@ def delete_sheet_music(eid):
     :param eid: The eid of the song to remove sheet music from.
     :type eid: int
     """
-    song = song_db.get(eid=eid)
+    # song = song_db.get(eid=eid)
     song_db.update(delete('sheet_music'), eids=[eid])
-    song = song_db.get(eid=eid)
-    return render_template("song.html.j2", song=song)
+    # song = song_db.get(eid=eid)
+    # return render_template("song.html.j2", song=song)
+    return redirect(f'/songs/{eid}')
 
 
 @mod.route('/clean', methods=['POST'])
