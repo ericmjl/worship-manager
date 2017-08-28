@@ -4,7 +4,8 @@ from .__init__ import coworker_db, program_db, song_db
 
 from ..datamodels import Program
 
-from ..utils import clean_arrangement, fill_program_information, get_grouped_coworkers, save_program_information
+from ..utils import (clean_arrangement, fill_program_information,
+                     get_grouped_coworkers, save_program_information)
 
 mod = Blueprint('programs', __name__, url_prefix='/programs')
 
