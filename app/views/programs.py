@@ -49,6 +49,7 @@ def view_all():
 
 @mod.route('/<int:eid>/view')
 @mod.route('/<int:eid>/edit')
+@mod.route('/<int:eid>')
 def view(eid):
     """
     Displays a page to view a particular week's program. The view page doubles
