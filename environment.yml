@@ -15,3 +15,6 @@ dependencies:
     - pinyin
     - tinydb==3.3.1
     - sphinx==1.6.3
+    - gspread
+    - oauth2client
+    - PyOpenSSL
