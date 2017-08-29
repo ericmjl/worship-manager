@@ -6,7 +6,7 @@ from ..datamodels import Coworker
 
 from ..static import fellowships, genders, service
 
-from ..utils import search_coworkers_db, update_coworker_info
+from ..utils.coworker_utils import search_coworkers_db, update_coworker_info
 
 mod = Blueprint('coworkers', __name__, url_prefix='/coworkers')
 

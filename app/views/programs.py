@@ -4,13 +4,13 @@ from .__init__ import coworker_db, program_db, song_db
 
 from ..datamodels import Program
 
-from ..utils import (authorize_google_sheets,
-                     clean_arrangement,
-                     create_gsheet,
-                     delete_spreadsheet,
-                     fill_program_information,
-                     get_grouped_coworkers,
-                     save_program_information)
+from ..utils.coworker_utils import get_grouped_coworkers
+from ..utils.google_sheets import (authorize_google_sheets,
+                                   create_gsheet,
+                                   delete_spreadsheet)
+from ..utils.program_utils import (fill_program_information,
+                                   save_program_information)
+from ..utils.song_utils import clean_arrangement
 
 
 mod = Blueprint('programs', __name__, url_prefix='/programs')
