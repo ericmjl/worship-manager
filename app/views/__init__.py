@@ -20,4 +20,4 @@ program_db = TinyDB(osp.join(db_folder, 'program.db'))
 
 # Commonly-used text conversion
 hzc = HanziConv()
-convert = hzc.toSimplified
+convert = hzc.toTraditional
