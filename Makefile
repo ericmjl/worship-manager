@@ -26,3 +26,6 @@ pull:
 
 backup:
 	docker save ericmjl/worshipdata:latest | gzip -c > ~/worshipdata.tgz
+	docker load < ~/worshipdata.tgz
+	docker tag ericmjl/worshipdata ericmjl/worshipdata
+	docker push ericmjl/worshipdata
