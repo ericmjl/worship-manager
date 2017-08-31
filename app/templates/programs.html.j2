@@ -40,6 +40,7 @@
                 <th>幻燈</th>
                 <th>音控</th>
                 <th>播放</th>
+                <th>GS</th>
                 <th></th>
             </tr>
             {% for program in all_programs|sort(attribute='date')|reverse %}
@@ -69,6 +70,13 @@
                         <a href="/programs/{{ program.eid }}/slides">
                             <i class="fa fa-desktop" aria-hidden="true"></i>
                         </a>
+                    </td>
+                    <td>
+                        {% if program['gsheets'] %}
+                            <a href="https://docs.google.com/spreadsheets/d/{{ program['gsheets'] }}/edit#gid=0">
+                                <i class="fa fa-google"></i>
+                            </a>
+                        {% endif %}
                     </td>
                     <td>{% if not program['date'] %}<a href="/programs/{{ program.eid }}/edit">剪輯</a>{% endif %}</td>
                 </tr>

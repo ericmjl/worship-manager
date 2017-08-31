@@ -4,8 +4,14 @@ from .__init__ import coworker_db, program_db, song_db
 
 from ..datamodels import Program
 
-from ..utils import (clean_arrangement, fill_program_information,
-                     get_grouped_coworkers, save_program_information)
+from ..utils.coworker_utils import get_grouped_coworkers
+from ..utils.google_sheets import (authorize_google_sheets,
+                                   create_gsheet,
+                                   delete_gsheet)
+from ..utils.program_utils import (fill_program_information,
+                                   save_program_information)
+from ..utils.song_utils import clean_arrangement
+
 
 mod = Blueprint('programs', __name__, url_prefix='/programs')
 
@@ -110,7 +116,7 @@ def view_program_slides(eid):
     Creates the HTML slides for the songs associated with a program sheet.
 
     :param eid: The eid of the program for which the HTML slides are to be
-                made.
+        made.
     :type eid: int
 
     :returns: Renders the HTML slides.
@@ -131,3 +137,41 @@ def view_program_slides(eid):
         else:
             songs[i][1] = clean_arrangement(song['default_arrangement'])
     return render_template('slides_multi_song.html.j2', songs=songs)
+
+
+@mod.route('/<int:eid>/create_gsheet')
+def create_google_sheets(eid):
+    """
+    Creates the Google Spreadsheet for that week's Program.
+
+    :param eid: The eid of the program for which the Google Sheet is to be
+        created/updated.
+    :type eid: int
+
+    :returns: Redirects to the view page for the program.
+    """
+    gc = authorize_google_sheets()
+    spreadsheet = create_gsheet(gc, eid, program_db)
+    program_db.update({'gsheets': spreadsheet.id}, eids=[eid])
+
+    return redirect(f'/programs/{eid}')
+
+
+@mod.route('/<int:eid>/update_gsheet')
+def update_google_sheets(eid):
+    """
+    Updates the Google Spreadsheet for that week's Program.
+    """
+    gc = authorize_google_sheets()
+    delete_gsheet(gc, eid, program_db)
+    create_gsheet(gc, eid, program_db)
+
+    return redirect(f'/programs/{eid}')
+
+
+@mod.route('/<int:eid>/delete_gsheet')
+def delete_google_sheets(eid):
+    gc = authorize_google_sheets()
+    delete_gsheet(gc, eid, program_db)
+
+    return redirect(f'programs/{eid}')
