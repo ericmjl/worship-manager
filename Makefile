@@ -24,4 +24,5 @@ pull:
 	docker pull ericmjl/worship
 	docker pull ericmjl/worshipdata
 
-# push: dockerbuild dockerpush
+backup:
+	docker save ericmjl/worshipdata:latest | gzip -c > ~/worshipdata.tgz
