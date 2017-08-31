@@ -5,8 +5,8 @@ run:
 	python run.py
 
 build:
-	docker build data/. -t ericmjl/worshipdata
-	docker build . -t ericmjl/worship
+	docker build --no-cache data/. -t ericmjl/worshipdata
+	docker build --no-cache . -t ericmjl/worship
 
 start:
 	docker-compose up
@@ -17,6 +17,8 @@ push:
 	docker tag ericmjl/worshipdata ericmjl/worshipdata
 	docker push ericmjl/worshipdata
 
-# start: dockerbuild dockerrun
+pull:
+	docker pull ericmjl/worship
+	docker pull ericmjl/worshipdata
 
 # push: dockerbuild dockerpush
