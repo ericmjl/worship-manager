@@ -182,13 +182,13 @@ def get_lyrics(request, exclude_id=None):
         assert isinstance(exclude_id, int)
 
     # Get lyrics
-    l = Lyrics()
+    lyr = Lyrics()
     for k, v in request.form.items():
         if 'section-' in k:
             idx = int(k.split('-')[-1])
             if idx is not exclude_id:
                 lyrics = convert(request.form[f'lyrics-{idx}'])
                 section = request.form[k]
-                l.add_section(section=section,
-                              lyrics=lyrics)
-    return l
+                lyr.add_section(section=section,
+                                lyrics=lyrics)
+    return lyr

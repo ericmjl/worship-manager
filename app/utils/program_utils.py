@@ -2,7 +2,9 @@ from .song_utils import clean_arrangement, is_valid_arrangement
 
 from ..datamodels import Program
 
-from ..static import standard_program_roles, standard_program_songs
+from ..static import (standard_program_roles,
+                      standard_program_songs,
+                      standard_program_song_arrangements)
 
 
 def fill_program_information(program, coworker_db, song_db):

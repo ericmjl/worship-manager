@@ -7,7 +7,7 @@ from ..datamodels import Program
 from ..utils.coworker_utils import get_grouped_coworkers
 from ..utils.google_sheets import (authorize_google_sheets,
                                    create_gsheet,
-                                   delete_spreadsheet)
+                                   delete_gsheet)
 from ..utils.program_utils import (fill_program_information,
                                    save_program_information)
 from ..utils.song_utils import clean_arrangement
@@ -157,9 +157,21 @@ def create_google_sheets(eid):
     return redirect(f'/programs/{eid}')
 
 
+@mod.route('/<int:eid>/update_gsheet')
+def update_google_sheets(eid):
+    """
+    Updates the Google Spreadsheet for that week's Program.
+    """
+    gc = authorize_google_sheets()
+    delete_gsheet(gc, eid, program_db)
+    create_gsheet(gc, eid, program_db)
+
+    return redirect(f'/programs/{eid}')
+
+
 @mod.route('/<int:eid>/delete_gsheet')
 def delete_google_sheets(eid):
     gc = authorize_google_sheets()
-    delete_spreadsheet(gc, eid, program_db)
+    delete_gsheet(gc, eid, program_db)
 
     return redirect(f'programs/{eid}')
