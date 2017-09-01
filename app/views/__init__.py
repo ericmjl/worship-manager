@@ -2,6 +2,7 @@
 This module contains elements commonly used across all of the other modules
 under /views.
 """
+import os
 import os.path as osp
 
 from hanziconv import HanziConv
@@ -9,7 +10,7 @@ from hanziconv import HanziConv
 from tinydb import TinyDB
 
 # Commonly-used paths.
-data_folder = 'data/'
+data_folder = osp.join(os.environ['HOME'], '.worship-manager', 'data')
 db_folder = osp.join(data_folder, 'database')
 upload_folder = osp.join(data_folder, 'files')  # upload folder
 

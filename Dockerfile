@@ -18,5 +18,7 @@ RUN pip install -r requirements.txt
 EXPOSE 8080
 EXPOSE 8888
 
+VOLUME ["/root/.worship-manager/data"]
+
 # Run app.py when the container launches
 CMD ["python", "main.py"]
