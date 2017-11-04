@@ -3,11 +3,9 @@ Utility functions used in songs.
 """
 import pinyin
 
-from .__init__ import ALLOWED_EXTENSIONS, song_datamodel
-
 from ..datamodels import Lyrics
-
 from ..views.__init__ import convert
+from .__init__ import ALLOWED_EXTENSIONS, song_datamodel
 
 
 def clean_arrangement(arrangement):

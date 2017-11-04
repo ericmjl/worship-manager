@@ -1,17 +1,13 @@
 from flask import Blueprint, redirect, render_template, request
 
-from .__init__ import coworker_db, program_db, song_db
-
 from ..datamodels import Program
-
 from ..utils.coworker_utils import get_grouped_coworkers
-from ..utils.google_sheets import (authorize_google_sheets,
-                                   create_gsheet,
+from ..utils.google_sheets import (authorize_google_sheets, create_gsheet,
                                    delete_gsheet)
 from ..utils.program_utils import (fill_program_information,
                                    save_program_information)
 from ..utils.song_utils import clean_arrangement
-
+from .__init__ import coworker_db, program_db, song_db
 
 mod = Blueprint('programs', __name__, url_prefix='/programs')
 

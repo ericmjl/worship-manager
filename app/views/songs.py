@@ -1,23 +1,15 @@
 import json
-
 import os.path as osp
 
+import yaml
 from flask import (Blueprint, flash, redirect, render_template, request,
                    send_file)
-
 from tinydb.operations import delete
 
-import yaml
-
-from .__init__ import convert, song_db, upload_folder
-
 from ..datamodels import Song
-
-from ..utils.song_utils import (allowed_file,
-                                clean_arrangement,
-                                search_songs_db,
-                                update_song_info)
-
+from ..utils.song_utils import (allowed_file, clean_arrangement,
+                                search_songs_db, update_song_info)
+from .__init__ import convert, song_db, upload_folder
 
 mod = Blueprint('songs', __name__, url_prefix='/songs')
 

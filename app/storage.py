@@ -1,6 +1,5 @@
-from tinydb import Storage
-
 import yaml
+from tinydb import Storage
 
 
 class YAMLStorage(Storage):

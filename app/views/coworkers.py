@@ -1,12 +1,9 @@
 from flask import Blueprint, redirect, render_template, request
 
-from .__init__ import convert, coworker_db
-
 from ..datamodels import Coworker
-
 from ..static import fellowships, genders, service
-
 from ..utils.coworker_utils import search_coworkers_db, update_coworker_info
+from .__init__ import convert, coworker_db
 
 mod = Blueprint('coworkers', __name__, url_prefix='/coworkers')
 

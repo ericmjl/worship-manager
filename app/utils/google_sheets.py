@@ -2,13 +2,11 @@ import os
 import os.path as osp
 
 import gspread
-
 from oauth2client.service_account import ServiceAccountCredentials
 
-from ..static import (gsheets_template,
-                      standard_program_roles,
+from ..static import (gsheets_template, standard_program_roles,
                       standard_program_songs)
-from ..views import song_db, coworker_db, program_db
+from ..views import coworker_db, program_db, song_db
 
 
 def authorize_google_sheets():

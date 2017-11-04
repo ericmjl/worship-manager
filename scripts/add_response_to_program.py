@@ -6,7 +6,6 @@ import os
 
 from tinydb import TinyDB
 
-
 filepath = os.path.dirname(os.path.realpath(__file__))
 program_db_path = f'{filepath}/../data/database/program.db'
 

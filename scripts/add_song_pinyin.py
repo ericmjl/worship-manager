@@ -5,9 +5,7 @@ This file automatically adds the pinyin field to each song in the database.
 import os
 
 import pinyin
-
 from tinydb import TinyDB
-
 
 filepath = os.path.dirname(os.path.realpath(__file__))
 song_db_path = f'{filepath}/../data/database/song.db'
