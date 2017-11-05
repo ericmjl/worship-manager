@@ -13,68 +13,63 @@
             <button class="btn btn-danger btn-md" type="submit" formaction="/songs/clean">清理數據庫</button>
         </form>
     </div>
-    <div class="col-3">
-        <form method="post">
-            <!-- <label for="search">搜索</label> -->
-            {% if term %}
-                <input class="form-control" name="search" formaction="/songs/search" value="{{ term }}"></input>
-            {% else %}
-                <input class="form-control" name="search" formaction="/songs/search"></input>
-            {% endif %}
-        </div>
-        <div class="col-1">
-            <button class="btn btn-danger" type="submit" formaction="/songs/search">搜索</button>
-        </form>
+    <div class="col-4">
+        <input class="form-control" id="search" onkeyup="search()" placeholder="搜索"></input>
     </div>
 </div>
 <hr>
 <!-- Table Section -->
 <div class="row">
     <div class="col-12">
-        <table class="table table-hover">
-            <tr>
-                <th>歌名</th>
-                <th>詞曲</th>
-                <th>版權</th>
-                <th>幻燈片</th>
-                <th>歌譜</th>
-                <th>視頻</th>
-                <th></th>
-            </tr>
-            {% for song in all_songs %}
+        <table class="table table-hover" id="table">
+            <thead>
                 <tr>
-                    <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
-                    <td>
-                        {% if song['composer'] %}
-                            <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if song['copyright'] %}
-                            <a href="/songs/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if song['default_arrangement'] %}
-                            <a href="/songs/{{ song.eid }}/slides" align="center">
-                                <i class="fa fa-desktop" aria-hidden="true"></i>
-                            </a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if song['sheet_music'] %}
-                            <a href="/songs/{{ song.eid }}/sheet_music/download"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if song['youtube'] %}
-                            <a href="{{ song['youtube'] }}"><i class="fa fa-play-circle" aria-hidden="true"></i></a>
-                        {% endif %}
-                    </td>
-
-                    <td>{% if not song['name'] %}<a href="/songs/{{ song.eid }}/edit">剪輯</a>{% endif %}</td>
+                    <th>歌名</th>
+                    <th>詞曲</th>
+                    <th>版權</th>
+                    <th>幻燈片</th>
+                    <th>歌譜</th>
+                    <th>視頻</th>
+                    <th></th>
                 </tr>
-            {% endfor %}
+            </thead>
+            <tbody>
+                {% for song in all_songs %}
+                    <tr>
+                        <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
+                        <td>
+                            {% if song['composer'] %}
+                                <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if song['copyright'] %}
+                                <a href="/songs/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if song['default_arrangement'] %}
+                                <a href="/songs/{{ song.eid }}/slides" align="center">
+                                    <i class="fa fa-desktop" aria-hidden="true"></i>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if song['sheet_music'] %}
+                                <a href="/songs/{{ song.eid }}/sheet_music/download"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if song['youtube'] %}
+                                <a href="{{ song['youtube'] }}"><i class="fa fa-play-circle" aria-hidden="true"></i></a>
+                            {% endif %}
+                        </td>
+
+                        <td>{% if not song['name'] %}<a href="/songs/{{ song.eid }}/edit">剪輯</a>{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
         </table>
     </div>
 </div>

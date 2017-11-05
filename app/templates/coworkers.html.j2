@@ -12,57 +12,51 @@
         </form>
     </div>
     <div class="col-3">
-        <form method="post">
-            {% if term %}
-                <input class="form-control" name="search" formaction="/coworkers/search" value="{{ term }}"></input>
-            {% else %}
-                <input class="form-control" name="search" formaction="/coworkers/search"></input>
-            {% endif %}
-        </div>
-        <div class="col-1">
-            <button class="btn btn-danger" type="submit" formaction="/coworkers/search">搜索</button>
-        </form>
+        <input class="form-control" id="search" placeholder="搜索" onkeyup="search()"></input>
     </div>
 </div>
 <hr>
 <div class="row">
     <div class="col-12">
-        <table class="table table-hover">
-            <tr>
-                <th>名字</th>
-                <th>郵箱</th>
-                <th>電話</th>
-                <th>團契</th>
-                <!-- <th>性別</th> -->
-                <th>服事項目</th>
-                <th></th>
-            </tr>
-
-            {% for coworker in all_coworkers %}
-            <tr>
-                <td><a href="/coworkers/{{ coworker.eid }}/view">{{ coworker['name'] }}</a></td>
-                <td>
-                    <a href="mailto:{{ coworker['email'] }}">{{ coworker['email'] }}</a>
-                </td>
-                <td>{{ coworker['phone'] }}</td>
-                <td>
-                    <a href="/coworkers/search/{{ coworker['fellowship'] }}">{{ coworker['fellowship'] }}</a>
-                </td>
-                <!-- <td>{{ coworker['gender'] }}</td> -->
-                <td>
-                    {% for srv in coworker['service'] %}
-                    <a href="/coworkers/search/{{ srv }}">
-                        {% if loop.last %}
-                            {{ service[srv] }}
-                        {% else %}
-                            {{ service[srv] }},
-                        {% endif %}
-                    </a>
-                    {% endfor %}
-                </td>
-                <td>{% if not coworker['name'] %}<a href="/coworkers/{{ coworker.eid }}/edit">剪輯</a>{% endif %}</td>
-            </tr>
-            {% endfor %}
+        <table class="table table-hover" id="table">
+            <thead>
+                <tr>
+                    <th>名字</th>
+                    <th>郵箱</th>
+                    <th>電話</th>
+                    <th>團契</th>
+                    <!-- <th>性別</th> -->
+                    <th>服事項目</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coworker in all_coworkers %}
+                <tr>
+                    <td><a href="/coworkers/{{ coworker.eid }}/view">{{ coworker['name'] }}</a></td>
+                    <td>
+                        <a href="mailto:{{ coworker['email'] }}">{{ coworker['email'] }}</a>
+                    </td>
+                    <td>{{ coworker['phone'] }}</td>
+                    <td>
+                        <a href="/coworkers/search/{{ coworker['fellowship'] }}">{{ coworker['fellowship'] }}</a>
+                    </td>
+                    <!-- <td>{{ coworker['gender'] }}</td> -->
+                    <td>
+                        {% for srv in coworker['service'] %}
+                        <a href="/coworkers/search/{{ srv }}">
+                            {% if loop.last %}
+                                {{ service[srv] }}
+                            {% else %}
+                                {{ service[srv] }},
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                    </td>
+                    <td>{% if not coworker['name'] %}<a href="/coworkers/{{ coworker.eid }}/edit">剪輯</a>{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 </div>

@@ -78,31 +78,6 @@ def view(eid):
                            genders=genders())
 
 
-@mod.route('/search', methods=['POST'])
-@mod.route('/search')
-@mod.route('/search/<term>')
-def search(term=None):
-    """
-    Search function for songs in the database. Performs a strict substring
-    search by calling on `app.utils.search_coworkers_db`.
-
-    :param term: The search term.
-    :type term: str
-
-    :returns: Renders an HTML table of coworkers.
-    """
-    if term:
-        pass
-    elif request.form['search']:
-        term = convert(request.form['search'])
-    # Perform a search of all key/value pairs in the database.
-    filtered_coworkers = search_coworkers_db(term, coworker_db)
-    return render_template('coworkers.html.j2',
-                           all_coworkers=filtered_coworkers,
-                           term=term,
-                           service=service())
-
-
 @mod.route('/<int:eid>/remove', methods=['POST'])
 @mod.route('/<int:eid>/remove')
 def remove(eid):

@@ -27,30 +27,6 @@ def view_all():
     return render_template('songs.html.j2', all_songs=all_songs)
 
 
-@mod.route('/search', methods=['POST'])
-@mod.route('/search')
-@mod.route('/search/<term>')
-def search(term=None):
-    """
-    Search function for songs in the database. Performs a strict substring
-    search by calling on `app.utils.search_songs_db`.
-
-    :param term: The search term.
-    :type term: str
-
-    :returns: Renders an HTML table of songs.
-    """
-    if term:
-        pass
-    elif request.form['search']:
-        term = convert(request.form['search'])
-    # Perform a search of all key/value pairs in the database.
-    filtered_songs = search_songs_db(term, song_db)
-    return render_template('songs.html.j2',
-                           all_songs=filtered_songs,
-                           term=term)
-
-
 @mod.route('/<int:eid>/view')
 @mod.route('/<int:eid>/edit')
 @mod.route('/<int:eid>')
