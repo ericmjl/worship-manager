@@ -16,17 +16,13 @@ def main(db):
     data_folder = osp.join(
         os.environ['HOME'], '.worship-manager', 'data', 'database')
     db_path = f'{data_folder}/{db}.db'
-    print(db_path)
-
     db = TinyDB(db_path)
-
     els = db.all()  # els = "elements"
+    
     for el in els:
         eid = el.eid
         name = el['name']
-
         py = pinyin.get(name, format='strip', delimiter='')
-
         db.update({'pinyin': py}, eids=[eid])
 
     print(db.all())
