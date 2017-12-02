@@ -25,6 +25,7 @@
             <thead>
                 <tr>
                     <th>歌名</th>
+                    <th style="display:none">拼音</th>
                     <th>詞曲</th>
                     <th>版權</th>
                     <th>幻燈片</th>
@@ -37,6 +38,8 @@
                 {% for song in all_songs %}
                     <tr>
                         <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
+                        <!-- Enable search by pinyin -->
+                        <td style="display:none">{{ song['pinyin'] }}</td> 
                         <td>
                             {% if song['composer'] %}
                                 <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a>

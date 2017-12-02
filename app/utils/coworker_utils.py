@@ -79,6 +79,7 @@ def update_coworker_info(request, eid, coworker_db):
     """
     data = {k: convert(v) for k, v in request.form.items() if k != 'service'}
     data['service'] = []
+    data['pinyin'] = pinyin.get(data['name'], format="strip", delimiter=" ")
     # print(request.form.getlist('service'))
     for serv in request.form.getlist('service'):
         data['service'].append(serv)

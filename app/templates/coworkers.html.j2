@@ -22,6 +22,8 @@
             <thead>
                 <tr>
                     <th>名字</th>
+                    <th style="display: none;">另名</th>
+                    <th style="display: none;">拼音</th>
                     <th>郵箱</th>
                     <th>電話</th>
                     <th>團契</th>
@@ -34,6 +36,8 @@
                 {% for coworker in all_coworkers %}
                 <tr>
                     <td><a href="/coworkers/{{ coworker.eid }}/view">{{ coworker['name'] }}</a></td>
+                    <td style="display: none;">{{ coworker.alias }}</td>
+                    <td style="display: none;">{{ coworker.pinyin }}</td>
                     <td>
                         <a href="mailto:{{ coworker['email'] }}">{{ coworker['email'] }}</a>
                     </td>
