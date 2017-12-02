@@ -114,6 +114,9 @@ class Coworker(object):
     :param alias: Alternative names for the coworker.
     :type alias: `str`
 
+    :param pinyin: Pinyin of coworker's name. Makes searching for them easier. 
+    :type pinyin: `str`
+
     :param fellowship: Coworker's primary fellowship. Refer to `static.py` for
                        the full list of fellowships.
     :type fellowship: `str`
