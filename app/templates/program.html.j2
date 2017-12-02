@@ -30,16 +30,6 @@
                 <input type="date" name="date" value="" class="form-control">
             {% endif %}
         </div>
-        <div class="col-md-8">
-            {% if program['gsheets'] %}
-                <a class="btn btn-success" href="https://docs.google.com/spreadsheets/d/{{ program['gsheets'] }}/edit#gid=0">打開Google Sheet</a>
-                <a class="btn btn-primary" href="/programs/{{ program.eid }}/update_gsheet">更新Google Sheet</a>
-                <a class="btn btn-danger" href="/programs/{{ program.eid }}/delete_gsheet">刪除Google Sheet</a>
-            {% else %}
-                <a class="btn btn-success" href="/programs/{{ program.eid }}/create_gsheet">創建Google Sheet</a>
-            {% endif %}
-        </div>
-
     </div>
     <hr>
     <div class="row" id="row-coworkers-1">
