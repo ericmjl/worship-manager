@@ -1,13 +1,14 @@
 """
 This file automatically adds the pinyin field to each el in the database.
 """
-import click
+import logging
 import os
 import os.path as osp
-import logging
 
+import click
 import pinyin
 from tinydb import TinyDB
+
 
 @click.command()
 @click.option('--db', help="The database to add pinyin.", type=click.Choice(['coworker', 'song']))
