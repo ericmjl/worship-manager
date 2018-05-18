@@ -120,8 +120,7 @@ def view_program_slides(eid):
     program = fill_program_information(program_db.get(eid=eid),
                                        coworker_db=coworker_db,
                                        song_db=song_db)
-    songs = [
-             [program['song1'], program['song1_arrangement']],
+    songs = [[program['song1'], program['song1_arrangement']],
              [program['song2'], program['song2_arrangement']],
              [program['song3'], program['song3_arrangement']],
              [program['offering'], program['offering_arrangement']]
