@@ -19,11 +19,11 @@ def main(db):
     db_path = f'{data_folder}/{db}.db'
     db = TinyDB(db_path)
     els = db.all()  # els = "elements"
-    
+
     for el in els:
         eid = el.eid
         name = el['name']
-        py = pinyin.get(name, format='strip', delimiter='')
+        py = pinyin.get(name, format='strip', delimiter=' ')
         db.update({'pinyin': py}, eids=[eid])
 
     print(db.all())
