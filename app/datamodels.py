@@ -114,7 +114,7 @@ class Coworker(object):
     :param alias: Alternative names for the coworker.
     :type alias: `str`
 
-    :param pinyin: Pinyin of coworker's name. Makes searching for them easier. 
+    :param pinyin: Pinyin of coworker's name. Makes searching for them easier.
     :type pinyin: `str`
 
     :param fellowship: Coworker's primary fellowship. Refer to `static.py` for
@@ -241,3 +241,18 @@ class Program(object):
 
     def to_dict(self):
         return self.__dict__
+
+
+class Announcement(object):
+    def __init__(self, title='', content=''):
+        """
+        Data model for Announcement.
+
+        :param str title: The title of the announcement.
+        :param str content: The content of the announcement.
+        """
+        self.title = title
+        self.content = content
+
+    def __repr__():
+        return self.title + '\n\n' + self.content
