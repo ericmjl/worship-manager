@@ -1,6 +1,8 @@
+import uuid
 import json
 import os.path as osp
 
+import boto3
 import yaml
 from flask import (Blueprint, flash, redirect, render_template, request,
                    send_file)
@@ -8,8 +10,8 @@ from tinydb.operations import delete
 
 from ..datamodels import Song
 from ..utils.song_utils import (allowed_file, clean_arrangement,
-                                search_songs_db, update_song_info)
-from .__init__ import convert, song_db, upload_folder
+                                update_song_info)
+from .__init__ import song_db, upload_folder
 
 mod = Blueprint('songs', __name__, url_prefix='/songs')
 
@@ -164,24 +166,29 @@ def upload_sheet_music(eid):
 
     :returns: The view page for the song.
     """
-    song = song_db.get(eid=eid)
+
     if 'file-upload' not in request.files:
         flash('No file part')
-        # return render_template('song.html.j2', song=song)
         return redirect(f'/songs/{eid}')
     f = request.files['file-upload']
 
     if f.filename == '':
         flash('No selected file')
-        # return render_template('song.html.j2', song=song)
         return redirect(f'/songs/{eid}')
 
     if f and allowed_file(f.filename):
-        fname = f'{song["name"]}-{song["copyright"]}.pdf'
-        f.save(osp.join(upload_folder, fname))
+        # Compute the song filename.
+        fname = f'{str(uuid.uuid4())}.pdf'
+        # Save the file to disk.
+        fpath = osp.join(upload_folder, fname)
+        f.save(fpath)
+        # Save the file to S3
+        s3 = boto3.resource('s3')
+        bucket = 'worship-manager'
+        s3.Bucket(bucket).upload_file(fpath, fname, ExtraArgs={'ACL': 'public-read'})  # noqa: E501
+        # Update the song database
         song_db.update({'sheet_music': fname}, eids=[eid])
-        song = song_db.get(eid=eid)
-        # return render_template('song.html.j2', song=song)
+        # Go back to song page.
         return redirect(f'/songs/{eid}')
 
 

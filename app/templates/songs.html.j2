@@ -39,15 +39,17 @@
                     <tr>
                         <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
                         <!-- Enable search by pinyin -->
-                        <td style="display:none">{{ song['pinyin'] }}</td> 
+                        <td style="display:none">{{ song['pinyin'] }}</td>
                         <td>
                             {% if song['composer'] %}
-                                <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a>
+                                <!-- <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a> -->
+                                {{ song['composer']|truncate(20) }}
                             {% endif %}
                         </td>
                         <td>
                             {% if song['copyright'] %}
-                                <a href="/songs/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a>
+                                <!-- <a href="/songs/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a> -->
+                                {{ song['copyright'] }}
                             {% endif %}
                         </td>
                         <td>
@@ -59,7 +61,7 @@
                         </td>
                         <td>
                             {% if song['sheet_music'] %}
-                                <a href="/songs/{{ song.eid }}/sheet_music/download"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
+                                <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
                             {% endif %}
                         </td>
                         <td>

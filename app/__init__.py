@@ -4,8 +4,8 @@ from .views import coworkers, programs, songs
 
 app = Flask(__name__)
 app.register_blueprint(songs.mod)
-app.register_blueprint(coworkers.mod)
-app.register_blueprint(programs.mod)
+# app.register_blueprint(coworkers.mod)
+# app.register_blueprint(programs.mod)
 
 
 @app.route('/')

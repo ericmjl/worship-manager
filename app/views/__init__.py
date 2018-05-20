@@ -2,22 +2,34 @@
 This module contains elements commonly used across all of the other modules
 under /views.
 """
-import os
-import os.path as osp
-
 from hanziconv import HanziConv
 
 from tinydb import TinyDB
 
+import boto3
+import yaml
+from pathlib import Path
+
 # Commonly-used paths.
-data_folder = osp.join(os.environ['HOME'], '.worship-manager', 'data')
-db_folder = osp.join(data_folder, 'database')
-upload_folder = osp.join(data_folder, 'files')  # upload folder
+home = Path.home()
+worship_dir = home / '.worship-manager'
+data_dir = worship_dir / 'data'
+db_dir = data_dir / 'database'
+upload_dir = data_dir / 'files'
 
 # Common database objects.
-song_db = TinyDB(osp.join(db_folder, 'song.db'))
-coworker_db = TinyDB(osp.join(db_folder, 'coworker.db'))
-program_db = TinyDB(osp.join(db_folder, 'program.db'))
+song_db = TinyDB(db_dir / 'song.db')
+coworker_db = TinyDB(db_dir / 'coworker.db')
+program_db = TinyDB(db_dir / 'program.db')
+
+# Load configuration file.
+with open(data_dir / 'config.yaml', 'r+') as f:
+    config = yaml.load(f)
+
+# Download database
+bucket = config['bucket']
+s3 = boto3.resource('s3')
+s3.Bucket(bucket).download_file('song.db', db_dir / 'song.db')
 
 # Commonly-used text conversion
 hzc = HanziConv()
