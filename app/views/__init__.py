@@ -22,15 +22,6 @@ song_db = TinyDB(db_dir / 'song.db')
 coworker_db = TinyDB(db_dir / 'coworker.db')
 program_db = TinyDB(db_dir / 'program.db')
 
-# Load configuration file.
-with open(data_dir / 'config.yaml', 'r+') as f:
-    config = yaml.load(f)
-
-# Download database
-bucket = config['bucket']
-s3 = boto3.resource('s3')
-s3.Bucket(bucket).download_file('song.db', db_dir / 'song.db')
-
 # Commonly-used text conversion
 hzc = HanziConv()
 convert = hzc.toTraditional
