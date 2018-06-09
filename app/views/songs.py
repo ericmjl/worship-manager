@@ -1,6 +1,6 @@
-import uuid
 import json
-import os.path as osp
+import uuid
+from pathlib import Path
 
 import boto3
 import yaml
@@ -11,7 +11,7 @@ from tinydb.operations import delete
 from ..datamodels import Song
 from ..utils.song_utils import (allowed_file, clean_arrangement,
                                 update_song_info)
-from .__init__ import song_db, upload_folder
+from .__init__ import song_db, upload_dir
 
 mod = Blueprint('songs', __name__, url_prefix='/songs')
 
@@ -37,9 +37,7 @@ def view(eid):
     Displays a page to view a particular song. The view page doubles up as the
     edit page as well.
 
-    :param eid: The eid of the song in the database.
-    :type eid: int
-
+    :param int eid: The eid of the song in the database.
     :returns: Renders the view page for a single song.
     """
     song = song_db.get(eid=eid)
@@ -180,7 +178,7 @@ def upload_sheet_music(eid):
         # Compute the song filename.
         fname = f'{str(uuid.uuid4())}.pdf'
         # Save the file to disk.
-        fpath = osp.join(upload_folder, fname)
+        fpath = upload_dir / fname
         f.save(fpath)
         # Save the file to S3
         s3 = boto3.resource('s3')
@@ -208,8 +206,7 @@ def download_sheet_music(eid):
               changes in the future...
     """
     song = song_db.get(eid=eid)
-    # return send_from_directory(upload_folder, filename=song['sheet_music'])
-    return send_file(osp.join('..', upload_folder, song['sheet_music']))
+    return send_file(Path('..') / upload_dir / song['sheet_music'])
 
 
 @mod.route('/<int:eid>/sheet_music/delete', methods=['POST'])

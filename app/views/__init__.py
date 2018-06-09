@@ -6,8 +6,6 @@ from hanziconv import HanziConv
 
 from tinydb import TinyDB
 
-import boto3
-import yaml
 from pathlib import Path
 
 # Commonly-used paths.
