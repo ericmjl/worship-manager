@@ -29,8 +29,8 @@ def view_all():
     return render_template('songs.html.j2', all_songs=all_songs)
 
 
-@mod.route('/<int:eid>/view')
-@mod.route('/<int:eid>/edit')
+# @mod.route('/<int:eid>/view')
+# @mod.route('/<int:eid>/edit')
 @mod.route('/<int:eid>')
 def view(eid):
     """
@@ -44,7 +44,7 @@ def view(eid):
     return render_template('song.html.j2', song=song)
 
 
-@mod.route('/add', methods=['POST'])
+# @mod.route('/add', methods=['POST'])
 @mod.route('/add')
 def new():
     """
@@ -93,7 +93,7 @@ def update(eid):
     return render_template('song.html.j2', song=song)
 
 
-@mod.route('/<int:eid>/remove', methods=['POST'])
+@mod.route('/<int:eid>/remove')
 def remove(eid):
     """
     Removes a song from the database.
@@ -151,7 +151,7 @@ def remove_lyrics_section(eid, section_id):
 
 
 @mod.route('/<int:eid>/sheet_music/upload', methods=['POST'])
-@mod.route('/<int:eid>/sheet_music/upload')
+# @mod.route('/<int:eid>/sheet_music/upload')
 def upload_sheet_music(eid):
     """
     Uploads a PDF of the sheet music for the song.
@@ -190,7 +190,7 @@ def upload_sheet_music(eid):
         return redirect(f'/songs/{eid}')
 
 
-@mod.route('/<int:eid>/sheet_music/download', methods=['POST'])
+# @mod.route('/<int:eid>/sheet_music/download', methods=['POST'])
 @mod.route('/<int:eid>/sheet_music/download')
 def download_sheet_music(eid):
     """
@@ -209,7 +209,7 @@ def download_sheet_music(eid):
     return send_file(Path('..') / upload_dir / song['sheet_music'])
 
 
-@mod.route('/<int:eid>/sheet_music/delete', methods=['POST'])
+# @mod.route('/<int:eid>/sheet_music/delete', methods=['POST'])
 @mod.route('/<int:eid>/sheet_music/delete')
 def delete_sheet_music(eid):
     """
@@ -232,7 +232,7 @@ def delete_sheet_music(eid):
     return redirect(f'/songs/{eid}')
 
 
-@mod.route('/clean', methods=['POST'])
+# @mod.route('/clean', methods=['POST'])
 @mod.route('/clean')
 def clean_database():
     """
@@ -250,7 +250,7 @@ def clean_database():
     return redirect('/songs/')
 
 
-@mod.route('/export', methods=['POST'])
+# @mod.route('/export', methods=['POST'])
 @mod.route('/export')
 def export_database():
     """
@@ -266,7 +266,7 @@ def export_database():
     return yaml.dump(data, default_flow_style=False)
 
 
-@mod.route('/<int:eid>/slides', methods=['POST'])
+# @mod.route('/<int:eid>/slides', methods=['POST'])
 @mod.route('/<int:eid>/slides')
 def view_slides(eid):
     """

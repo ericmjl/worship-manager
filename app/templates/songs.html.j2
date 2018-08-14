@@ -37,7 +37,7 @@
             <tbody>
                 {% for song in all_songs %}
                     <tr>
-                        <td><a href="/songs/{{ song.eid }}/edit">{{ song['name'] }}</a></td>
+                        <td><a href="/songs/{{ song.eid }}">{{ song['name'] }}</a></td>
                         <!-- Enable search by pinyin -->
                         <td style="display:none">{{ song['pinyin'] }}</td>
                         <td>
