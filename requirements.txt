@@ -5,4 +5,4 @@ pinyin==0.4.0
 Flask==1.0.2
 hanziconv==0.3.2
 google_api_python_client==1.7.6
-PyYAML==3.12
+PyYAML==3.13
