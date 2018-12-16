@@ -1,8 +1,8 @@
 from .datamodels import Lyrics, Song
 
 l = Lyrics()
-sections = ['A', 'B']
-lyrics = ['lyrics-1', 'lyrics-2']
+sections = ["A", "B"]
+lyrics = ["lyrics-1", "lyrics-2"]
 
 
 def test_lyrics():
@@ -15,5 +15,5 @@ def test_lyrics():
 
 
 def test_songs():
-    s = Song(lyrics=l, default_arrangement=['A', 'B'])
+    s = Song(lyrics=l, default_arrangement=["A", "B"])
     assert isinstance(s.lyrics, Lyrics)

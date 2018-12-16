@@ -24,17 +24,21 @@ def search_coworkers_db(term, db):
         for coworker in all_coworkers:
             for k, v in coworker.items():
                 # print(k, v)
-                if k == 'service':
+                if k == "service":
                     for srvc in v:
-                        if (srvc
-                                and term in srvc
-                                and coworker not in filtered_coworkers):
+                        if (
+                            srvc
+                            and term in srvc
+                            and coworker not in filtered_coworkers
+                        ):
                             filtered_coworkers.append(coworker)
                 else:
-                    if (v
-                            and hasattr(v, '__iter__')
-                            and term in v
-                            and coworker not in filtered_coworkers):
+                    if (
+                        v
+                        and hasattr(v, "__iter__")
+                        and term in v
+                        and coworker not in filtered_coworkers
+                    ):
                         filtered_coworkers.append(coworker)
         return filtered_coworkers
     else:
@@ -55,14 +59,16 @@ def get_grouped_coworkers(coworker_db):
     """
     p = Query()
     coworkers = dict()
-    coworkers['presiders'] = coworker_db.search(p.service.any(['presider']))
-    coworkers['vocalists'] = coworker_db.search(p.service.any(['vocalist']))
-    coworkers['pianists'] = coworker_db.search(p.service.any(['pianist']))
-    coworkers['speakers'] = coworker_db.search(p.service.any(['speaker']))
-    coworkers['audios'] = coworker_db.search(p.service.any(['audio']))
-    coworkers['powerpoints'] = coworker_db.search(p.service.any(['powerpoint']))  # noqa
-    coworkers['guitarists'] = coworker_db.search(p.service.any(['guitarist']))
-    coworkers['drummers'] = coworker_db.search(p.service.any(['drummer']))
+    coworkers["presiders"] = coworker_db.search(p.service.any(["presider"]))
+    coworkers["vocalists"] = coworker_db.search(p.service.any(["vocalist"]))
+    coworkers["pianists"] = coworker_db.search(p.service.any(["pianist"]))
+    coworkers["speakers"] = coworker_db.search(p.service.any(["speaker"]))
+    coworkers["audios"] = coworker_db.search(p.service.any(["audio"]))
+    coworkers["powerpoints"] = coworker_db.search(
+        p.service.any(["powerpoint"])
+    )  # noqa
+    coworkers["guitarists"] = coworker_db.search(p.service.any(["guitarist"]))
+    coworkers["drummers"] = coworker_db.search(p.service.any(["drummer"]))
 
     return coworkers
 
@@ -77,10 +83,10 @@ def update_coworker_info(request, eid, coworker_db):
     :param eid: the eid of the coworker to be updated in the database.
     :type eid: `int`
     """
-    data = {k: convert(v) for k, v in request.form.items() if k != 'service'}
-    data['service'] = []
-    data['pinyin'] = pinyin.get(data['name'], format="strip", delimiter=" ")
+    data = {k: convert(v) for k, v in request.form.items() if k != "service"}
+    data["service"] = []
+    data["pinyin"] = pinyin.get(data["name"], format="strip", delimiter=" ")
     # print(request.form.getlist('service'))
-    for serv in request.form.getlist('service'):
-        data['service'].append(serv)
+    for serv in request.form.getlist("service"):
+        data["service"].append(serv)
     coworker_db.update(data, eids=[eid])

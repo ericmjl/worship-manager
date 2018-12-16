@@ -29,7 +29,7 @@ def clean_arrangement(arrangement):
         lyrics dictionary.
     :rtype: `list(str)`
     """
-    arrangement = [a.strip(' ') for a in arrangement.split(',')]
+    arrangement = [a.strip(" ") for a in arrangement.split(",")]
     return arrangement
 
 
@@ -48,7 +48,7 @@ def is_valid_arrangement(arrangement, song):
 
     is_valid = True
     for section in arrangement:
-        if section not in song['lyrics'].keys():
+        if section not in song["lyrics"].keys():
             is_valid = False
             print(f'{section} not in {song["lyrics"].keys()}')
             break
@@ -73,10 +73,10 @@ def arrange_lyrics(arrangement, song_data):
     :rtype: `str`
     """
     # Now, we allow the default arrangement to be set.
-    arranged_lyrics = ''
+    arranged_lyrics = ""
     for a in arrangement:
-        arranged_lyrics += song_data['lyrics'][a]
-        arranged_lyrics += '\n\n'
+        arranged_lyrics += song_data["lyrics"][a]
+        arranged_lyrics += "\n\n"
     # print(arranged_lyrics)
     return arranged_lyrics
 
@@ -104,7 +104,7 @@ def search_songs_db(term, db):
     if term:
         for song in all_songs:
             for k, v in song.items():
-                if k == 'lyrics':
+                if k == "lyrics":
                     for sec, txt in v.items():
                         if txt and term in txt and song not in filtered_songs:
                             filtered_songs.append(song)
@@ -137,8 +137,10 @@ def allowed_file(filename):
     >>> allowed_file(file3)
     True
     """
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 
 def update_song_info(request, eid, song_db, exclude_id=None):
@@ -151,13 +153,13 @@ def update_song_info(request, eid, song_db, exclude_id=None):
     :param eid: the eid of the song to be updated in the database.
     :type eid: `int`
     """
-    data = {k: convert(v)
-            for k, v in request.form.items()
-            if k in song_datamodel}
-    data['pinyin'] = pinyin.get(data['name'], format="strip", delimiter=" ")
+    data = {
+        k: convert(v) for k, v in request.form.items() if k in song_datamodel
+    }
+    data["pinyin"] = pinyin.get(data["name"], format="strip", delimiter=" ")
 
     lyrics = get_lyrics(request=request, exclude_id=exclude_id)
-    data['lyrics'] = lyrics.to_dict()
+    data["lyrics"] = lyrics.to_dict()
     song_db.update(data, eids=[eid])
 
 
@@ -182,11 +184,10 @@ def get_lyrics(request, exclude_id=None):
     # Get lyrics
     lyr = Lyrics()
     for k, v in request.form.items():
-        if 'section-' in k:
-            idx = int(k.split('-')[-1])
+        if "section-" in k:
+            idx = int(k.split("-")[-1])
             if idx is not exclude_id:
-                lyrics = convert(request.form[f'lyrics-{idx}'])
+                lyrics = convert(request.form[f"lyrics-{idx}"])
                 section = request.form[k]
-                lyr.add_section(section=section,
-                                lyrics=lyrics)
+                lyr.add_section(section=section, lyrics=lyrics)
     return lyr

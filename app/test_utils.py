@@ -3,9 +3,15 @@ from collections import defaultdict
 import pytest
 
 from .datamodels import Lyrics
-from .utils import (allowed_file, arrange_lyrics, clean_arrangement,
-                    get_lyrics, is_valid_arrangement, search_songs_db,
-                    update_song_info)
+from .utils import (
+    allowed_file,
+    arrange_lyrics,
+    clean_arrangement,
+    get_lyrics,
+    is_valid_arrangement,
+    search_songs_db,
+    update_song_info,
+)
 
 
 # Define a mock "request" class to mimick the real "request" object returned.
@@ -34,26 +40,30 @@ class Database(object):
 def to_request(song_data):
     r = Request()
     for k, v in song_data.items():
-        if k == 'lyrics':
+        if k == "lyrics":
             for i, (section, lyrics) in enumerate(v.items()):
-                r.form[f'section-{i+1}'] = section
-                r.form[f'lyrics-{i+1}'] = lyrics
+                r.form[f"section-{i+1}"] = section
+                r.form[f"lyrics-{i+1}"] = lyrics
         else:
             r.form[k] = v
     return r
 
 
 # Setup some mock data for tests below.
-song1_data = {'lyrics': {'A': 'lyrics1', 'B': 'lyrics2', 'C': 'lyrics3'},
-              'name': 'test_song',
-              'composer': '',
-              'copyright': 'copyright',
-              'pinyin': 't e s t _ s o n g'}
-song2_data = {'lyrics': {'A': 'lyrics1', 'B': 'lyrics2', 'C': 'lyrics3'},
-              'name': 'test_song2',
-              'composer': '',
-              'copyright': 'copyright',
-              'pinyin': 't e s t _ s o n g 2'}
+song1_data = {
+    "lyrics": {"A": "lyrics1", "B": "lyrics2", "C": "lyrics3"},
+    "name": "test_song",
+    "composer": "",
+    "copyright": "copyright",
+    "pinyin": "t e s t _ s o n g",
+}
+song2_data = {
+    "lyrics": {"A": "lyrics1", "B": "lyrics2", "C": "lyrics3"},
+    "name": "test_song2",
+    "composer": "",
+    "copyright": "copyright",
+    "pinyin": "t e s t _ s o n g 2",
+}
 request = to_request(song1_data)
 
 song_db = Database()
@@ -64,10 +74,10 @@ song_db.update(song2_data, [2])
 def test_clean_arrangement():
     # This first test is a "correctness" test - we give a valid input and
     # check to make sure that the output is valid too.
-    arrangement = 'A, B, A, C'
+    arrangement = "A, B, A, C"
     new_arrangement = clean_arrangement(arrangement)
 
-    assert new_arrangement == ['A', 'B', 'A', 'C']
+    assert new_arrangement == ["A", "B", "A", "C"]
 
     # This second test is an "incorrectness" test - we give it an invalid input
     # and check that an error is raised.
@@ -78,26 +88,26 @@ def test_clean_arrangement():
 
 
 def test_is_valid_arrangement():
-    arrangement = 'A, B, A, C'
+    arrangement = "A, B, A, C"
     cleaned_arrangement = clean_arrangement(arrangement)
     assert is_valid_arrangement(cleaned_arrangement, song1_data)
 
     with pytest.raises(AssertionError):
-        assert is_valid_arrangement('A, B, A, D', song1_data)
+        assert is_valid_arrangement("A, B, A, D", song1_data)
 
 
 def test_arrange_lyrics():
     # This first test is the "correctness" test. Give valid input, return
     # valid output.
-    arrangement = ['A', 'B']
+    arrangement = ["A", "B"]
 
     arranged_lyrics = arrange_lyrics(arrangement, song1_data)
 
-    assert arranged_lyrics == 'lyrics1\n\nlyrics2\n\n'
+    assert arranged_lyrics == "lyrics1\n\nlyrics2\n\n"
 
     # The second test is an "incorrectness" test. Give an invalid input,
     # check that an error is raised.
-    invalid_arrg = ['A', 'D']
+    invalid_arrg = ["A", "D"]
     with pytest.raises(KeyError):
         arranged_lyrics = arrange_lyrics(invalid_arrg, song1_data)
 
@@ -106,14 +116,14 @@ def test_get_lyrics():
     # This is the "correctness" test.
     lyrics = get_lyrics(request)
     assert isinstance(lyrics, Lyrics)
-    assert lyrics.sections['A'] == 'lyrics1'
-    assert lyrics.sections['B'] == 'lyrics2'
+    assert lyrics.sections["A"] == "lyrics1"
+    assert lyrics.sections["B"] == "lyrics2"
 
     # This next test explicitly tests the exclusion of a section.
     lyrics = get_lyrics(request, exclude_id=1)
-    assert lyrics.sections['B'] == 'lyrics2'
+    assert lyrics.sections["B"] == "lyrics2"
     with pytest.raises(KeyError):
-        assert lyrics.sections['A'] == 'lyrics1'
+        assert lyrics.sections["A"] == "lyrics1"
 
 
 def test_update_song_info():
@@ -133,15 +143,15 @@ def test_update_song_info():
 
 
 def test_allowed_file():
-    assert allowed_file('myfile.pdf')
-    assert not allowed_file('myfile.jpg')
+    assert allowed_file("myfile.pdf")
+    assert not allowed_file("myfile.jpg")
 
 
 def test_search_songs_db():
-    term = 'song2'
+    term = "song2"
     filtered_songs = search_songs_db(term, song_db)
     assert len(filtered_songs) == 1
 
-    term = 'test_song'
+    term = "test_song"
     filtered_songs = search_songs_db(term, song_db)
     assert len(filtered_songs) == 2
