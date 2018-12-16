@@ -1,11 +1,10 @@
 from flask import Flask, render_template
 
-from .views import coworkers, programs, songs
+from .views import songs
 
 app = Flask(__name__)
 app.register_blueprint(songs.mod)
-# app.register_blueprint(coworkers.mod)
-# app.register_blueprint(programs.mod)
+# Register other blueprints later.
 
 
 @app.route('/')
