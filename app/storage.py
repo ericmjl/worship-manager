@@ -15,7 +15,7 @@ class YAMLStorage(Storage):
                 return None  # (3)
 
     def write(self, data):
-        with open(self.filename, 'w') as handle:
+        with open(self.filename, "w") as handle:
             yaml.dump(data, handle)
 
     def close(self):  # (4)

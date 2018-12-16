@@ -29,9 +29,17 @@ class Song(object):
     :param youtube: URL to a YouTube video.
     :type youtube: `str`
     """
-    def __init__(self, name='', copyright='',
-                 composer='', lyrics=None, ccli='',
-                 default_arrangement=None, youtube=''):
+
+    def __init__(
+        self,
+        name="",
+        copyright="",
+        composer="",
+        lyrics=None,
+        ccli="",
+        default_arrangement=None,
+        youtube="",
+    ):
         self.name = name
         self.pinyin_name = pinyin.get(self.name, format="strip", delimiter=" ")
         self.copyright = copyright
@@ -68,8 +76,9 @@ class Song(object):
         # a key in the lyrics' sections.
         if default_arrangement:
             for section in default_arrangement:
-                assert section in self.lyrics.sections.keys(), \
-                    f'{section} not specified'
+                assert (
+                    section in self.lyrics.sections.keys()
+                ), f"{section} not specified"
 
             # Now, we allow the default arrangement to be set.
             self.default_arrangement = default_arrangement
@@ -81,6 +90,7 @@ class Lyrics(object):
 
     :attr sections: A key-value pairing of section to lyrics.
     """
+
     def __init__(self):
         self.sections = dict()
 
@@ -133,8 +143,17 @@ class Coworker(object):
     :param gender: Coworker's gender. Genesis 1:26-27
     :type gender: `str`, one of "M" or "F".
     """
-    def __init__(self, name="", alias="", fellowship="", email="", phone="",
-                 service=[], gender=""):
+
+    def __init__(
+        self,
+        name="",
+        alias="",
+        fellowship="",
+        email="",
+        phone="",
+        service=[],
+        gender="",
+    ):
         self.name = name
         self.alias = alias
         self.fellowship = fellowship
@@ -206,13 +225,26 @@ class Program(object):
     .. note:: Arrangements are stored in the corresponding `{song}_arrangement`
               object attribute.
     """
-    def __init__(self, date='',
-                 presider='',
-                 pianist='', guitarist='', drummer='',
-                 vocalist1='', vocalist2='', vocalist3='',
-                 speaker='',
-                 audio='', powerpoint='',
-                 song1='', song2='', song3='', offering='', response=''):
+
+    def __init__(
+        self,
+        date="",
+        presider="",
+        pianist="",
+        guitarist="",
+        drummer="",
+        vocalist1="",
+        vocalist2="",
+        vocalist3="",
+        speaker="",
+        audio="",
+        powerpoint="",
+        song1="",
+        song2="",
+        song3="",
+        offering="",
+        response="",
+    ):
 
         # Coworkers
         self.date = date
@@ -244,7 +276,7 @@ class Program(object):
 
 
 class Announcement(object):
-    def __init__(self, title='', content=''):
+    def __init__(self, title="", content=""):
         """
         Data model for Announcement.
 
@@ -255,4 +287,4 @@ class Announcement(object):
         self.content = content
 
     def __repr__():
-        return self.title + '\n\n' + self.content
+        return self.title + "\n\n" + self.content

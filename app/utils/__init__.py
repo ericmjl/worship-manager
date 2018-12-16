@@ -6,7 +6,7 @@ from ..datamodels import Song
 song_datamodel = list(Song().to_dict().keys())
 
 # We only allow uploading of PDFs.
-ALLOWED_EXTENSIONS = set(['pdf'])
+ALLOWED_EXTENSIONS = set(["pdf"])
 
 
 def makedir(path):

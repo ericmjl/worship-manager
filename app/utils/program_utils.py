@@ -1,7 +1,9 @@
 from ..datamodels import Program
-from ..static import (standard_program_roles,
-                      standard_program_song_arrangements,
-                      standard_program_songs)
+from ..static import (
+    standard_program_roles,
+    standard_program_song_arrangements,
+    standard_program_songs,
+)
 from .song_utils import clean_arrangement, is_valid_arrangement
 
 
@@ -42,16 +44,17 @@ def save_program_information(request, eid, program_db, song_db):
     Commits program information to the program DB.
     """
     program_model = Program().to_dict()
-    form_data = {k: v
-                 for k, v in request.form.items()
-                 if k in program_model.keys()}
+    form_data = {
+        k: v for k, v in request.form.items() if k in program_model.keys()
+    }
 
     # Validate song arrangements
-    for song_label, song_arrangement in \
-            zip(standard_program_songs(), standard_program_song_arrangements()):  # noqa
+    for song_label, song_arrangement in zip(
+        standard_program_songs(), standard_program_song_arrangements()
+    ):  # noqa
         arrangement = clean_arrangement(form_data[song_arrangement])
         if form_data[song_label]:
             song = song_db.get(eid=int(form_data[song_label]))
             if not is_valid_arrangement(arrangement, song):
-                form_data[song_arrangement] = song['default_arrangement']
+                form_data[song_arrangement] = song["default_arrangement"]
     program_db.update(form_data, eids=[eid])

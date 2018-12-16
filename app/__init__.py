@@ -7,6 +7,6 @@ app.register_blueprint(songs.mod)
 # Register other blueprints later.
 
 
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('index.html.j2')
+    return render_template("index.html.j2")
