@@ -2,7 +2,7 @@ gspread==3.1.0
 tinydb==3.12.1
 pytest==4.0.2
 pinyin==0.4.0
-Flask==0.12.2
+Flask==1.0.2
 hanziconv==0.3.2
 google_api_python_client==1.6.3
 PyYAML==3.12
