@@ -1,5 +1,5 @@
 gspread==3.1.0
-tinydb==3.12.1
+tinydb==3.12.2
 pytest==4.0.2
 pinyin==0.4.0
 Flask==1.0.2
