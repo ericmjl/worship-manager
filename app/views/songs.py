@@ -187,9 +187,10 @@ def upload_sheet_music(eid):
         # Save the file to disk.
         fpath = str(upload_dir / fname)
         f.save(fpath)
+
         # Save the file to S3
         s3 = boto3.resource("s3")
-        bucket = "worship-manager"
+        bucket = os.environ["S3_BUCKET_NAME"]
         s3.Bucket(bucket).upload_file(
             fpath, fname, ExtraArgs={"ACL": "public-read"}
         )  # noqa: E501
@@ -208,13 +209,13 @@ def download_sheet_music(eid):
     :type eid: int
 
     :returns: The song sheet PDF.
-
-    .. note:: The path for sending the file is very hacky; assumes that `data/`
-              is one directory above `app/__init__.py`. Could be brittle to
-              changes in the future...
     """
     song = song_db.get(eid=eid)
-    return send_file(Path("..") / upload_dir / song["sheet_music"])
+    fname = song["sheet_music"]
+    s3 = boto3.resource("s3")
+    bucket = os.environ["S3_BUCKET_NAME"]
+    s3.Bucket(bucket).download_file(fname, f"/tmp/{fname}")
+    return send_file(f"/tmp/{fname}")
 
 
 @mod.route("/<int:eid>/sheet_music/delete")
@@ -296,7 +297,7 @@ def export_lyrics(eid):
     """
     song = song_db.get(eid=eid)
     output = lyrics_plaintext(song)
-    return render_template('song_export.html.j2', output=output)
+    return render_template("song_export.html.j2", output=output)
 
 
 def lyrics_plaintext(song):
@@ -312,7 +313,7 @@ def lyrics_plaintext(song):
     output += song["copyright"]
     output += "\n\n"
 
-    for section, lyrics in song['lyrics'].items():
+    for section, lyrics in song["lyrics"].items():
         output += section
         output += "\n"
         output += lyrics

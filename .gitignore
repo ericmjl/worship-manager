@@ -4,7 +4,7 @@ tmp/*
 data/*
 !data/Dockerfile
 credentials.json
-
+.vscode/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
