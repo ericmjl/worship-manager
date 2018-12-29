@@ -87,7 +87,7 @@
         <div class="col-12">
             {% if song['sheet_music'] %}
                 <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}">下載歌譜</a>
-                <button class="btn btn-danger btn-sm" type="submit" name="delete-sheet-music" formaction="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</button>
+                <a class="btn btn-danger btn-sm" href="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</a>
             {% else %}
             <label for="file-upload" class="custom-file" class="btn btn-default">
                 增添歌譜
