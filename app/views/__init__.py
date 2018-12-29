@@ -10,7 +10,12 @@ from pathlib import Path
 
 import boto3
 import os
+from dotenv import load_dotenv
 
+# Project Root
+root = Path('.')
+dotenv_path = root / '.env'
+load_dotenv(dotenv_path, verbose=True)
 
 # Commonly-used paths.
 home = Path.home()
@@ -26,7 +31,7 @@ upload_dir.mkdir(parents=True, exist_ok=True)
 
 # Get song database from S3.
 s3 = boto3.resource("s3")
-bucket = os.environ["S3_BUCKET_NAME"]
+bucket = os.getenv("S3_BUCKET_NAME")
 s3.Bucket(bucket).download_file("song.db", str(db_dir / "song.db"))
 
 # Common database objects.
