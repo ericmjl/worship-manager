@@ -185,7 +185,7 @@ def upload_sheet_music(eid):
         # Compute the song filename.
         fname = f"{str(uuid.uuid4())}.pdf"
         # Save the file to disk.
-        fpath = upload_dir / fname
+        fpath = str(upload_dir / fname)
         f.save(fpath)
         # Save the file to S3
         s3 = boto3.resource("s3")
@@ -287,3 +287,34 @@ def view_slides(eid):
         arrangement=arrangement,
         eid=eid,
     )
+
+
+@mod.route("/<int:eid>/export")
+def export_lyrics(eid):
+    """
+    View function for lyrics export.
+    """
+    song = song_db.get(eid=eid)
+    output = lyrics_plaintext(song)
+    return render_template('song_export.html.j2', output=output)
+
+
+def lyrics_plaintext(song):
+    """
+    Get lyrics as plaintext.
+    """
+    output = ""
+
+    output += song["default_arrangement"]
+    output += "\n\n\n\n"
+    output += song["composer"]
+    output += "\n"
+    output += song["copyright"]
+    output += "\n\n"
+
+    for section, lyrics in song['lyrics'].items():
+        output += section
+        output += "\n"
+        output += lyrics
+        output += "\n\n"
+    return output
