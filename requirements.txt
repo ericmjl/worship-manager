@@ -7,3 +7,4 @@ hanziconv==0.3.2
 google_api_python_client==1.7.7
 PyYAML==3.13
 gunicorn
+boto3
