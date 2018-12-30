@@ -3,6 +3,7 @@ channels:
 - defaults
 - conda-forge
 - ericmjl
+- bioconda
 dependencies:
 - python=3.7
 - flask
@@ -14,6 +15,11 @@ dependencies:
 - doc8
 - black
 - pycodestyle
+- imagemagick
+- perl-image-exiftool
+- python-dotenv
+- boto3
+- gunicorn
 - pip:
     - hanziconv
     - flask-breadcrumbs
@@ -23,3 +29,5 @@ dependencies:
     - gspread
     - oauth2client
     - PyOpenSSL
+    - preview-generator
+    - google_api_python_client
