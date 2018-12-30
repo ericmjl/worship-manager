@@ -206,8 +206,9 @@ def upload_sheet_music(eid):
         # )  # noqa: E501
         # Update the song database
         song_db.update({"sheet_music": fname}, eids=[eid])
-        # Go back to song page.
-        return redirect(f"/songs/{eid}")
+        # Redirect to preview generator, which will then generate the preview.
+        # This will then redirect back to the original.
+        return redirect(f"/songs/{eid}/preview")
 
 
 @mod.route("/<int:eid>/sheet_music/download")
