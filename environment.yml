@@ -19,6 +19,7 @@ dependencies:
 - python-dotenv
 - boto3
 - gunicorn
+- poppler
 - pip:
     - hanziconv
     - pinyin
