@@ -13,10 +13,14 @@
             {{ save_delete_buttons(song) }}
         </div>
     </div>
+    <hr>
     <div class="row">
-        <div class="form-group">
-            <div name="id" class="form-group">
-                <input type="hidden" name="id" value="{{ song.eid }}"></input>
+        <div class="col-12">
+            <h1>歌曲信息</h1>
+            <div class="form-group">
+                <div name="id" class="form-group">
+                    <input type="hidden" name="id" value="{{ song.eid }}"></input>
+                </div>
             </div>
         </div>
     </div>
@@ -47,6 +51,11 @@
         </div>
 
     </div>
+    <div class="row">
+        <div class="col-12">
+            <h1>歌詞</h1>
+        </div>
+    </div>
     <div class="row" id="div-default_arrangement">
         <div class="col-9" name="default_arrangement">
             <label for="default_arrangement">默認排版</label>
@@ -74,33 +83,44 @@
     <div class="row" id="row-button-update">
         <div class="col-12">
             <button class="btn btn-primary btn-sm" type="submit" name="refresh" formaction="/songs/{{ song.eid }}/update">更新</button>
+            <button class="btn btn-success btn-sm" type="submit" name="add-lyrics-section" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">增添曲段</button>
         </div>
     </div>
-    <hr>
     <div class="row" id="row-add-section-button">
         <div class="col-12">
-            <button class="btn btn-success btn-sm" type="submit" name="add-lyrics-section" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">增添曲段</button>
         </div>
     </div>
     <hr>
     <div class="row" id="row-upload-sheet-music-button">
-        <div class="col-12">
+        <div class="col-6">
+            <h1>歌譜</h1>
             {% if song['sheet_music'] %}
-                <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}">下載歌譜</a>
-                <a class="btn btn-danger btn-sm" href="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</a>
+                {# <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}">下載歌譜</a> #}
+                {% if song['pdf_preview'] %}
+                    <p>點擊下載歌譜</p>
+                    <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}">
+                        <img src="data:image/jpg;base64, {{ song.pdf_preview }}"></img>
+                    </a>
+                    <p>
+                        <a class="btn btn-success btn-sm" href="/songs/{{ song.eid }}/preview">更新預覽</a>
+                        <a class="btn btn-danger btn-sm" href="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</a>
+                    </p>
+                {% else %}
+                    <p>
+                        <a class="btn btn-danger btn-sm" href="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</a>
+                        <a class="btn btn-success btn-sm" href="/songs/{{ song.eid }}/preview">創造預覽</a>
+                    </p>
+                {% endif %}
             {% else %}
             <label for="file-upload" class="custom-file" class="btn btn-default">
                 增添歌譜
             </label>
             <input type="file" name="file-upload">
-            <button class="btn btn-success" type="submit" name="upload-button" formaction="/songs/{{ song.eid }}/sheet_music/upload">上傳</button>
+            <button class="btn btn-success btn-sm" type="submit" name="upload-button" formaction="/songs/{{ song.eid }}/sheet_music/upload">上傳</button>
             {% endif %}
         </div>
-    </div>
-    <hr>
-    <div class="row" name="youtube">
         <div class="col-6">
-            <p>視頻</p>
+            <h1>視頻</h1>
             {% if song['youtube'] %}
                 <iframe id="youtube" width="100%" height="315" src="{{ song['youtube']|replace('watch?v=', 'embed/') }}" frameborder="0" allowfullscreen></iframe>
             {% else %}

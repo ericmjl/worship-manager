@@ -9,3 +9,4 @@ PyYAML==3.13
 gunicorn
 boto3
 python-dotenv
+preview-generator

@@ -29,13 +29,15 @@ db_dir.mkdir(parents=True, exist_ok=True)
 upload_dir = data_dir / "files"
 upload_dir.mkdir(parents=True, exist_ok=True)
 
+db_path = db_dir / "song.db"
+
 # Get song database from S3.
 s3 = boto3.resource("s3")
 bucket = os.getenv("S3_BUCKET_NAME")
-s3.Bucket(bucket).download_file("song.db", str(db_dir / "song.db"))
+s3.Bucket(bucket).download_file("song.db", str(db_path))
 
 # Common database objects.
-song_db = TinyDB(db_dir / "song.db")
+song_db = TinyDB(db_path)
 
 # Commonly-used text conversion
 hzc = HanziConv()

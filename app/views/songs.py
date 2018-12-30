@@ -21,12 +21,17 @@ from ..utils.song_utils import (
     clean_arrangement,
     update_song_info,
 )
-from .__init__ import song_db, upload_dir
+from .__init__ import song_db, upload_dir, db_path
+
+from preview_generator.manager import PreviewManager
+import base64
 
 mod = Blueprint("songs", __name__, url_prefix="/songs")
 
 song_datamodel = list(Song().to_dict().keys())
 
+
+manager = PreviewManager('/tmp/cache/', create_folder= True)
 
 @mod.route("/")
 def view_all():
@@ -75,12 +80,15 @@ def save(eid):
     Saves the song to the database. This function calls on the
     `app.utils.update_song_info` function.
 
+    Also refreshes the database on s3.
+
     :param eid: The eid of the song to be saved.
     :type eid: int
 
     :returns: Redirects to the `/songs/` page (master table).
     """
     update_song_info(request=request, eid=eid, song_db=song_db)
+    s3ul(str(db_path), "song.db")
     return redirect("/songs/")
 
 
@@ -185,16 +193,17 @@ def upload_sheet_music(eid):
     if f and allowed_file(f.filename):
         # Compute the song filename.
         fname = f"{str(uuid.uuid4())}.pdf"
-        # Save the file to disk.
+        # Save the file to disk temporarily.
         fpath = str(upload_dir / fname)
         f.save(fpath)
 
         # Save the file to S3
-        s3 = boto3.resource("s3")
-        bucket = os.environ["S3_BUCKET_NAME"]
-        s3.Bucket(bucket).upload_file(
-            fpath, fname, ExtraArgs={"ACL": "public-read"}
-        )  # noqa: E501
+        s3ul(fpath, fname)
+        # s3 = boto3.resource("s3")
+        # bucket = os.environ["S3_BUCKET_NAME"]
+        # s3.Bucket(bucket).upload_file(
+        #     fpath, fname, ExtraArgs={"ACL": "public-read"}
+        # )  # noqa: E501
         # Update the song database
         song_db.update({"sheet_music": fname}, eids=[eid])
         # Go back to song page.
@@ -213,10 +222,39 @@ def download_sheet_music(eid):
     """
     song = song_db.get(eid=eid)
     fname = song["sheet_music"]
+    # Use s3dl utility function to conditionally download file.
+    s3dl(fname)
+    # NOTE: 30 December 2018: If the above line works, then we can delete the
+    # following 3 lines.
+    # s3 = boto3.resource("s3")
+    # bucket = os.environ["S3_BUCKET_NAME"]
+    # s3.Bucket(bucket).download_file(fname, f"/tmp/{fname}")
+    return send_file(f"/tmp/{fname}")
+
+
+def s3dl(fname):
+    """
+    Downloads a file from S3. Does this conditionally; if the file already
+    exists, then we do not download it.
+
+    Does not return anything
+    """
+    pathstr = f"/tmp/{fname}"
+    if not Path(pathstr).exists():
+        s3 = boto3.resource("s3")
+        bucket = os.environ["S3_BUCKET_NAME"]
+        s3.Bucket(bucket).download_file(fname, f"/tmp/{fname}")
+
+
+def s3ul(fpath, fname):
+    """
+    Uploads a file to S3.
+    """
     s3 = boto3.resource("s3")
     bucket = os.environ["S3_BUCKET_NAME"]
-    s3.Bucket(bucket).download_file(fname, f"/tmp/{fname}")
-    return send_file(f"/tmp/{fname}")
+    s3.Bucket(bucket).upload_file(
+        fpath, fname, ExtraArgs={"ACL": "public-read"}
+    )
 
 
 @mod.route("/<int:eid>/sheet_music/delete")
@@ -320,3 +358,29 @@ def lyrics_plaintext(song):
         output += lyrics
         output += "\n\n"
     return output
+
+
+def generate_songsheet_preview(fpath, song_db, eid):
+    """
+    Generates a JPEG preview of the sheet music, and stores it as a
+    base64-encoded string in the database.
+    """
+    # Generate preview of the file
+    thumbnail_file_path = manager.get_jpeg_preview(fpath, height=400)
+    # Base64 encode image for preview purposes
+    with open(thumbnail_file_path, 'rb') as thumbnail:
+        encoded = base64.b64encode(thumbnail.read())
+
+    # Save b64-encoded image to the database.
+    song_db.update({"pdf_preview": encoded.decode()}, eids=[eid])
+
+
+@mod.route('/<int:eid>/preview')
+def songsheet_preview(eid):
+    song = song_db.get(eid=eid)
+    fname = song["sheet_music"]
+    # Use s3dl utility function to conditionally download file.
+    s3dl(fname)
+    fpath = f"/tmp/{fname}"
+    generate_songsheet_preview(fpath, song_db, eid)
+    return redirect(f"/songs/{eid}")
