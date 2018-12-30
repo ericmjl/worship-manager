@@ -199,11 +199,6 @@ def upload_sheet_music(eid):
 
         # Save the file to S3
         s3ul(fpath, fname)
-        # s3 = boto3.resource("s3")
-        # bucket = os.environ["S3_BUCKET_NAME"]
-        # s3.Bucket(bucket).upload_file(
-        #     fpath, fname, ExtraArgs={"ACL": "public-read"}
-        # )  # noqa: E501
         # Update the song database
         song_db.update({"sheet_music": fname}, eids=[eid])
         # Redirect to preview generator, which will then generate the preview.
@@ -225,11 +220,6 @@ def download_sheet_music(eid):
     fname = song["sheet_music"]
     # Use s3dl utility function to conditionally download file.
     s3dl(fname)
-    # NOTE: 30 December 2018: If the above line works, then we can delete the
-    # following 3 lines.
-    # s3 = boto3.resource("s3")
-    # bucket = os.environ["S3_BUCKET_NAME"]
-    # s3.Bucket(bucket).download_file(fname, f"/tmp/{fname}")
     return send_file(f"/tmp/{fname}")
 
 
