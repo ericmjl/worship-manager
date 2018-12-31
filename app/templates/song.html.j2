@@ -98,7 +98,7 @@
                 {# <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}">下載歌譜</a> #}
                 {% if song['pdf_preview'] %}
                     <p>點擊下載歌譜</p>
-                    <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}">
+                    <a href="/songs/{{ song.eid }}/sheet_music/download">
                         <img src="data:image/jpg;base64, {{ song.pdf_preview }}"></img>
                     </a>
                     <p>
