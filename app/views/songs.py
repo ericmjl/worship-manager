@@ -220,32 +220,14 @@ def download_sheet_music(eid):
     fname = song["sheet_music"]
     # Use s3dl utility function to conditionally download file.
     s3dl(fname)
-    return send_file(f"/tmp/{fname}")
 
+    # Change the name of the file so that it is easier to read.
+    new_fname = f'{song["name"]}-{song["composer"]}-{song["copyright"]}.pdf'
+    os.system(f"cp /tmp/{fname} /tmp/{new_fname}")
 
-def s3dl(fname):
-    """
-    Downloads a file from S3. Does this conditionally; if the file already
-    exists, then we do not download it.
+    # Return the file.
+    return send_file(f"/tmp/{new_fname}", as_attachment=True)
 
-    Does not return anything
-    """
-    pathstr = f"/tmp/{fname}"
-    if not Path(pathstr).exists():
-        s3 = boto3.resource("s3")
-        bucket = os.environ["S3_BUCKET_NAME"]
-        s3.Bucket(bucket).download_file(fname, f"/tmp/{fname}")
-
-
-def s3ul(fpath, fname):
-    """
-    Uploads a file to S3.
-    """
-    s3 = boto3.resource("s3")
-    bucket = os.environ["S3_BUCKET_NAME"]
-    s3.Bucket(bucket).upload_file(
-        fpath, fname, ExtraArgs={"ACL": "public-read"}
-    )
 
 
 @mod.route("/<int:eid>/sheet_music/delete")
@@ -368,6 +350,9 @@ def generate_songsheet_preview(fpath, song_db, eid):
 
 @mod.route('/<int:eid>/preview')
 def songsheet_preview(eid):
+    """
+    Generates a JPEG preview for each file.
+    """
     song = song_db.get(eid=eid)
     fname = song["sheet_music"]
     # Use s3dl utility function to conditionally download file.
@@ -375,3 +360,61 @@ def songsheet_preview(eid):
     fpath = f"/tmp/{fname}"
     generate_songsheet_preview(fpath, song_db, eid)
     return redirect(f"/songs/{eid}")
+
+
+# @mod.route('/<int:eid>/update_filename')
+# def update_filename(eid):
+#     song = song_db.get(eid=eid)
+#     old_fname = song["sheet_music"]
+#     new_fname = f'{song["name"]}-{song["composer"]}-{song["copyright"]}.pdf'
+#     song_db.update({"sheet_music": new_fname})
+#     s3rename(old_fname, new_fname)
+#     return redirect(f"/songs/{eid}")
+
+
+"""
+Below are a bunch of s3-specific utility functions. I may refactor them
+out at a later date.
+"""
+
+def s3bucket():
+    s3 = boto3.resource("s3")
+    bucket = os.environ["S3_BUCKET_NAME"]
+    return s3.Bucket(bucket)
+
+
+def s3dl(fname):
+    """
+    Downloads a file from S3. Does this conditionally; if the file already
+    exists, then we do not download it.
+
+    Does not return anything
+    """
+    pathstr = f"/tmp/{fname}"
+    if not Path(pathstr).exists():
+        s3bucket().download_file(fname, f"/tmp/{fname}")
+
+
+def s3ul(fpath, fname):
+    """
+    Uploads a file to S3.
+    """
+    s3bucket().upload_file(
+        fpath, fname, ExtraArgs={"ACL": "public-read"}
+    )
+
+
+def s3del(fname):
+    """
+    Deletes a file from s3.
+    """
+    s3bucket().delete_objects(Delete={'Objects': [{'Key': fname}]})
+
+
+def s3rename(old, new):
+    """
+    Renames a file on s3.
+    """
+    s3dl(old)
+    s3ul(f'/tmp/{old}', new)
+    s3del(old)
