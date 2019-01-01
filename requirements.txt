@@ -6,7 +6,7 @@ Flask==1.0.2
 hanziconv==0.3.2
 google_api_python_client==1.7.7
 PyYAML==3.13
-gunicorn
-boto3
-python-dotenv
-preview-generator
+gunicorn==19.9.0
+boto3==1.9.71
+python-dotenv==0.10.1
+preview-generator==0.9
