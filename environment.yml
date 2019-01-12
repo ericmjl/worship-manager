@@ -20,6 +20,7 @@ dependencies:
 - boto3
 - gunicorn
 - poppler
+- pandas
 - pip:
     - hanziconv
     - pinyin
@@ -27,3 +28,4 @@ dependencies:
     - oauth2client
     - PyOpenSSL
     - preview-generator
+    - pgcli
