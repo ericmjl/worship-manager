@@ -1,4 +1,5 @@
 import json
+import yaml
 import uuid
 from pathlib import Path
 import os
@@ -21,7 +22,7 @@ from ..utils.song_utils import (
     clean_arrangement,
     update_song_info,
 )
-from .__init__ import song_db, upload_dir, db_path
+from .__init__ import conn, cur # song_db, upload_dir, db_path
 
 from preview_generator.manager import PreviewManager
 import base64
@@ -40,20 +41,22 @@ def view_all():
 
     :returns: Renders an HTML table of songs.
     """
-    all_songs = song_db.all()
+    cur.execute("SELECT * FROM songs")
+    all_songs = cur.fetchall()
     return render_template("songs.html.j2", all_songs=all_songs)
 
 
-@mod.route("/<int:eid>")
-def view(eid):
+@mod.route("/<int:id>")
+def view(id):
     """
     Displays a page to view a particular song. The view page doubles up as the
     edit page as well.
 
-    :param int eid: The eid of the song in the database.
+    :param int id: The id of the song in the database.
     :returns: Renders the view page for a single song.
     """
-    song = song_db.get(eid=eid)
+    cur.execute("SELECT * FROM songs WHERE id=id")
+    song = cur.fetchone()
     return render_template("song.html.j2", song=song)
 
 
@@ -62,79 +65,79 @@ def new():
     """
     Adds a new song to the database. To ensure that the song is entered into
     the database, we first create the song in the db, and then return the empty
-    information to Jinja, including the `eid`. In this way, we are guaranteed
-    an `eid` for the `/save` function (below).
+    information to Jinja, including the `id`. In this way, we are guaranteed
+    an `id` for the `/save` function (below).
 
     :returns: Renders the view page for a new song, but under the url path
               /add.
     """
     data = Song().to_dict()
-    eid = song_db.insert(data)
-    song = song_db.get(eid=eid)
+    id = song_db.insert(data)
+    song = song_db.get(id=id)
     return render_template("song.html.j2", song=song)
 
 
-@mod.route("/<int:eid>/save", methods=["POST"])
-def save(eid):
+@mod.route("/<int:id>/save", methods=["POST"])
+def save(id):
     """
     Saves the song to the database. This function calls on the
     `app.utils.update_song_info` function.
 
     Also refreshes the database on s3.
 
-    :param eid: The eid of the song to be saved.
-    :type eid: int
+    :param id: The id of the song to be saved.
+    :type id: int
 
     :returns: Redirects to the `/songs/` page (master table).
     """
-    update_song_info(request=request, eid=eid, song_db=song_db)
+    update_song_info(request=request, id=id, song_db=song_db)
     s3ul(str(db_path), "song.db")
     return redirect("/songs/")
 
 
-@mod.route("/<int:eid>/update", methods=["POST"])
-def update(eid):
+@mod.route("/<int:id>/update", methods=["POST"])
+def update(id):
     """
-    Updates the song information to the database. In contrast to `save(eid)`,
+    Updates the song information to the database. In contrast to `save(id)`,
     this function will come back to the song page.
 
-    :param eid: The eid of the song to be updated.
-    :type eid: int
+    :param id: The id of the song to be updated.
+    :type id: int
 
     :returns: Renders the view page for the song that was updated.
     """
-    update_song_info(request=request, eid=eid, song_db=song_db)
-    song = song_db.get(eid=eid)
+    update_song_info(request=request, id=id, song_db=song_db)
+    song = song_db.get(id=id)
     return render_template("song.html.j2", song=song)
 
 
-@mod.route("/<int:eid>/remove")
-def remove(eid):
+@mod.route("/<int:id>/remove")
+def remove(id):
     """
     Removes a song from the database.
 
-    :param eid: The eid of the song to be removed.
-    :type eid: int
+    :param id: The id of the song to be removed.
+    :type id: int
 
     :returns: Redirects to the `/songs/` page (master table).
     """
-    song_db.remove(eids=[eid])
+    song_db.remove(ids=[id])
     return redirect("/songs/")
 
 
-@mod.route("/<int:eid>/add_lyrics_section", methods=["POST"])
-def add_lyrics_section(eid):
+@mod.route("/<int:id>/add_lyrics_section", methods=["POST"])
+def add_lyrics_section(id):
     """
     Adds a lyrics section to the song.
 
-    :param eid: The eid of the song to add a lyrics section to.
-    :type eid: int
+    :param id: The id of the song to add a lyrics section to.
+    :type id: int
 
     :returns: Renders the view page for a song, but with an added lyrics
               section to the song.
     """
-    update_song_info(request=request, eid=eid, song_db=song_db)
-    song = song_db.get(eid=eid)
+    update_song_info(request=request, id=id, song_db=song_db)
+    song = song_db.get(id=id)
     sect_ct = len(song["lyrics"]) + 1
     # print(sect_ct)
     song["lyrics"][f"section-{sect_ct}"] = f"lyrics-{sect_ct}"
@@ -142,14 +145,14 @@ def add_lyrics_section(eid):
 
 
 @mod.route(
-    "/<int:eid>/remove_lyrics_section/<int:section_id>", methods=["POST"]
+    "/<int:id>/remove_lyrics_section/<int:section_id>", methods=["POST"]
 )
-def remove_lyrics_section(eid, section_id):
+def remove_lyrics_section(id, section_id):
     """
     Removes a lyric section from the song.
 
-    :param eid: The eid of the song to remove a section from.
-    :type eid: int
+    :param id: The id of the song to remove a section from.
+    :type id: int
 
     :param section_id: The section ID to be removed.
     :type section_id: str
@@ -161,19 +164,19 @@ def remove_lyrics_section(eid, section_id):
               section removed.
     """
     update_song_info(
-        request=request, eid=eid, song_db=song_db, exclude_id=section_id
+        request=request, id=id, song_db=song_db, exclude_id=section_id
     )
-    song = song_db.get(eid=eid)
+    song = song_db.get(id=id)
     return render_template("song.html.j2", song=song)
 
 
-@mod.route("/<int:eid>/sheet_music/upload", methods=["POST"])
-def upload_sheet_music(eid):
+@mod.route("/<int:id>/sheet_music/upload", methods=["POST"])
+def upload_sheet_music(id):
     """
     Uploads a PDF of the sheet music for the song.
 
-    :param eid: The eid of the song for which a sheet music is to be attached.
-    :type eid: int
+    :param id: The id of the song for which a sheet music is to be attached.
+    :type id: int
 
     .. note:: The only acceptable upload formats are indicated in
               `app.utils.ALLOWED_EXTENSIONS`.
@@ -183,12 +186,12 @@ def upload_sheet_music(eid):
 
     if "file-upload" not in request.files:
         flash("No file part")
-        return redirect(f"/songs/{eid}")
+        return redirect(f"/songs/{id}")
     f = request.files["file-upload"]
 
     if f.filename == "":
         flash("No selected file")
-        return redirect(f"/songs/{eid}")
+        return redirect(f"/songs/{id}")
 
     if f and allowed_file(f.filename):
         # Compute the song filename.
@@ -200,23 +203,23 @@ def upload_sheet_music(eid):
         # Save the file to S3
         s3ul(fpath, fname)
         # Update the song database
-        song_db.update({"sheet_music": fname}, eids=[eid])
+        song_db.update({"sheet_music": fname}, ids=[id])
         # Redirect to preview generator, which will then generate the preview.
         # This will then redirect back to the original.
-        return redirect(f"/songs/{eid}/preview")
+        return redirect(f"/songs/{id}/preview")
 
 
-@mod.route("/<int:eid>/sheet_music/download")
-def download_sheet_music(eid):
+@mod.route("/<int:id>/sheet_music/download")
+def download_sheet_music(id):
     """
     Returns the sheet music to be downloaded.
 
-    :param eid: The eid of the song.
-    :type eid: int
+    :param id: The id of the song.
+    :type id: int
 
     :returns: The song sheet PDF.
     """
-    song = song_db.get(eid=eid)
+    song = song_db.get(id=id)
     fname = song["sheet_music"]
     # Use s3dl utility function to conditionally download file.
     s3dl(fname)
@@ -230,8 +233,8 @@ def download_sheet_music(eid):
 
 
 
-@mod.route("/<int:eid>/sheet_music/delete")
-def delete_sheet_music(eid):
+@mod.route("/<int:id>/sheet_music/delete")
+def delete_sheet_music(id):
     """
     Deletes the sheet music from the song.
 
@@ -242,11 +245,11 @@ def delete_sheet_music(eid):
 
     .. todo:: Make sure to fix the problem indicated in the note above.
 
-    :param eid: The eid of the song to remove sheet music from.
-    :type eid: int
+    :param id: The id of the song to remove sheet music from.
+    :type id: int
     """
-    song_db.update(delete("sheet_music"), eids=[eid])
-    return redirect(f"/songs/{eid}")
+    song_db.update(delete("sheet_music"), ids=[id])
+    return redirect(f"/songs/{id}")
 
 
 @mod.route("/clean")
@@ -262,7 +265,7 @@ def clean_database():
             if k == "id":
                 pass
             elif k not in song_datamodel:
-                song_db.update(delete(k), eids=[s.eid])
+                song_db.update(delete(k), ids=[s.id])
     return redirect("/songs/")
 
 
@@ -281,33 +284,33 @@ def export_database():
     return yaml.dump(data, default_flow_style=False)
 
 
-@mod.route("/<int:eid>/slides")
-def view_slides(eid):
+@mod.route("/<int:id>/slides")
+def view_slides(id):
     """
     Creates `reveal.js` slides for the song of interest, using the default
     arrangement specified in the song's database entry.
 
-    :param eid: The eid of the song to create slides for.
-    :type eid: int
+    :param id: The id of the song to create slides for.
+    :type id: int
 
     :returns: Renders the HTML slides for that song.
     """
-    song = song_db.get(eid=eid)
+    song = song_db.get(id=id)
     arrangement = clean_arrangement(song["default_arrangement"])
     return render_template(
         "slides_single_song.html.j2",
         song=song,
         arrangement=arrangement,
-        eid=eid,
+        id=id,
     )
 
 
-@mod.route("/<int:eid>/export")
-def export_lyrics(eid):
+@mod.route("/<int:id>/export")
+def export_lyrics(id):
     """
     View function for lyrics export.
     """
-    song = song_db.get(eid=eid)
+    song = song_db.get(id=id)
     output = lyrics_plaintext(song)
     return render_template("song_export.html.j2", output=output)
 
@@ -333,7 +336,7 @@ def lyrics_plaintext(song):
     return output
 
 
-def generate_songsheet_preview(fpath, song_db, eid):
+def generate_songsheet_preview(fpath, song_db, id):
     """
     Generates a JPEG preview of the sheet music, and stores it as a
     base64-encoded string in the database.
@@ -345,31 +348,31 @@ def generate_songsheet_preview(fpath, song_db, eid):
         encoded = base64.b64encode(thumbnail.read())
 
     # Save b64-encoded image to the database.
-    song_db.update({"pdf_preview": encoded.decode()}, eids=[eid])
+    song_db.update({"pdf_preview": encoded.decode()}, ids=[id])
 
 
-@mod.route('/<int:eid>/preview')
-def songsheet_preview(eid):
+@mod.route('/<int:id>/preview')
+def songsheet_preview(id):
     """
     Generates a JPEG preview for each file.
     """
-    song = song_db.get(eid=eid)
+    song = song_db.get(id=id)
     fname = song["sheet_music"]
     # Use s3dl utility function to conditionally download file.
     s3dl(fname)
     fpath = f"/tmp/{fname}"
-    generate_songsheet_preview(fpath, song_db, eid)
-    return redirect(f"/songs/{eid}")
+    generate_songsheet_preview(fpath, song_db, id)
+    return redirect(f"/songs/{id}")
 
 
-# @mod.route('/<int:eid>/update_filename')
-# def update_filename(eid):
-#     song = song_db.get(eid=eid)
+# @mod.route('/<int:id>/update_filename')
+# def update_filename(id):
+#     song = song_db.get(id=id)
 #     old_fname = song["sheet_music"]
 #     new_fname = f'{song["name"]}-{song["composer"]}-{song["copyright"]}.pdf'
 #     song_db.update({"sheet_music": new_fname})
 #     s3rename(old_fname, new_fname)
-#     return redirect(f"/songs/{eid}")
+#     return redirect(f"/songs/{id}")
 
 
 """
