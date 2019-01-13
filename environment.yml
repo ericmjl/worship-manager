@@ -21,6 +21,7 @@ dependencies:
 - gunicorn
 - poppler
 - pandas
+- pylint
 - pip:
     - hanziconv
     - pinyin
