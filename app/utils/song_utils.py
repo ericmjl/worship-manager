@@ -1,10 +1,12 @@
 """
 Utility functions used in songs.
 """
+import json
+
 import pinyin
 
 from ..datamodels import Lyrics
-from ..views.__init__ import convert
+from ..config import convert
 from .__init__ import ALLOWED_EXTENSIONS, song_datamodel
 
 
@@ -143,7 +145,14 @@ def allowed_file(filename):
     )
 
 
-def update_song_info(request, id, cur, exclude_id=None):
+def get_one_song(id):
+    cur.execute(f"SELECT * FROM songs WHERE id={id}")
+    song = cur.fetchone()
+    return song
+
+
+
+def update_song_info(request, id, cur, conn, exclude_id=None):
     """
     Updates song information in database.
 
@@ -159,12 +168,31 @@ def update_song_info(request, id, cur, exclude_id=None):
     # data["pinyin"] = pinyin.get(data["name"], format="strip", delimiter=" ")
 
     lyrics = get_lyrics(request=request, exclude_id=exclude_id)
-    data["lyrics"] = json.dumps(lyrics.to_dict())
-    song_db.update(data, ids=[id])
+    data["lyrics"] = json.dumps(lyrics.to_dict(), ensure_ascii=False)
 
+    if not data.get('sheet_music'):
+        data['sheet_music'] = "NULL"
+    if not data.get('pdf_preview'):
+        data['pdf_preview'] = "NULL"
 
-import json
-
+    # Build the SQL query
+    query = f"""
+    UPDATE "songs"
+    SET
+        "name"='{data["name"]}',
+        "copyright"='{data["copyright"]}',
+        "lyrics"='{data["lyrics"]}',
+        "ccli"='{data["ccli"]}',
+        "default_arrangement"='{data['default_arrangement']}',
+        "youtube"='{data['youtube']}',
+        "sheet_music"='{data['sheet_music']}',
+        "pdf_preview"='{data['pdf_preview']}',
+        "composer"='{data['composer']}'
+    WHERE
+        "id"={id}
+    """
+    cur.execute(query)
+    conn.commit()
 
 def get_lyrics(request, exclude_id=None):
     """
