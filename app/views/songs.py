@@ -1,35 +1,22 @@
+import base64
 import json
-import yaml
+import os
 import uuid
 from pathlib import Path
-import os
 
 import boto3
 import yaml
-from flask import (
-    Blueprint,
-    flash,
-    redirect,
-    render_template,
-    request,
-    send_file,
-)
+from flask import (Blueprint, flash, redirect, render_template, request,
+                   send_file)
+from preview_generator.manager import PreviewManager
 from tinydb.operations import delete
 
-from ..datamodels import Song
-from ..utils.song_utils import (
-    allowed_file,
-    clean_arrangement,
-    update_song_info,
-)
-from .__init__ import conn, cur # song_db, upload_dir, db_path
-
-from preview_generator.manager import PreviewManager
-import base64
+from ..utils.song_utils import (allowed_file, clean_arrangement, get_one_song,
+                                update_song_info)
+from ..config import conn, cur
 
 mod = Blueprint("songs", __name__, url_prefix="/songs")
 
-song_datamodel = list(Song().to_dict().keys())
 
 
 manager = PreviewManager('/tmp/cache/', create_folder= True)
@@ -55,8 +42,7 @@ def view(id):
     :param int id: The id of the song in the database.
     :returns: Renders the view page for a single song.
     """
-    cur.execute("SELECT * FROM songs WHERE id=id")
-    song = cur.fetchone()
+    song = get_one_song(id)
     return render_template("song.html.j2", song=song)
 
 
@@ -71,9 +57,9 @@ def new():
     :returns: Renders the view page for a new song, but under the url path
               /add.
     """
-    data = Song().to_dict()
-    id = song_db.insert(data)
-    song = song_db.get(id=id)
+    # data = Song().to_dict()
+    # id = song_db.insert(data)
+    # song = song_db.get(id=id)
     return render_template("song.html.j2", song=song)
 
 
@@ -90,8 +76,9 @@ def save(id):
 
     :returns: Redirects to the `/songs/` page (master table).
     """
-    update_song_info(request=request, id=id, song_db=song_db)
-    s3ul(str(db_path), "song.db")
+
+    update_song_info(request, id=id, cur=cur, conn=conn)
+    # s3ul(str(db_path), "song.db")
     return redirect("/songs/")
 
 
@@ -106,8 +93,8 @@ def update(id):
 
     :returns: Renders the view page for the song that was updated.
     """
-    update_song_info(request=request, id=id, song_db=song_db)
-    song = song_db.get(id=id)
+    update_song_info(request, id=id, cur=cur, conn=conn)
+    song = get_one_song(id)
     return render_template("song.html.j2", song=song)
 
 
@@ -136,8 +123,8 @@ def add_lyrics_section(id):
     :returns: Renders the view page for a song, but with an added lyrics
               section to the song.
     """
-    update_song_info(request=request, id=id, song_db=song_db)
-    song = song_db.get(id=id)
+    update_song_info(request, id=id, cur=cur, conn=conn)
+    song = get_one_song(id=id)
     sect_ct = len(song["lyrics"]) + 1
     # print(sect_ct)
     song["lyrics"][f"section-{sect_ct}"] = f"lyrics-{sect_ct}"
@@ -163,10 +150,8 @@ def remove_lyrics_section(id, section_id):
     :returns: Renders the view page for the song, but with the indicated
               section removed.
     """
-    update_song_info(
-        request=request, id=id, song_db=song_db, exclude_id=section_id
-    )
-    song = song_db.get(id=id)
+    update_song_info(request, id=id, cur=cur, conn=conn, exclude_id=section_id)
+    song = get_one_song(id)
     return render_template("song.html.j2", song=song)
 
 
@@ -219,7 +204,7 @@ def download_sheet_music(id):
 
     :returns: The song sheet PDF.
     """
-    song = song_db.get(id=id)
+    song = get_one_song(id)
     fname = song["sheet_music"]
     # Use s3dl utility function to conditionally download file.
     s3dl(fname)
@@ -295,7 +280,8 @@ def view_slides(id):
 
     :returns: Renders the HTML slides for that song.
     """
-    song = song_db.get(id=id)
+    cur.execute(f"SELECT * FROM songs WHERE id={id}")
+    song = cur.fetchone()
     arrangement = clean_arrangement(song["default_arrangement"])
     return render_template(
         "slides_single_song.html.j2",
@@ -310,7 +296,8 @@ def export_lyrics(id):
     """
     View function for lyrics export.
     """
-    song = song_db.get(id=id)
+    cur.execute(f"SELECT * FROM songs WHERE id={id}")
+    song = cur.fetchone()
     output = lyrics_plaintext(song)
     return render_template("song_export.html.j2", output=output)
 
@@ -356,7 +343,8 @@ def songsheet_preview(id):
     """
     Generates a JPEG preview for each file.
     """
-    song = song_db.get(id=id)
+    cur.execute(f"SELECT * FROM songs WHERE id={id}")
+    song = cur.fetchone()
     fname = song["sheet_music"]
     # Use s3dl utility function to conditionally download file.
     s3dl(fname)
