@@ -30,3 +30,4 @@ dependencies:
     - PyOpenSSL
     - preview-generator
     - pgcli
+    - flask_sqlalchemy
