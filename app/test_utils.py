@@ -3,15 +3,9 @@ from collections import defaultdict
 import pytest
 
 from .datamodels import Lyrics
-from .utils import (
-    allowed_file,
-    arrange_lyrics,
-    clean_arrangement,
-    get_lyrics,
-    is_valid_arrangement,
-    search_songs_db,
-    update_song_info,
-)
+from .utils import (allowed_file, arrange_lyrics, clean_arrangement,
+                    get_lyrics, is_valid_arrangement, search_songs_db,
+                    update_song_info)
 
 
 # Define a mock "request" class to mimick the real "request" object returned.
