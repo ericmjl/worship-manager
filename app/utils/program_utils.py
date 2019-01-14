@@ -1,7 +1,9 @@
 from ..datamodels import Program
-from ..static import (standard_program_roles,
-                      standard_program_song_arrangements,
-                      standard_program_songs)
+from ..static import (
+    standard_program_roles,
+    standard_program_song_arrangements,
+    standard_program_songs,
+)
 from .song_utils import clean_arrangement, is_valid_arrangement
 
 

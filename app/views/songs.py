@@ -6,20 +6,29 @@ from pathlib import Path
 
 import boto3
 import yaml
-from flask import (Blueprint, flash, redirect, render_template, request,
-                   send_file)
+from flask import (
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_file,
+)
 from preview_generator.manager import PreviewManager
 from tinydb.operations import delete
 
-from ..utils.song_utils import (allowed_file, clean_arrangement, get_one_song,
-                                update_song_info)
+from ..utils.song_utils import (
+    allowed_file,
+    clean_arrangement,
+    get_one_song,
+    update_song_info,
+)
 from ..config import conn, cur
 
 mod = Blueprint("songs", __name__, url_prefix="/songs")
 
+manager = PreviewManager("/tmp/cache/", create_folder=True)
 
-
-manager = PreviewManager('/tmp/cache/', create_folder= True)
 
 @mod.route("/")
 def view_all():
@@ -217,7 +226,6 @@ def download_sheet_music(id):
     return send_file(f"/tmp/{new_fname}", as_attachment=True)
 
 
-
 @mod.route("/<int:id>/sheet_music/delete")
 def delete_sheet_music(id):
     """
@@ -284,10 +292,7 @@ def view_slides(id):
     song = cur.fetchone()
     arrangement = clean_arrangement(song["default_arrangement"])
     return render_template(
-        "slides_single_song.html.j2",
-        song=song,
-        arrangement=arrangement,
-        id=id,
+        "slides_single_song.html.j2", song=song, arrangement=arrangement, id=id
     )
 
 
@@ -331,14 +336,14 @@ def generate_songsheet_preview(fpath, song_db, id):
     # Generate preview of the file
     thumbnail_file_path = manager.get_jpeg_preview(fpath, height=400)
     # Base64 encode image for preview purposes
-    with open(thumbnail_file_path, 'rb') as thumbnail:
+    with open(thumbnail_file_path, "rb") as thumbnail:
         encoded = base64.b64encode(thumbnail.read())
 
     # Save b64-encoded image to the database.
     song_db.update({"pdf_preview": encoded.decode()}, ids=[id])
 
 
-@mod.route('/<int:id>/preview')
+@mod.route("/<int:id>/preview")
 def songsheet_preview(id):
     """
     Generates a JPEG preview for each file.
@@ -368,6 +373,7 @@ Below are a bunch of s3-specific utility functions. I may refactor them
 out at a later date.
 """
 
+
 def s3bucket():
     s3 = boto3.resource("s3")
     bucket = os.environ["S3_BUCKET_NAME"]
@@ -390,16 +396,14 @@ def s3ul(fpath, fname):
     """
     Uploads a file to S3.
     """
-    s3bucket().upload_file(
-        fpath, fname, ExtraArgs={"ACL": "public-read"}
-    )
+    s3bucket().upload_file(fpath, fname, ExtraArgs={"ACL": "public-read"})
 
 
 def s3del(fname):
     """
     Deletes a file from s3.
     """
-    s3bucket().delete_objects(Delete={'Objects': [{'Key': fname}]})
+    s3bucket().delete_objects(Delete={"Objects": [{"Key": fname}]})
 
 
 def s3rename(old, new):
@@ -407,5 +411,5 @@ def s3rename(old, new):
     Renames a file on s3.
     """
     s3dl(old)
-    s3ul(f'/tmp/{old}', new)
+    s3ul(f"/tmp/{old}", new)
     s3del(old)

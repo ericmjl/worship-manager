@@ -19,6 +19,7 @@ app.register_blueprint(songs.mod)
 app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
 db = SQLAlchemy(app)
 
+
 @app.route("/")
 def home():
     return render_template("index.html.j2")

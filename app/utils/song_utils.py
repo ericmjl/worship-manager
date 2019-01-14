@@ -151,7 +151,6 @@ def get_one_song(id):
     return song
 
 
-
 def update_song_info(request, id, cur, conn, exclude_id=None):
     """
     Updates song information in database.
@@ -170,10 +169,10 @@ def update_song_info(request, id, cur, conn, exclude_id=None):
     lyrics = get_lyrics(request=request, exclude_id=exclude_id)
     data["lyrics"] = json.dumps(lyrics.to_dict(), ensure_ascii=False)
 
-    if not data.get('sheet_music'):
-        data['sheet_music'] = "NULL"
-    if not data.get('pdf_preview'):
-        data['pdf_preview'] = "NULL"
+    if not data.get("sheet_music"):
+        data["sheet_music"] = "NULL"
+    if not data.get("pdf_preview"):
+        data["pdf_preview"] = "NULL"
 
     # Build the SQL query
     query = f"""
@@ -193,6 +192,7 @@ def update_song_info(request, id, cur, conn, exclude_id=None):
     """
     cur.execute(query)
     conn.commit()
+
 
 def get_lyrics(request, exclude_id=None):
     """

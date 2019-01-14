@@ -31,7 +31,6 @@ class Song(object):
     :type youtube: `str`
     """
 
-
     def __init__(
         self,
         name="",
