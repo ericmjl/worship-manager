@@ -2,8 +2,9 @@
 Data models used in the project.
 """
 
-
 import pinyin
+from sqlalchemy.dialects.postgresql import JSON
+from flask_sqlalchemy import SQLAlchemy
 
 
 class Song(object):
@@ -29,6 +30,7 @@ class Song(object):
     :param youtube: URL to a YouTube video.
     :type youtube: `str`
     """
+
 
     def __init__(
         self,
@@ -112,179 +114,3 @@ class Lyrics(object):
         :returns: a `dict` representation of the Lyrics object.
         """
         return self.sections
-
-
-class Coworker(object):
-    """
-    Data model for a coworker.
-
-    :param name: Coworker's name
-    :type name: `str`
-
-    :param alias: Alternative names for the coworker.
-    :type alias: `str`
-
-    :param pinyin: Pinyin of coworker's name. Makes searching for them easier.
-    :type pinyin: `str`
-
-    :param fellowship: Coworker's primary fellowship. Refer to `static.py` for
-                       the full list of fellowships.
-    :type fellowship: `str`
-
-    :param email: Coworker's email address.
-    :type email: `str`
-
-    :param phone: Coworker's phone number. Should be of format `###-###-####`.
-    :type phone: `str`
-
-    :param service: List of roles that a coworker serves in.
-    :type service: `list` of `str`
-
-    :param gender: Coworker's gender. Genesis 1:26-27
-    :type gender: `str`, one of "M" or "F".
-    """
-
-    def __init__(
-        self,
-        name="",
-        alias="",
-        fellowship="",
-        email="",
-        phone="",
-        service=[],
-        gender="",
-    ):
-        self.name = name
-        self.alias = alias
-        self.fellowship = fellowship
-        self.email = email
-        self.phone = phone
-        self.service = service
-        self.active = True
-        self.gender = gender
-
-    def __repr__(self):
-        return f"{self.name}, {self.fellowship}"
-
-    def to_dict(self):
-        return self.__dict__
-
-
-class Program(object):
-    """
-    Data model for a program.
-
-    :param date: The worship service date.
-    :type date: `str`
-
-    :param presider: The name of the presider.
-    :type presider: `str`
-
-    :param pianist: The name of the pianist.
-    :type pianist: `str`
-
-    :param drummer: The name of the drummer.
-    :type drummer: `str`
-
-    :param guitarist: The name of the guitarist.
-    :type guitarist: `str`
-
-    :param vocalist1: The name of vocalist #1.
-    :type vocalist1: `str`
-
-    :param vocalist2: The name of vocalist #2.
-    :type vocalist2: `str`
-
-    :param vocalist3: The name of vocalist #3.
-    :type vocalist3: `str`
-
-    :param speaker: The name of the speaker.
-    :type speaker: `str`
-
-    :param audio: The name of the audio controller coworker.
-    :type audio: `str`
-
-    :param powerpoint: The name of the slides controller coworker.
-    :type powerpoint: `str`
-
-    :param song1: The eid of the first worship song.
-    :type song1: `int`
-
-    :param song2: The eid of the second worship song.
-    :type song2: `int`
-
-    :param song3: The eid of the third worship song.
-    :type song3: `int`
-
-    :param offering: The eid of the offering song.
-    :type offering: `int`
-
-    :param response: The eid of the response song.
-    :type response: `int`
-
-    .. note:: Arrangements are stored in the corresponding `{song}_arrangement`
-              object attribute.
-    """
-
-    def __init__(
-        self,
-        date="",
-        presider="",
-        pianist="",
-        guitarist="",
-        drummer="",
-        vocalist1="",
-        vocalist2="",
-        vocalist3="",
-        speaker="",
-        audio="",
-        powerpoint="",
-        song1="",
-        song2="",
-        song3="",
-        offering="",
-        response="",
-    ):
-
-        # Coworkers
-        self.date = date
-        self.presider = presider
-        self.pianist = pianist
-        self.vocalist1 = vocalist1
-        self.vocalist2 = vocalist2
-        self.vocalist3 = vocalist3
-        self.audio = audio
-        self.powerpoint = powerpoint
-        self.speaker = speaker
-        self.guitarist = guitarist
-        self.drummer = drummer
-
-        # Songs + Arrangements
-        self.song1 = song1
-        self.song1_arrangement = None
-        self.song2 = song2
-        self.song2_arrangement = None
-        self.song3 = song3
-        self.song3_arrangement = None
-        self.offering = offering
-        self.offering_arrangement = None
-        self.response = None
-        self.response_arrangement = None
-
-    def to_dict(self):
-        return self.__dict__
-
-
-class Announcement(object):
-    def __init__(self, title="", content=""):
-        """
-        Data model for Announcement.
-
-        :param str title: The title of the announcement.
-        :param str content: The content of the announcement.
-        """
-        self.title = title
-        self.content = content
-
-    def __repr__():
-        return self.title + "\n\n" + self.content
