@@ -1,4 +1,4 @@
 {% macro save_delete_buttons(song) %}
-<button class="btn btn-success btn-lg" type="submit" formaction="/songs/{{ song.eid }}/save">儲存</button>
-<a class="btn btn-danger btn-lg" href="/songs/{{ song.eid }}/remove">刪除</a>
+<button class="btn btn-success btn-lg" type="submit" formaction="/songs/{{ song['id'] }}/save">儲存</button>
+<a class="btn btn-danger btn-lg" href="/songs/{{ song['id'] }}/remove">刪除</a>
 {% endmacro %}
