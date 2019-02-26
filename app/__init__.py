@@ -108,5 +108,10 @@ def save(id):
 
 @app.route('/<int:id>/update', methods=['POST'])
 def update(id):
+    """
+    Update song and return to same page.
+
+    Note: essentially just a different redirect compared to `save(id)`.
+    """
     save_song(id, request)
     return redirect(f"/{id}")
