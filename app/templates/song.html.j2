@@ -63,8 +63,7 @@
         </div>
         <div class="col-3" name="slides_button">
             <label for="">選項</label>
-            <!-- <p><button class="btn btn-primary btn-md" type="submit" formaction="/songs/{{ song['id'] }}/slides">幻燈片</button></p> -->
-            <p> <a href="/songs/{{ song['id'] }}/slides" class="btn btn-primary btn-md">幻燈片</a> </p>
+            <p> <a href="/{{ song['id'] }}/slides" class="btn btn-primary btn-md">幻燈片</a> </p>
         </div>
     </div>
     <p>
@@ -97,7 +96,7 @@
             {% if song['sheet_music'] %}
                 {% if song['pdf_preview'] %}
                     <p>點擊下載歌譜</p>
-                    <a href="/songs/{{ song['id'] }}/sheet_music/download">
+                    <a href="/{{ song['id'] }}/sheet_music/download">
                         <img src="data:image/jpg;base64, {{ song.pdf_preview }}"></img>
                     </a>
                     <p>
