@@ -3,8 +3,7 @@ from .env import DB_URL
 from .utils import get_lyrics
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSON
-from collections import defaultdict
+import pinyin
 
 # Start app
 app = Flask(__name__)
@@ -23,15 +22,14 @@ class Song(db.Model):
     sheet_music = db.Column(db.String(), nullable=True)
     pdf_preview = db.Column(db.Text(), nullable=True)
     composer = db.Column(db.String(), nullable=True)
+    pinyin = db.Column(db.String(), nullable=True)
 
     def _add_default_arrangement(self, default_arrangement):
         # Firstly, we make sure that every element in default_arrangement is
         # a key in the lyrics' sections.
         if default_arrangement:
             for section in default_arrangement:
-                assert (
-                    section in self.lyrics.sections.keys()
-                ), f"{section} not specified"
+                assert section in self.lyrics.sections.keys(), f"{section} not specified"
 
             # Now, we allow the default arrangement to be set.
             self.default_arrangement = default_arrangement
@@ -62,21 +60,28 @@ def view(id):
     return render_template("song.html.j2", song=song)
 
 
+@app.route("/<int:id>/export")
+def export(id):
+    """
+    Exports the song lyrics to plain text that gets rendered inside a text box.
+
+    :param int id: The id of the song in the database.
+    :returns: Renders the view page for the lyrics of a song.
+    """
+    song = Song.query.filter_by(id=id).first()
+
+
 @app.route("/add")
 def new():
     """
     Sends us to a blank song.
     """
-    # data = Song().to_dict()
-    # id = song_db.insert(data)
-    # song = song_db.get(id=id)
     return render_template("song.html.j2", song=song)
 
 
-@app.route('/<int:id>/save', methods=['POST'])
-def save(id):
+def save_song(id, request):
     """
-    Saves the song information to the database.
+    Refactored out of `save()` to support both saving and updating.
     """
     song = Song.query.get(id)
     song.name = request.form.get('name', None)
@@ -88,6 +93,20 @@ def save(id):
     song.sheet_music = request.form.get('sheet_music', None)
     song.pdf_preview = request.form.get('pdf_preview', None)
     song.composer = request.form.get('composer', None)
-
+    song.pinyin = pinyin.get(song.name, format="strip", delimiter=" ")
     db.session.commit()
+
+
+@app.route('/<int:id>/save', methods=['POST'])
+def save(id):
+    """
+    Saves the song information to the database.
+    """
+    save_song(id, request)
     return redirect('/')
+
+
+@app.route('/<int:id>/update', methods=['POST'])
+def update(id):
+    save_song(id, request)
+    return redirect(f"/{id}")
