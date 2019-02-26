@@ -52,3 +52,28 @@ def get_lyrics(request, exclude_id=None):
                 section = request.form[k]
                 lyr.add_section(section=section, lyrics=lyrics)
     return lyr
+
+
+def clean_arrangement(arrangement):
+    """
+    Cleans the song arrangement and turns it into a list.
+
+    :example:
+    >>> str_arr = 'V, C, V, C'
+    >>> clean_arrangement(str_arr)
+    ['V', 'C', 'V', 'C']
+
+    :param arrangement: a comma-delimited string containing the arrangement of
+        the song.
+    :type arrangement: `str`
+
+    :param song_data: a data dictionary. Keys are the data model fields as
+        specified in `datamodels.py`. One of the keys has to be "lyrics".
+    :type song_data: `dict`
+
+    :returns: arrangement a list of strings, each of which is a key in song's
+        lyrics dictionary.
+    :rtype: `list(str)`
+    """
+    arrangement = [a.strip(" ") for a in arrangement.split(",")]
+    return arrangement

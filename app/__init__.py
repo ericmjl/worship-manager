@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from .env import DB_URL
-from .utils import get_lyrics
+from .utils import get_lyrics, clean_arrangement
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
 import pinyin
@@ -115,3 +115,15 @@ def update(id):
     """
     save_song(id, request)
     return redirect(f"/{id}")
+
+
+@app.route('/<int:id>/slides')
+def slides(id):
+    """
+    Render slides using revealjs.
+    """
+    song = Song.query.filter_by(id=id).first()
+    arrangement = clean_arrangement(song.default_arrangement)
+    return render_template(
+        "slides_single_song.html.j2", song=song, arrangement=arrangement, id=id
+    )
