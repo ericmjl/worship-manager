@@ -132,21 +132,23 @@ def update(id):
     return redirect(f"/{id}")
 
 
-@app.route('/<int:id>/slides')
+@app.route('/<int:id>/slides', methods=['POST'])
 def slides(id):
     """
     Render slides using revealjs.
     """
-    song = Song.query.filter_by(id=id).first()
+    save_song(id, request)
+    song = Song.query.get(id)
     arrangement = clean_arrangement(song.default_arrangement)
     return render_template(
         "slides_single_song.html.j2", song=song, arrangement=arrangement, id=id
     )
 
 
-@app.route('/<int:id>/add_lyrics_section')
+@app.route('/<int:id>/add_lyrics_section', methods=['POST'])
 def add_lyrics_section(id):
-    song = Song.query.filter_by(id=id).first()
+    save_song(id, request)
+    song = Song.query.get(id)
     count = len(song.lyrics) + 1
     song.lyrics.update({f'section-{count}':f'section-{count}'})
     print(song.lyrics, count)
@@ -158,7 +160,7 @@ def add_lyrics_section(id):
 
 @app.route('/<int:id>/remove_lyrics_section/<int:section_id>')
 def remove_lyrics_section(id, section_id):
-    song = Song.query.filter_by(id=id).first()
+    song = Song.query.get(id)
     del song.lyrics[f"section-{section_id}"]
     # song.lyrics.pop(section_id, None)
     flag_modified(song, "lyrics")

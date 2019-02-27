@@ -63,7 +63,7 @@
         </div>
         <div class="col-3" name="slides_button">
             <label for="">選項</label>
-            <p> <a href="/{{ song['id'] }}/slides" class="btn btn-primary btn-md">幻燈片</a> </p>
+            <p> <button type="submit" formaction="/{{ song['id'] }}/slides" class="btn btn-primary btn-md">幻燈片</button> </p>
         </div>
     </div>
     <p>
@@ -82,7 +82,7 @@
     <div class="row" id="row-button-update">
         <div class="col-12">
             <button class="btn btn-primary btn-sm" type="submit" name="refresh" formaction="/{{ song['id'] }}/update">更新</button>
-            <a class="btn btn-success btn-sm" name="add-lyrics-section" id="add-section-button" href="/{{ song['id'] }}/add_lyrics_section">增添曲段</a>
+            <button class="btn btn-success btn-sm" type="submit" name="add-lyrics-section" id="add-section-button" formaction="/{{ song['id'] }}/add_lyrics_section">增添曲段</button>
         </div>
     </div>
     <div class="row" id="row-add-section-button">
