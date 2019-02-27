@@ -147,22 +147,32 @@ def slides(id):
 
 @app.route('/<int:id>/add_lyrics_section', methods=['POST'])
 def add_lyrics_section(id):
+    # Update song
     save_song(id, request)
     song = Song.query.get(id)
     count = len(song.lyrics) + 1
     song.lyrics.update({f'section-{count}':f'section-{count}'})
-    print(song.lyrics, count)
     flag_modified(song, "lyrics")
+
+    # Commit to database
     db.session.merge(song)
     db.session.commit()
+
+    # Redirect
     return redirect(f"/{id}")
 
 
-@app.route('/<int:id>/remove_lyrics_section/<int:section_id>')
+@app.route('/<int:id>/remove_lyrics_section/<int:section_id>', methods=['POST'])
 def remove_lyrics_section(id, section_id):
+    # Update song
+    save_song(id, request)
     song = Song.query.get(id)
     del song.lyrics[f"section-{section_id}"]
-    # song.lyrics.pop(section_id, None)
     flag_modified(song, "lyrics")
+
+    # Commit to database
+    db.session.merge(song)
     db.session.commit()
+
+    # Redirect
     return redirect(f"/{id}")
