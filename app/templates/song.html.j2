@@ -82,7 +82,7 @@
     <div class="row" id="row-button-update">
         <div class="col-12">
             <button class="btn btn-primary btn-sm" type="submit" name="refresh" formaction="/{{ song['id'] }}/update">更新</button>
-            <button class="btn btn-success btn-sm" type="submit" name="add-lyrics-section" id="add-section-button" formaction="/{{ song['id'] }}/add_lyrics_section">增添曲段</button>
+            <a class="btn btn-success btn-sm" name="add-lyrics-section" id="add-section-button" href="/{{ song['id'] }}/add_lyrics_section">增添曲段</a>
         </div>
     </div>
     <div class="row" id="row-add-section-button">

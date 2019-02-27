@@ -3,6 +3,7 @@ from .env import DB_URL
 from .utils import get_lyrics, clean_arrangement
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm.attributes import flag_modified
 import pinyin
 
 # Start app
@@ -76,7 +77,21 @@ def new():
     """
     Sends us to a blank song.
     """
-    return render_template("song.html.j2", song=song)
+    song = Song()
+    song.id = len(Song.query.all())
+    song.name = "Name"
+    song.copyright = None
+    song.lyrics = {'section-1': 'section-1', 'section-2': 'section-2'}
+    song.ccli = None
+    song.default_arrangement = None
+    song.youtube = None
+    song.sheet_music = None
+    song.pdf_preview = None
+    song.composer = None
+    song.pinyin = None
+    db.session.add(song)
+    db.session.commit()
+    return redirect(f'/{song.id}')
 
 
 def save_song(id, request):
@@ -127,3 +142,25 @@ def slides(id):
     return render_template(
         "slides_single_song.html.j2", song=song, arrangement=arrangement, id=id
     )
+
+
+@app.route('/<int:id>/add_lyrics_section')
+def add_lyrics_section(id):
+    song = Song.query.filter_by(id=id).first()
+    count = len(song.lyrics) + 1
+    song.lyrics.update({f'section-{count}':f'section-{count}'})
+    print(song.lyrics, count)
+    flag_modified(song, "lyrics")
+    db.session.merge(song)
+    db.session.commit()
+    return redirect(f"/{id}")
+
+
+@app.route('/<int:id>/remove_lyrics_section/<int:section_id>')
+def remove_lyrics_section(id, section_id):
+    song = Song.query.filter_by(id=id).first()
+    del song.lyrics[f"section-{section_id}"]
+    # song.lyrics.pop(section_id, None)
+    flag_modified(song, "lyrics")
+    db.session.commit()
+    return redirect(f"/{id}")
