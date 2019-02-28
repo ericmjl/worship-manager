@@ -6,5 +6,4 @@ PyYAML
 gunicorn
 boto3
 python-dotenv
-preview-generator
 flask_sqlalchemy
