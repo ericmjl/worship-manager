@@ -6,7 +6,8 @@ from hanziconv import HanziConv
 
 root = Path(".")
 dotenv_path = root / ".env"
-load_dotenv(dotenv_path, verbose=True)
+if dotenv_path.exists():
+    load_dotenv(dotenv_path, verbose=True)
 
 # Instantiate connection to the database on Heroku
 DB_URL = os.getenv("DATABASE_URL")
