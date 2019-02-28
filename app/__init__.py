@@ -138,12 +138,14 @@ def update(id):
     return redirect(f"/{id}")
 
 
+@app.route('/<int:id>/slides')
 @app.route('/<int:id>/slides', methods=['POST'])
 def slides(id):
     """
     Render slides using revealjs.
     """
-    save_song(id, request)
+    if request.method == 'POST':
+        save_song(id, request)
     song = Song.query.get(id)
     arrangement = clean_arrangement(song.default_arrangement)
     return render_template(
