@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.attributes import flag_modified
 from pathlib import Path
+from hanziconv import HanziConv
 
 import pinyin
 import uuid
@@ -15,6 +16,7 @@ import os
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
 db = SQLAlchemy(app)
+convert = HanziConv.toTraditional
 
 
 class Song(db.Model):
@@ -105,15 +107,15 @@ def save_song(id, request):
     Refactored out of `save()` to support both saving and updating.
     """
     song = Song.query.get(id)
-    song.name = request.form.get('name', None)
-    song.copyright = request.form.get('copyright', None)
+    song.name = convert(request.form.get('name', None))
+    song.copyright = convert(request.form.get('copyright', None))
     song.lyrics = get_lyrics(request).to_dict()
-    song.ccli = request.form.get('ccli', None)
-    song.default_arrangement = request.form.get('default_arrangement', None)
-    song.youtube = request.form.get('youtube', None)
-    song.sheet_music = request.form.get('sheet_music', None)
-    song.pdf_preview = request.form.get('pdf_preview', None)
-    song.composer = request.form.get('composer', None)
+    song.ccli = convert(request.form.get('ccli', None))
+    song.default_arrangement = convert(request.form.get('default_arrangement', None))
+    song.youtube = convert(request.form.get('youtube', None))
+    song.sheet_music = convert(request.form.get('sheet_music', None))
+    song.pdf_preview = convert(request.form.get('pdf_preview', None))
+    song.composer = convert(request.form.get('composer', None))
     song.pinyin = pinyin.get(song.name, format="strip", delimiter=" ")
     db.session.commit()
 
