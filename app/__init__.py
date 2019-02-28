@@ -107,15 +107,15 @@ def save_song(id, request):
     Refactored out of `save()` to support both saving and updating.
     """
     song = Song.query.get(id)
-    song.name = convert(request.form.get('name', None))
-    song.copyright = convert(request.form.get('copyright', None))
+    song.name = convert(request.form.get('name', ''))
+    song.copyright = convert(request.form.get('copyright', ''))
     song.lyrics = get_lyrics(request).to_dict()
-    song.ccli = convert(request.form.get('ccli', None))
-    song.default_arrangement = convert(request.form.get('default_arrangement', None))
-    song.youtube = convert(request.form.get('youtube', None))
-    song.sheet_music = convert(request.form.get('sheet_music', None))
-    song.pdf_preview = convert(request.form.get('pdf_preview', None))
-    song.composer = convert(request.form.get('composer', None))
+    song.ccli = convert(request.form.get('ccli', ''))
+    song.default_arrangement = convert(request.form.get('default_arrangement', ''))
+    song.youtube = convert(request.form.get('youtube', ''))
+    song.sheet_music = convert(request.form.get('sheet_music', ''))
+    song.pdf_preview = convert(request.form.get('pdf_preview', ''))
+    song.composer = convert(request.form.get('composer', ''))
     song.pinyin = pinyin.get(song.name, format="strip", delimiter=" ")
     db.session.commit()
 
