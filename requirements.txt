@@ -7,3 +7,4 @@ gunicorn
 boto3
 python-dotenv
 flask_sqlalchemy
+psycopg2
