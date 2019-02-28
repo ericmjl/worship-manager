@@ -1,9 +1,9 @@
 import os
 
-from ..datamodels import Song
+# from ..datamodels import Song
 
 # Keep a list of song keys
-song_datamodel = list(Song().to_dict().keys())
+# song_datamodel = list(Song().to_dict().keys())
 
 # We only allow uploading of PDFs.
 ALLOWED_EXTENSIONS = set(["pdf"])

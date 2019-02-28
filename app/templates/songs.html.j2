@@ -9,8 +9,7 @@
 <div class="row">
     <div class="col-8">
         <form method="post">
-            <a class="btn btn-success btn-md" href="/songs/add">增添</a>
-            <a class="btn btn-danger btn-md" href="/songs/clean">清理數據庫</a>
+            <a class="btn btn-success btn-md" href="/add">增添</a>
         </form>
     </div>
     <div class="col-4">
@@ -37,31 +36,31 @@
             <tbody>
                 {% for song in all_songs %}
                     <tr>
-                        <td><a href="/songs/{{ song.eid }}">{{ song['name'] }}</a></td>
+                        <td><a href="/{{ song['id'] }}">{{ song['name'] }}</a></td>
                         <!-- Enable search by pinyin -->
                         <td style="display:none">{{ song['pinyin'] }}</td>
                         <td>
                             {% if song['composer'] %}
-                                <!-- <a href="/songs/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a> -->
+                                <!-- <a href="/search/{{ song['composer'] }}">{{ song['composer']|truncate(20) }}</a> -->
                                 {{ song['composer']|truncate(20) }}
                             {% endif %}
                         </td>
                         <td>
                             {% if song['copyright'] %}
-                                <!-- <a href="/songs/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a> -->
+                                <!-- <a href="/search/{{ song['copyright'] }}">{{ song['copyright'] }}</a> -->
                                 {{ song['copyright'] }}
                             {% endif %}
                         </td>
                         <td>
                             {% if song['default_arrangement'] %}
-                                <a href="/songs/{{ song.eid }}/slides" align="center">
+                                <a href="/{{ song['id'] }}/slides" align="center">
                                     <i class="fa fa-desktop" aria-hidden="true"></i>
                                 </a>
                             {% endif %}
                         </td>
                         <td>
                             {% if song['sheet_music'] %}
-                                <a href="/songs/{{ song.eid }}/sheet_music/download"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
+                                <a href="/{{ song['id'] }}/sheet_music/download"><i class="fa fa-paperclip" aria-hidden="true"></i></a>
                             {% endif %}
                         </td>
                         <td>
@@ -70,7 +69,7 @@
                             {% endif %}
                         </td>
 
-                        <td>{% if not song['name'] %}<a href="/songs/{{ song.eid }}/edit">剪輯</a>{% endif %}</td>
+                        <td>{% if not song['name'] %}<a href="/{{ song['id'] }}/edit">剪輯</a>{% endif %}</td>
                     </tr>
                 {% endfor %}
             </tbody>

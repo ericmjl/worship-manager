@@ -19,7 +19,7 @@
             <h1>歌曲信息</h1>
             <div class="form-group">
                 <div name="id" class="form-group">
-                    <input type="hidden" name="id" value="{{ song.eid }}"></input>
+                    <input type="hidden" name="id" value="{{ song['id'] }}"></input>
                 </div>
             </div>
         </div>
@@ -63,8 +63,11 @@
         </div>
         <div class="col-3" name="slides_button">
             <label for="">選項</label>
-            <!-- <p><button class="btn btn-primary btn-md" type="submit" formaction="/songs/{{ song.eid }}/slides">幻燈片</button></p> -->
-            <p> <a href="/songs/{{ song.eid }}/slides" class="btn btn-primary btn-md">幻燈片</a> </p>
+            <p>
+                <button type="submit" formaction="/{{ song['id'] }}/slides" class="btn btn-primary btn-md">
+                    <i class="fas fa-desktop"></i> 幻燈片
+                </button>
+            </p>
         </div>
     </div>
     <p>
@@ -72,18 +75,18 @@
         {% if song and song['lyrics'] %}
             {% set counter = ['1'] %}
             {% for section, lyrics in song['lyrics'].items() %}
-                {{ render_lyrics(section, lyrics, song.eid, loop.index) }}
+                {{ render_lyrics(section, lyrics, song['id'], loop.index) }}
                 {% set _ = counter.append('1') %}
             {% endfor %}
         {% else %}
-            {{ render_lyrics(section, lyrics, song.eid) }}
+            {{ render_lyrics(section, lyrics, song['id']) }}
         {% endif %}
     </div>
     <br>
     <div class="row" id="row-button-update">
         <div class="col-12">
-            <button class="btn btn-primary btn-sm" type="submit" name="refresh" formaction="/songs/{{ song.eid }}/update">更新</button>
-            <button class="btn btn-success btn-sm" type="submit" name="add-lyrics-section" id="add-section-button" formaction="/songs/{{ song.eid }}/add_lyrics_section">增添曲段</button>
+            <button class="btn btn-primary btn-sm" type="submit" name="refresh" formaction="/{{ song['id'] }}/update"><i class="fas fa-sync-alt"></i> 更新</button>
+            <button class="btn btn-success btn-sm" type="submit" name="add-lyrics-section" id="add-section-button" formaction="/{{ song['id'] }}/add_lyrics_section"><i class="fas fa-plus-circle"></i> 增添曲段</button>
         </div>
     </div>
     <div class="row" id="row-add-section-button">
@@ -95,28 +98,25 @@
         <div class="col-6">
             <h1>歌譜</h1>
             {% if song['sheet_music'] %}
-                {# <a href="https://s3.amazonaws.com/worship-manager/{{ song.sheet_music }}">下載歌譜</a> #}
-                {% if song['pdf_preview'] %}
-                    <p>點擊下載歌譜</p>
-                    <a href="/songs/{{ song.eid }}/sheet_music/download">
-                        <img src="data:image/jpg;base64, {{ song.pdf_preview }}"></img>
-                    </a>
                     <p>
-                        <a class="btn btn-success btn-sm" href="/songs/{{ song.eid }}/preview">更新預覽</a>
-                        <a class="btn btn-danger btn-sm" href="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</a>
+                        <a class="btn btn-danger btn-lg" href="/{{ song['id'] }}/sheet_music/delete">
+                            <i class="far fa-trash-alt"></i>
+                            刪除歌譜
+                        </a>
+                        <a class="btn btn-success btn-lg" href="/{{ song['id'] }}/sheet_music/download">
+                            <i class="fas fa-file-download"></i>
+                            下載歌譜
+                        </a>
                     </p>
-                {% else %}
-                    <p>
-                        <a class="btn btn-danger btn-sm" href="/songs/{{ song.eid }}/sheet_music/delete">刪除歌譜</a>
-                        <a class="btn btn-success btn-sm" href="/songs/{{ song.eid }}/preview">創造預覽</a>
-                    </p>
-                {% endif %}
             {% else %}
             <label for="file-upload" class="custom-file" class="btn btn-default">
                 增添歌譜
             </label>
             <input type="file" name="file-upload">
-            <button class="btn btn-success btn-sm" type="submit" name="upload-button" formaction="/songs/{{ song.eid }}/sheet_music/upload">上傳</button>
+            <button class="btn btn-success btn-lg" type="submit" name="upload-button" formaction="/{{ song['id'] }}/sheet_music/upload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                上傳歌譜
+            </button>
             {% endif %}
         </div>
         <div class="col-6">
@@ -130,15 +130,12 @@
             <label for="youtube">視頻鏈接</label>
             <input class="form-control" type="text" name="youtube" value="{{ song['youtube'] }}">
             <p></p>
-            <button class="btn btn-success btn-sm" type="submit" name="update_youtube" formaction="/songs/{{ song.eid }}/update">更新鏈接</button>
+            <button class="btn btn-success btn-sm" type="submit" name="update_youtube" formaction="/{{ song['id'] }}/update"><i class="fas fa-sync-alt"></i> 更新鏈接</button>
         </div>
     </div>
     <hr>
     <div class="row">
         <div class="col-12">
-            <!-- <button class="btn btn-success btn-lg" type="submit" formaction="/songs/{{ song.eid }}/save">儲存</button> -->
-            <!-- <button class="btn btn-danger btn-lg" type="submit" formaction="/songs/{{ song.eid }}/remove">刪除</button> -->
-            <!-- <a class="btn btn-danger btn-lg" href="/songs/{{ song.eid }}/remove">刪除</a> -->
             {{ save_delete_buttons(song) }}
         </div>
     </div>

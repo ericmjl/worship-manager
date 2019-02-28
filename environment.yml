@@ -20,6 +20,8 @@ dependencies:
 - boto3
 - gunicorn
 - poppler
+- pandas
+- pylint
 - pip:
     - hanziconv
     - pinyin
@@ -27,3 +29,5 @@ dependencies:
     - oauth2client
     - PyOpenSSL
     - preview-generator
+    - pgcli
+    - flask_sqlalchemy

@@ -1,11 +1,13 @@
 """
 Utility functions used in songs.
 """
+import json
+
 import pinyin
 
 from ..datamodels import Lyrics
-from ..views.__init__ import convert
-from .__init__ import ALLOWED_EXTENSIONS, song_datamodel
+from ..config import convert
+from .__init__ import ALLOWED_EXTENSIONS# , song_datamodel
 
 
 def clean_arrangement(arrangement):
@@ -143,24 +145,53 @@ def allowed_file(filename):
     )
 
 
-def update_song_info(request, eid, song_db, exclude_id=None):
+def get_one_song(id):
+    cur.execute(f"SELECT * FROM songs WHERE id={id}")
+    song = cur.fetchone()
+    return song
+
+
+def update_song_info(request, id, cur, conn, exclude_id=None):
     """
     Updates song information in database.
 
     :param request: `request` object from the Flask app.
     :type request: `flask.request` object, `dict`-like.
 
-    :param eid: the eid of the song to be updated in the database.
-    :type eid: `int`
+    :param id: the id of the song to be updated in the database.
+    :type id: `int`
     """
     data = {
         k: convert(v) for k, v in request.form.items() if k in song_datamodel
     }
-    data["pinyin"] = pinyin.get(data["name"], format="strip", delimiter=" ")
+    # data["pinyin"] = pinyin.get(data["name"], format="strip", delimiter=" ")
 
     lyrics = get_lyrics(request=request, exclude_id=exclude_id)
-    data["lyrics"] = lyrics.to_dict()
-    song_db.update(data, eids=[eid])
+    data["lyrics"] = json.dumps(lyrics.to_dict(), ensure_ascii=False)
+
+    if not data.get("sheet_music"):
+        data["sheet_music"] = "NULL"
+    if not data.get("pdf_preview"):
+        data["pdf_preview"] = "NULL"
+
+    # Build the SQL query
+    query = f"""
+    UPDATE "songs"
+    SET
+        "name"='{data["name"]}',
+        "copyright"='{data["copyright"]}',
+        "lyrics"='{data["lyrics"]}',
+        "ccli"='{data["ccli"]}',
+        "default_arrangement"='{data['default_arrangement']}',
+        "youtube"='{data['youtube']}',
+        "sheet_music"='{data['sheet_music']}',
+        "pdf_preview"='{data['pdf_preview']}',
+        "composer"='{data['composer']}'
+    WHERE
+        "id"={id}
+    """
+    cur.execute(query)
+    conn.commit()
 
 
 def get_lyrics(request, exclude_id=None):
