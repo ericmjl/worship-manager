@@ -1,10 +1,15 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash, send_file
 from .env import DB_URL
-from .utils import get_lyrics, clean_arrangement
+from .utils import get_lyrics, clean_arrangement, allowed_file
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.attributes import flag_modified
+from pathlib import Path
+
 import pinyin
+import uuid
+import boto3
+import os
 
 # Start app
 app = Flask(__name__)
@@ -30,7 +35,8 @@ class Song(db.Model):
         # a key in the lyrics' sections.
         if default_arrangement:
             for section in default_arrangement:
-                assert section in self.lyrics.sections.keys(), f"{section} not specified"
+                assert section in self.lyrics.sections.keys(), \
+                    f"{section} not specified"
 
             # Now, we allow the default arrangement to be set.
             self.default_arrangement = default_arrangement
@@ -151,7 +157,7 @@ def add_lyrics_section(id):
     save_song(id, request)
     song = Song.query.get(id)
     count = len(song.lyrics) + 1
-    song.lyrics.update({f'section-{count}':f'section-{count}'})
+    song.lyrics.update({f'section-{count}': f'section-{count}'})
     flag_modified(song, "lyrics")
 
     # Commit to database
@@ -162,7 +168,10 @@ def add_lyrics_section(id):
     return redirect(f"/{id}")
 
 
-@app.route('/<int:id>/remove_lyrics_section/<int:section_id>', methods=['POST'])
+@app.route(
+    '/<int:id>/remove_lyrics_section/<int:section_id>',
+    methods=['POST']
+)
 def remove_lyrics_section(id, section_id):
     # Update song
     save_song(id, request)
@@ -176,3 +185,113 @@ def remove_lyrics_section(id, section_id):
 
     # Redirect
     return redirect(f"/{id}")
+
+
+@app.route("/<int:id>/sheet_music/upload", methods=["POST"])
+def upload_sheet_music(id):
+    """
+    Uploads a PDF of the sheet music for the song.
+
+    :param id: The id of the song for which a sheet music is to be attached.
+    :type id: int
+
+    .. note:: The only acceptable upload formats are indicated in
+              `app.utils.ALLOWED_EXTENSIONS`.
+
+    :returns: The view page for the song.
+    """
+
+    if "file-upload" not in request.files:
+        flash("No file part")
+        return redirect(f"/songs/{id}")
+    f = request.files["file-upload"]
+
+    if f.filename == "":
+        flash("No selected file")
+        return redirect(f"/songs/{id}")
+
+    if f and allowed_file(f.filename):
+        # Compute the song filename.
+        fname = f"{str(uuid.uuid4())}.pdf"
+        # Save the file to disk temporarily.
+        fpath = str(f'/tmp/{fname}')
+        f.save(fpath)
+
+        # Save the file to S3
+        s3ul(fpath, fname)
+        # Update the song database
+        song = Song.query.get(id)
+        song.sheet_music = fname
+        flag_modified(song, "sheet_music")
+        db.session.merge(song)
+        db.session.commit()
+
+        return redirect(f"/{id}")
+
+
+@app.route('/<int:id>/sheet_music/download')
+def download_sheet_music(id):
+    """
+    Returns the sheet music to be downloaded.
+
+    :param id: The id of the song.
+    :type id: int
+
+    :returns: The song sheet PDF.
+    """
+    song = Song.query.get(id)
+    fname = song.sheet_music
+    # Use s3dl utility function to conditionally download file.
+    s3dl(fname)
+
+    # Change the name of the file so that it is easier to read.
+    new_fname = f'{song.name}-{song.composer}-{song.copyright}.pdf'
+    os.system(f"cp /tmp/{fname} /tmp/{new_fname}")
+
+    # Return the file.
+    return send_file(f"/tmp/{new_fname}", as_attachment=True)
+
+
+# Below are a bunch of s3-specific utility functions. I may refactor them
+# out at a later date.
+
+
+def s3bucket():
+    s3 = boto3.resource("s3")
+    bucket = os.environ["S3_BUCKET_NAME"]
+    return s3.Bucket(bucket)
+
+
+def s3dl(fname):
+    """
+    Downloads a file from S3. Does this conditionally; if the file already
+    exists, then we do not download it.
+
+    Does not return anything
+    """
+    pathstr = f"/tmp/{fname}"
+    if not Path(pathstr).exists():
+        s3bucket().download_file(fname, f"/tmp/{fname}")
+
+
+def s3ul(fpath, fname):
+    """
+    Uploads a file to S3.
+    """
+    s3bucket().upload_file(fpath, fname, ExtraArgs={"ACL": "public-read"})
+
+
+def s3del(fname):
+    """
+    Deletes a file from s3.
+    """
+    s3bucket().delete_objects(Delete={"Objects": [{"Key": fname}]})
+
+
+def s3rename(old, new):
+    """
+    Renames a file on s3.
+    """
+    s3dl(old)
+    s3ul(f"/tmp/{old}", new)
+    s3del(old)

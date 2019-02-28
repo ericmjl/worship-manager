@@ -77,3 +77,32 @@ def clean_arrangement(arrangement):
     """
     arrangement = [a.strip(" ") for a in arrangement.split(",")]
     return arrangement
+
+
+def allowed_file(filename):
+    """
+    Utility function that checks that the filename has an allowed extension.
+        Used when uploading the file. Checks the module-level variable
+        `ALLOWED_EXTENSIONS` for allowed uploads.
+
+    :param filename: The name of the file that is being uploaded.
+    :type filename: `str`
+
+    :example:
+    >>> ALLOWED_EXTENSIONS = ['.pdf', '.jpg']  # module-level variable
+    >>> file1 = 'my_file.txt'
+    >>> allowed_file(file1)
+    False
+    >>> file2 = 'my_file'
+    >>> allowed_file(file2)
+    False
+    >>> file3 = 'my_file.jpg'
+    >>> allowed_file(file3)
+    True
+    """
+    ALLOWED_EXTENSIONS = set(["pdf"])
+
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
