@@ -8,4 +8,4 @@ python-dotenv
 flask_sqlalchemy
 psycopg2
 # We use the development install of hanziconv that I forked.
--e git+https://github.com/ericmjl/hanziconv.git@add-preserve
+git+https://github.com/ericmjl/hanziconv.git@add-preserve
