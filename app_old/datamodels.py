@@ -5,8 +5,8 @@ Data models used in the project.
 import pinyin
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
-# from .__init__ import db
 
+# from .__init__ import db
 
 
 # class Song(db.Model):

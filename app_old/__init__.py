@@ -54,6 +54,7 @@ class Song(db.Model):
             # Now, we allow the default arrangement to be set.
             self.default_arrangement = default_arrangement
 
+
 @app.route("/")
 def home():
     return render_template("index.html.j2")

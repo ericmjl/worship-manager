@@ -20,20 +20,19 @@ bucket = os.getenv("S3_BUCKET_NAME")
 # Commonly-used text conversion
 hzc = HanziConv()
 custom_mapping = {
-    '祢': '祢',
-    '面': '面',
-    '麵': '面',
-    '裡': '裡',
-    '里': '裡',
-    '裏': '裡',
-    '傢': '家',
-    '家': '家',
-    '禰': '祢',
-    '只': '只',
-    '隻': '只',
-    '衹': '只',
-    '瞭': '了',
-    '了': '了',
-
+    "祢": "祢",
+    "面": "面",
+    "麵": "面",
+    "裡": "裡",
+    "里": "裡",
+    "裏": "裡",
+    "傢": "家",
+    "家": "家",
+    "禰": "祢",
+    "只": "只",
+    "隻": "只",
+    "衹": "只",
+    "瞭": "了",
+    "了": "了",
 }
 convert = partial(HanziConv.toTraditional, custom_mapping=custom_mapping)

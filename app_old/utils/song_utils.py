@@ -7,7 +7,7 @@ import pinyin
 
 from ..datamodels import Lyrics
 from ..config import convert
-from .__init__ import ALLOWED_EXTENSIONS# , song_datamodel
+from .__init__ import ALLOWED_EXTENSIONS  # , song_datamodel
 
 
 def clean_arrangement(arrangement):
