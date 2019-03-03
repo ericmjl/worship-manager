@@ -106,6 +106,9 @@ def new():
 def save_song(id, request):
     """
     Refactored out of `save()` to support both saving and updating.
+
+    We do not save the song sheet, because it should already be saved after
+    uploading the sheet music to s3.
     """
     song = Song.query.get(id)
     song.name = convert(request.form.get('name', ''))
