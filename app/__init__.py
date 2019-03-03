@@ -11,6 +11,7 @@ import pinyin
 import uuid
 import boto3
 import os
+import logging as log
 
 # Start app
 app = Flask(__name__)
@@ -113,8 +114,6 @@ def save_song(id, request):
     song.ccli = convert(request.form.get('ccli', ''))
     song.default_arrangement = convert(request.form.get('default_arrangement', ''))
     song.youtube = convert(request.form.get('youtube', ''))
-    song.sheet_music = convert(request.form.get('sheet_music', ''))
-    song.pdf_preview = convert(request.form.get('pdf_preview', ''))
     song.composer = convert(request.form.get('composer', ''))
     song.pinyin = pinyin.get(song.name, format="strip", delimiter=" ")
     db.session.commit()
@@ -204,10 +203,11 @@ def upload_sheet_music(id):
 
     :returns: The view page for the song.
     """
-
+    log.debug('User wants to upload a song sheet.')
     if "file-upload" not in request.files:
         flash("No file part")
         return redirect(f"/songs/{id}")
+    log.debug('Getting file from for.')
     f = request.files["file-upload"]
 
     if f.filename == "":
@@ -218,12 +218,15 @@ def upload_sheet_music(id):
         # Compute the song filename.
         fname = f"{str(uuid.uuid4())}.pdf"
         # Save the file to disk temporarily.
+        log.debug('Saving to disk temporarily')
         fpath = str(f'/tmp/{fname}')
         f.save(fpath)
 
+        log.debug('Uploading to s3')
         # Save the file to S3
         s3ul(fpath, fname)
         # Update the song database
+        log.debug('Updating song database.')
         song = Song.query.get(id)
         song.sheet_music = fname
         flag_modified(song, "sheet_music")
