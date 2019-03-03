@@ -52,7 +52,7 @@ def get_lyrics(request, exclude_id=None):
                 lyrics = convert(request.form[f"lyrics-{idx}"])
 
                 # Next, strip trailing punctuation except for question marks.
-                lyrics = lyrics.strip("。，；,.;")
+                lyrics = lyrics.strip("。，；：").strip(',.;:')
 
                 # Finally, replace middle punctuation with special blank-space
                 # character.
