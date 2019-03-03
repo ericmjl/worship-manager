@@ -116,7 +116,7 @@ def save_song(id, request):
     song.lyrics = get_lyrics(request).to_dict()
     song.ccli = convert(request.form.get('ccli', ''))
     song.default_arrangement = convert(request.form.get('default_arrangement', ''))
-    song.youtube = convert(request.form.get('youtube', ''))
+    song.youtube = request.form.get('youtube', '')
     song.composer = convert(request.form.get('composer', ''))
     song.pinyin = pinyin.get(song.name, format="strip", delimiter=" ")
     db.session.commit()
