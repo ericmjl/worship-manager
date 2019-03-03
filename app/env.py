@@ -29,6 +29,9 @@ custom_mapping = {
     '傢': '家',
     '家': '家',
     '禰': '祢',
+    '只': '只',
     '隻': '只',
+    '衹': '只',
+
 }
 convert = partial(HanziConv.toTraditional, custom_mapping=custom_mapping)

@@ -12,7 +12,6 @@ import uuid
 import boto3
 import os
 import logging as log
-from functools import partial
 
 # Start app
 app = Flask(__name__)
