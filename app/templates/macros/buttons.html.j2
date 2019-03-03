@@ -1,7 +1,12 @@
-{% macro save_delete_buttons(song) %}
+{% macro common_buttons(song) %}
 <button class="btn btn-success btn-lg" type="submit" formaction="/{{ song['id'] }}/save">
 <i class="far fa-save"></i>
 儲存
+</button>
+
+<button class="btn btn-warning btn-lg" type="submit" formaction="/{{ song['id'] }}/export" method="post">
+<i class="fas fa-file-export"></i>
+獲取歌詞
 </button>
 {# <a class="btn btn-danger btn-lg" href="/remove">刪除</a> #}
 {% endmacro %}

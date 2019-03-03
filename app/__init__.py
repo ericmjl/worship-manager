@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, send_file
 from .env import DB_URL, convert
-from .utils import get_lyrics, clean_arrangement, allowed_file
+from .utils import get_lyrics, clean_arrangement, allowed_file, lyrics_plaintext
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.attributes import flag_modified
@@ -69,17 +69,6 @@ def view(id):
     return render_template("song.html.j2", song=song)
 
 
-@app.route("/<int:id>/export")
-def export(id):
-    """
-    Exports the song lyrics to plain text that gets rendered inside a text box.
-
-    :param int id: The id of the song in the database.
-    :returns: Renders the view page for the lyrics of a song.
-    """
-    song = Song.query.filter_by(id=id).first()
-
-
 @app.route("/add")
 def new():
     """
@@ -88,19 +77,20 @@ def new():
     song = Song()
     song.id = len(Song.query.all())
     song.name = "Name"
-    song.copyright = None
+    song.copyright = ''
     song.lyrics = {'section-1': 'section-1', 'section-2': 'section-2'}
-    song.ccli = None
-    song.default_arrangement = None
-    song.youtube = None
-    song.sheet_music = None
-    song.pdf_preview = None
-    song.composer = None
-    song.pinyin = None
+    song.ccli = ''
+    song.default_arrangement = ''
+    song.youtube = ''
+    song.sheet_music = ''
+    song.pdf_preview = ''
+    song.composer = ''
+    song.pinyin = ''
     db.session.add(song)
     db.session.commit()
     return redirect(f'/{song.id}')
 
+from .utils import validate_song
 
 def save_song(id, request):
     """
@@ -118,6 +108,8 @@ def save_song(id, request):
     song.youtube = request.form.get('youtube', '')
     song.composer = convert(request.form.get('composer', ''))
     song.pinyin = pinyin.get(song.name, format="strip", delimiter=" ")
+    song = validate_song(song)
+
     db.session.commit()
 
 
@@ -190,6 +182,19 @@ def remove_lyrics_section(id, section_id):
 
     # Redirect
     return redirect(f"/{id}")
+
+
+@app.route('/<int:id>/export')
+@app.route('/<int:id>/export', methods=["POST"])
+def export_lyrics(id):
+    """
+    View function for lyrics export.
+    """
+    if request.method == 'POST':
+        save_song(id, request)
+    song = Song.query.get(id)
+    output = lyrics_plaintext(song)
+    return render_template("song_export.html.j2", output=output)
 
 
 @app.route("/<int:id>/sheet_music/upload", methods=["POST"])

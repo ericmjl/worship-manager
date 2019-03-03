@@ -32,6 +32,8 @@ custom_mapping = {
     '只': '只',
     '隻': '只',
     '衹': '只',
+    '瞭': '了',
+    '了': '了',
 
 }
 convert = partial(HanziConv.toTraditional, custom_mapping=custom_mapping)

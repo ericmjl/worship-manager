@@ -34,7 +34,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for song in all_songs %}
+                {% for song in all_songs|sort(attribute='id') %}
                     <tr>
                         <td><a href="/{{ song['id'] }}">{{ song['name'] }}</a></td>
                         <!-- Enable search by pinyin -->

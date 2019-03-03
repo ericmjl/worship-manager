@@ -1,7 +1,7 @@
 {% extends "master.html.j2" %}
 
 {% from "macros/lyrics.html.j2" import render_lyrics %}
-{% from "macros/buttons.html.j2" import save_delete_buttons %}
+{% from "macros/buttons.html.j2" import common_buttons %}
 {% block title_extension %}
     {{ song['name'] }}
 {% endblock %}
@@ -10,7 +10,7 @@
 <form class="form-group" method="post" enctype=multipart/form-data>
     <div class="row">
         <div class="col-12">
-            {{ save_delete_buttons(song) }}
+            {{ common_buttons(song) }}
         </div>
     </div>
     <hr>
@@ -136,7 +136,7 @@
     <hr>
     <div class="row">
         <div class="col-12">
-            {{ save_delete_buttons(song) }}
+            {{ common_buttons(song) }}
         </div>
     </div>
 </form>

@@ -48,7 +48,28 @@ def get_lyrics(request, exclude_id=None):
         if "section-" in k:
             idx = int(k.split("-")[-1])
             if idx is not exclude_id:
+                # First, convert to traditional.
                 lyrics = convert(request.form[f"lyrics-{idx}"])
+
+                # Next, strip trailing punctuation except for question marks.
+                lyrics = lyrics.strip('。，；,.;')
+
+                # Finally, replace middle punctuation with special blank-space
+                # character.
+                # The special space character is specified here:
+                # https://unicodelookup.com/#%E3%80%80/1
+                lyrics = (
+                    lyrics
+                    .replace('。', '　')
+                    .replace('，', '　')
+                    .replace('；', '　')
+                    .replace('、', '　')
+                    .replace('.', '　')
+                    .replace(',', '　')
+                    .replace(';', '　')
+                    .replace(' ', '　')
+                )
+
                 section = request.form[k]
                 lyr.add_section(section=section, lyrics=lyrics)
     return lyr
@@ -106,3 +127,37 @@ def allowed_file(filename):
         "." in filename
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
+
+
+def lyrics_plaintext(song):
+    """
+    Get lyrics as plaintext.
+    """
+    output = ""
+
+    song = validate_song(song)
+
+    output += song.default_arrangement
+    output += "\n\n\n\n"
+    output += song.composer
+    output += "\n"
+    output += song.copyright
+    output += "\n\n"
+
+    for section, lyrics in song.lyrics.items():
+        output += section
+        output += "\n"
+        output += lyrics
+        output += "\n\n"
+    return output
+
+
+def validate_song(song):
+    """
+    Converts song fields from None to '' for string outputs.
+    """
+    attrs = ['default_arrangement', 'composer', 'copyright', 'youtube']
+    for a in attrs:
+        if getattr(song, a) in [None, 'None']:
+            setattr(song, a, '')
+    return song
