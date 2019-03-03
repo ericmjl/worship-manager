@@ -23,7 +23,7 @@ dependencies:
 - pandas
 - pylint
 - pip:
-    - hanziconv
+    - git+https://github.com/ericmjl/hanziconv.git@add-preserve
     - pinyin
     - tinydb
     - oauth2client

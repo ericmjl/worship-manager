@@ -1,10 +1,11 @@
 pytest
 pinyin
 Flask
-hanziconv
 PyYAML
 gunicorn
 boto3
 python-dotenv
 flask_sqlalchemy
 psycopg2
+# We use the development install of hanziconv that I forked.
+-e git+https://github.com/ericmjl/hanziconv.git@add-preserve

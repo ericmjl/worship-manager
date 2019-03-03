@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import boto3
 from hanziconv import HanziConv
+from functools import partial
 
 root = Path(".")
 dotenv_path = root / ".env"
@@ -18,4 +19,14 @@ bucket = os.getenv("S3_BUCKET_NAME")
 
 # Commonly-used text conversion
 hzc = HanziConv()
-convert = hzc.toTraditional
+custom_mapping = {
+    '祢': '祢',
+    '面': '面',
+    '里': '裡',
+    '裏': '裡',
+    '傢': '家',
+    '家': '家',
+    '禰': '祢',
+    '隻': '只',
+}
+convert = partial(HanziConv.toTraditional, custom_mapping=custom_mapping)

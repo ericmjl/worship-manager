@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, flash, send_file
-from .env import DB_URL
+from .env import DB_URL, convert
 from .utils import get_lyrics, clean_arrangement, allowed_file
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
@@ -12,12 +12,12 @@ import uuid
 import boto3
 import os
 import logging as log
+from functools import partial
 
 # Start app
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
 db = SQLAlchemy(app)
-convert = HanziConv.toTraditional
 
 
 class Song(db.Model):
@@ -66,7 +66,7 @@ def view(id):
     :param int id: The id of the song in the database.
     :returns: Renders the view page for a single song.
     """
-    song = Song.query.filter_by(id=id).first()
+    song = Song.query.get(id)
     return render_template("song.html.j2", song=song)
 
 
