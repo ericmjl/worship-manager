@@ -5,6 +5,7 @@ from .utils import (
     clean_arrangement,
     allowed_file,
     lyrics_plaintext,
+    clean_lyrics,
 )
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
@@ -152,6 +153,7 @@ def slides(id):
     if request.method == "POST":
         save_song(id, request)
     song = Song.query.get(id)
+    song = clean_lyrics(song)
     arrangement = clean_arrangement(song.default_arrangement)
     return render_template(
         "slides_single_song.html.j2", song=song, arrangement=arrangement, id=id
@@ -202,6 +204,7 @@ def export_lyrics(id):
     if request.method == "POST":
         save_song(id, request)
     song = Song.query.get(id)
+    song = clean_lyrics(song)
     output = lyrics_plaintext(song)
     return render_template("song_export.html.j2", output=output)
 

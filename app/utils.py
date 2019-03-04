@@ -1,5 +1,5 @@
 from .env import convert
-
+from flask import request
 
 class Lyrics(object):
     """
@@ -28,13 +28,12 @@ class Lyrics(object):
         return self.sections
 
 
-def get_lyrics(request, exclude_id=None):
+def get_lyrics(request: request, exclude_id: int=None):
     """
     Utility function that returns a Lyrics object containing the song lyrics.
+
     :param request: `request` object from the Flask app.
-    :type request: `flask.request` object, `dict`-like.
     :param exclude_id: an integer identifying which lyrics section to exclude.
-    :type exclude_id: `int`
     :returns: A Lyrics object containing the song's lyrics in a structured
               format.
     """
@@ -57,8 +56,11 @@ def get_lyrics(request, exclude_id=None):
 
 
 def clean_lyrics(song):
+    """
+    Cleans the lyrics in a song object.
+    """
     cleaned_lyrics = dict()
-    for name, lyrics in song.lyrics.sections.items():
+    for name, lyrics in song.lyrics.items():
         # Strip trailing punctuation except for question marks.
         lyrics = lyrics.strip("。，；：").strip(',.;:')
 
@@ -76,7 +78,8 @@ def clean_lyrics(song):
             .replace(" ", "　")
         )
         cleaned_lyrics[name] = lyrics
-    song.lyrics.sections.update(cleaned_lyrics)
+    song.lyrics.update(cleaned_lyrics)
+    return song
 
 
 def clean_arrangement(arrangement):
