@@ -51,27 +51,32 @@ def get_lyrics(request, exclude_id=None):
                 # First, convert to traditional.
                 lyrics = convert(request.form[f"lyrics-{idx}"])
 
-                # Next, strip trailing punctuation except for question marks.
-                lyrics = lyrics.strip("。，；：").strip(',.;:')
-
-                # Finally, replace middle punctuation with special blank-space
-                # character.
-                # The special space character is specified here:
-                # https://unicodelookup.com/#%E3%80%80/1
-                lyrics = (
-                    lyrics.replace("。", "　")
-                    .replace("，", "　")
-                    .replace("；", "　")
-                    .replace("、", "　")
-                    .replace(".", "　")
-                    .replace(",", "　")
-                    .replace(";", "　")
-                    .replace(" ", "　")
-                )
-
                 section = request.form[k]
                 lyr.add_section(section=section, lyrics=lyrics)
     return lyr
+
+
+def clean_lyrics(song):
+    cleaned_lyrics = dict()
+    for name, lyrics in song.lyrics.sections.items():
+        # Strip trailing punctuation except for question marks.
+        lyrics = lyrics.strip("。，；：").strip(',.;:')
+
+        # Replace middle punctuation with special blank-space character.
+        # The special space character is specified here:
+        # https://unicodelookup.com/#%E3%80%80/1
+        lyrics = (
+            lyrics.replace("。", "　")
+            .replace("，", "　")
+            .replace("；", "　")
+            .replace("、", "　")
+            .replace(".", "　")
+            .replace(",", "　")
+            .replace(";", "　")
+            .replace(" ", "　")
+        )
+        cleaned_lyrics[name] = lyrics
+    song.lyrics.sections.update(cleaned_lyrics)
 
 
 def clean_arrangement(arrangement):
