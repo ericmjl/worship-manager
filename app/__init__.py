@@ -34,7 +34,6 @@ class Song(db.Model):
     default_arrangement = db.Column(db.String(), nullable=True)
     youtube = db.Column(db.String(), nullable=True)
     sheet_music = db.Column(db.String(), nullable=True)
-    pdf_preview = db.Column(db.Text(), nullable=True)
     composer = db.Column(db.String(), nullable=True)
     pinyin = db.Column(db.String(), nullable=True)
 
