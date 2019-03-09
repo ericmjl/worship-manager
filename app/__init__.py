@@ -246,6 +246,7 @@ def upload_sheet_music(id):
         # Update the song database
         log.debug("Updating song database.")
         song = Song.query.get(id)
+        save_song(id, request)
         song.sheet_music = fname
         flag_modified(song, "sheet_music")
         db.session.merge(song)
