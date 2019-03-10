@@ -36,13 +36,19 @@ custom_mapping = {
     "瞭": "了",
     "了": "了",
     "犧": "犠",
+    "犠": "犠",
     '喔': '哦',
+    '哦': '哦',
     "嚮": "向",
+    "向": "向",
     '麽': '麼',
     '麼': '麼',
     '麯': '曲',
+    '曲': '曲',
     '爲': '為',
+    '為': '為',
     '齣': '出',
+    '出': '出',
 }
 
 convert = partial(HanziConv.toTraditional, custom_mapping=custom_mapping)
