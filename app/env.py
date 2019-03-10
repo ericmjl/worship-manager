@@ -21,6 +21,7 @@ bucket = os.getenv("S3_BUCKET_NAME")
 hzc = HanziConv()
 custom_mapping = {
     "祢": "祢",
+    "袮": "祢",
     "面": "面",
     "麵": "面",
     "裡": "裡",
@@ -34,5 +35,14 @@ custom_mapping = {
     "衹": "只",
     "瞭": "了",
     "了": "了",
+    "犧": "犠",
+    '喔': '哦',
+    "嚮": "向",
+    '麽': '麼',
+    '麼': '麼',
+    '麯': '曲',
+    '爲': '為',
+    '齣': '出',
 }
+
 convert = partial(HanziConv.toTraditional, custom_mapping=custom_mapping)
