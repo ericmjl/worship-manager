@@ -52,6 +52,8 @@ custom_mapping = {
     "噹": "當",
     "當": "當",
     "当": "當",
+    "迴": "回",
+    "回": "回",
 }
 
 convert = partial(HanziConv.toTraditional, custom_mapping=custom_mapping)
