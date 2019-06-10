@@ -3,7 +3,7 @@ pinyin==0.4.0
 Flask==1.0.3
 PyYAML==5.1.1
 gunicorn==19.9.0
-boto3==1.9.146
+boto3==1.9.164
 python-dotenv==0.10.2
 flask_sqlalchemy==2.4.0
 psycopg2==2.8.2
