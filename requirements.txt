@@ -1,4 +1,4 @@
-pytest==4.5.0
+pytest==4.6.2
 pinyin==0.4.0
 Flask==1.0.2
 PyYAML==5.1
