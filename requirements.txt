@@ -1,7 +1,7 @@
 pytest==4.6.2
 pinyin==0.4.0
 Flask==1.0.3
-PyYAML==5.1
+PyYAML==5.1.1
 gunicorn==19.9.0
 boto3==1.9.146
 python-dotenv==0.10.2
