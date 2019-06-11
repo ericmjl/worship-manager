@@ -7,6 +7,7 @@ channels:
 dependencies:
 - python=3.6
 - flask
+- pip
 - pyyaml
 - pytest
 - pytest-cov
@@ -22,6 +23,7 @@ dependencies:
 - poppler
 - pandas
 - pylint
+- psycopg2
 - pip:
     - git+https://github.com/ericmjl/hanziconv.git@add-preserve
     - pinyin
