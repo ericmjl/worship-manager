@@ -1,11 +1,11 @@
-pytest==5.2.0
+pytest==5.3.5
 pinyin==0.4.0
 Flask==1.1.1
-PyYAML==5.1.2
-gunicorn==19.9.0
-boto3==1.9.238
-python-dotenv==0.10.3
+PyYAML==5.3
+gunicorn==20.0.4
+boto3==1.11.9
+python-dotenv==0.10.5
 flask_sqlalchemy==2.4.1
-psycopg2==2.8.3
+psycopg2==2.8.4
 # We use the development install of hanziconv that I forked.
 git+https://github.com/ericmjl/hanziconv.git@add-preserve
