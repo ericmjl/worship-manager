@@ -3,9 +3,9 @@ pinyin==0.4.0
 Flask==1.1.2
 PyYAML==5.3.1
 gunicorn==20.0.4
-boto3==1.14.47
+boto3==1.14.56
 python-dotenv==0.14.0
 flask_sqlalchemy==2.4.4
-psycopg2==2.8.5
+psycopg2==2.8.6
 # We use the development install of hanziconv that I forked.
 git+https://github.com/ericmjl/hanziconv.git@add-preserve
