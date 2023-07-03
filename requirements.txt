@@ -6,6 +6,6 @@ gunicorn==20.1.0
 boto3==1.26.165
 python-dotenv==1.0.0
 flask_sqlalchemy==3.0.5
-psycopg2==2.8.6
+psycopg2==2.9.6
 # We use the development install of hanziconv that I forked.
 git+https://github.com/ericmjl/hanziconv.git@add-preserve
